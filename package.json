@@ -1,0 +1,23 @@
+{
+  "name": "js-tokens",
+  "version": "0.1.0",
+  "author": "Simon Lydell",
+  "license": "MIT",
+  "description": "A regex that tokenizes JavaScript.",
+  "main": "index.js",
+  "repository": "lydell/js-tokens",
+  "keywords": [
+    "JavaScript",
+    "js",
+    "token",
+    "tokenize",
+    "regex"
+  ],
+  "scripts": {
+    "test": "mocha"
+  },
+  "devDependencies": {
+    "mocha": "^1.17.1",
+    "coffee-script": "~1.7.1"
+  }
+}
