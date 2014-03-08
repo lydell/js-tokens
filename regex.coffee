@@ -101,7 +101,7 @@ module.exports = ///
     # See <http://mathiasbynens.be/notes/javascript-identifiers>.
     (?:
       # Cannot (and should not) start with a digit, because numbers are already matched at this point.
-      [ $ _ a-z A-Z \d \u0080-\uFFFF ]
+      [ $ \w \u0080-\uFFFF ]
       |
       # Unicode escape sequence.
       \\u[ \d a-f A-F ]{4}

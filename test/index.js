@@ -422,7 +422,6 @@ suite("tokens", function() {
     match("a_56åπ")
     match("Iñtërnâtiônàlizætiøn☃💩") // The last character is Pile of poo.
 
-
     match("\\u0000")
     match("\\u15cF")
     match("\\u15cG", false)
