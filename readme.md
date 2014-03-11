@@ -18,7 +18,7 @@ jsString.replace(jsTokens, function(token) {
   var name = jsTokens.names[index-1]
 
   if (lastSignificantToken !== "." && token === "foo") {
-    return "bar"
+    token = "bar"
   }
   if (name !== "comment" && name !== "whitespace") {
     lastSignificantToken = token
