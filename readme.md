@@ -62,8 +62,7 @@ Invalid code handling
 
 Unterminated strings are still matched as strings. JavaScript strings cannot
 contain (unescaped) newlines, so unterminated strings simply end at the end of
-the line. You may use `/['"]$/.test(matchedStringToken)` to determine if a
-string was terminated or not.
+the line.
 
 Unterminated multi-line comments are also still matched as comments. They
 simply go on to the end of the string.
