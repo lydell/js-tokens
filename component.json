@@ -12,12 +12,8 @@
     "tokenize",
     "regex"
   ],
-  "repository": "lydell/js-tokens",
-  "scripts": {
-    "test": "mocha"
-  },
-  "devDependencies": {
-    "mocha": "^1.17.1",
-    "coffee-script": "~1.7.1"
-  }
+  "repo": "lydell/js-tokens",
+  "scripts": [
+    "index.js"
+  ]
 }
