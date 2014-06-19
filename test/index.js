@@ -460,15 +460,6 @@ suite("tokens", function() {
   })
 
 
-  token("functionArrow", function(match) {
-
-    match("=>")
-    match("==>", false)
-    match("=>>", "=>")
-
-  })
-
-
   token("operator", function(match) {
 
     match("+")
@@ -521,6 +512,10 @@ suite("tokens", function() {
     match("=")
     match("==")
     match("===")
+
+    match("=>")
+    match("==>", "==")
+    match("=>>", "=>")
 
     match("?")
     match(":")

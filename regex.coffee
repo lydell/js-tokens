@@ -116,15 +116,13 @@ module.exports = ///
     [ ; , . [ \] ( ) { } ]
   )
   |
-  ( # <functionArrow>
-    => # ES6.
-  )
-  |
   ( # <operator>
     # Word operators (such as `instanceof`) are matched as <name>s.
     -- | \+\+
     |
     && | \|\|
+    |
+    => # ES6 function arrow.
     |
     (?:
       [ + \- * / % & | ^ ]
