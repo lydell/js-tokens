@@ -1,4 +1,4 @@
-### Version 0.2.0 (Unreleased) ###
+### Version 0.2.0 (2014-06-19) ###
 
 - Changed: Match ES6 function arrows (`=>`) as an operator, instead of its own
   category (“functionArrow”), for simplicity. (Backwards-incompatible change.)
