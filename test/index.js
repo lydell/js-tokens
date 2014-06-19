@@ -517,6 +517,11 @@ suite("tokens", function() {
     match("==>", "==")
     match("=>>", "=>")
 
+    match("...")
+    match("..", false)
+    match(".", false)
+    match("....", "...")
+
     match("?")
     match(":")
     match("~")
