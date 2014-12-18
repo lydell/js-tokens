@@ -9,23 +9,6 @@ var jsTokens = require("js-tokens")
 // Tokenize a whole string of JavaScript:
 jsString.match(jsTokens)
 // ["var", " ", "foo", "=", "opts", ".", "foo", ";", "\n", ...]
-
-// Rename the variable `foo` to `bar`:
-var lastSignificantToken
-jsString.replace(jsTokens, function(token) {
-  var index = 1
-  while (arguments[index] === undefined) index++
-  var name = jsTokens.names[index-1]
-
-  if (lastSignificantToken !== "." && token === "foo") {
-    token = "bar"
-  }
-  if (name !== "comment" && name !== "whitespace") {
-    lastSignificantToken = token
-  }
-  return token
-})
-// ["var", " ", "bar", "=", "opts", ".", "foo", ";", "\n", ...]
 ```
 
 
