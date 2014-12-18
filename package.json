@@ -14,7 +14,8 @@
   ],
   "repository": "lydell/js-tokens",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "build": "node generate-index.js"
   },
   "devDependencies": {
     "mocha": "^1.17.1",
