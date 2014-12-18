@@ -16,7 +16,6 @@ Installation
 ============
 
 - `npm install js-tokens`
-- `component install lydell/js-tokens`
 
 ```js
 var jsTokens = require("js-tokens")
