@@ -3,17 +3,8 @@
 
 # <http://es5.github.io/#A.1>
 
-string = (delimiter) ->
-  ///
-    #{delimiter}
-    (?:
-      [^ #{delimiter} \\ \r \n ]
-      |
-      \\(?: \r\n | [\s\S] )
-    )*
-    #{delimiter}?
-  ///.source
-
+# Don’t worry, you don’t need to know CoffeeScript. It is only used for its
+# readable regex syntax. Everything else is done in JavaScript in index.js.
 
 module.exports = ///
   ( # <whitespace>
@@ -22,20 +13,26 @@ module.exports = ///
   |
   ( # <comment>
     //.*
-    |
+  )
+  |
+  ( # <comment>
     /\*
     (?:
       [^*]
       |
       \*(?!/)
     )*
-    (?: \*/ )?
+    ( \*/ )?
   )
   |
   ( # <string>
-    #{string "'"}
-    |
-    #{string '"'}
+    ([ ' " ])
+    (?:
+      (?!\6) [^ \\ \r \n ]
+      |
+      \\(?: \r\n | [\s\S] )
+    )*
+    (\6)?
   )
   |
   ( # <regex>
@@ -137,11 +134,9 @@ module.exports = ///
     [ ; , . [ \] ( ) { } ]
   )
   |
-  ( # <empty>
-    ^$
-  )
-  |
   ( # <invalid>
+    ^$ # Empty.
+    |
     [\s\S] # Catch-all rule for anything not matched by the above.
   )
 ///g
