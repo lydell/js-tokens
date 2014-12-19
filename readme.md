@@ -39,14 +39,14 @@ The next match is always directly after the previous.
 Takes a `match` returned by `jsTokens.exec(string)`, and returns a `{type:
 String, value: String}` object. The following types are available:
 
-- whitespace
-- comment
 - string
+- comment
 - regex
 - number
 - name
 - operator
 - punctuation
+- whitespace
 - invalid
 
 Multi-line comments and strings also have a `closed` property indicating if the

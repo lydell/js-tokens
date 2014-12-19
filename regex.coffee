@@ -7,8 +7,14 @@
 # readable regex syntax. Everything else is done in JavaScript in index.js.
 
 module.exports = ///
-  ( # <whitespace>
-    \s+
+  ( # <string>
+    ([ ' " ])
+    (?:
+      (?!\2)[^ \\ \r \n ]
+      |
+      \\(?: \r\n | [\s\S] )
+    )*
+    (\2)?
   )
   |
   ( # <comment>
@@ -23,16 +29,6 @@ module.exports = ///
       \*(?!/)
     )*
     ( \*/ )?
-  )
-  |
-  ( # <string>
-    ([ ' " ])
-    (?:
-      (?!\6) [^ \\ \r \n ]
-      |
-      \\(?: \r\n | [\s\S] )
-    )*
-    (\6)?
   )
   |
   ( # <regex>
@@ -132,6 +128,10 @@ module.exports = ///
   ( # <punctuation>
     # A comma can also be an operator, but is matched as <punctuation> only.
     [ ; , . [ \] ( ) { } ]
+  )
+  |
+  ( # <whitespace>
+    \s+
   )
   |
   ( # <invalid>
