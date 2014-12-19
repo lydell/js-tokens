@@ -4,7 +4,6 @@
   "author": "Simon Lydell",
   "license": "MIT",
   "description": "A regex that tokenizes JavaScript.",
-  "main": "index.js",
   "keywords": [
     "JavaScript",
     "js",
