@@ -32,8 +32,7 @@ module.exports = ///
   )
   |
   ( # <regex>
-    /
-    # Cannot (and should not) start with a `*`, since `/*` comments are already matched at this point.
+    /(?!\*)
     (?:
       \[
       (?:
@@ -92,8 +91,8 @@ module.exports = ///
   |
   ( # <name>
     # See <http://mathiasbynens.be/notes/javascript-identifiers>.
+    (?!\d)
     (?:
-      # Cannot (and should not) start with a digit, because numbers are already matched at this point.
       [ $ \w \u0080-\uFFFF ]
       |
       # Unicode escape sequence.
