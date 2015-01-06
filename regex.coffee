@@ -10,7 +10,7 @@ module.exports = ///
   ( # <string>
     ([ ' " ])
     (?:
-      (?!\2)[^ \\ \r \n ]
+      (?!\2)[^ \\ \r \n \u2028 \u2029 ]
       |
       \\(?: \r\n | [\s\S] )
     )*
@@ -36,13 +36,13 @@ module.exports = ///
     (?:
       \[
       (?:
-        [^ \] \\ \r \n ]
+        [^ \] \\ \r \n \u2028 \u2029 ]
         |
         \\.
       )*
       \]
       |
-      [^ / \] \\ \r \n ]
+      [^ / \] \\ \r \n \u2028 \u2029 ]
       |
       \\.
     )+
@@ -93,7 +93,7 @@ module.exports = ///
     # See <http://mathiasbynens.be/notes/javascript-identifiers>.
     (?!\d)
     (?:
-      [ $ \w \u0080-\uFFFF ]
+      (?!\s)[ $ \w \u0080-\uFFFF ]
       |
       # Unicode escape sequence.
       \\u[ \d a-f A-F ]{4}

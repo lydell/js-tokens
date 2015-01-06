@@ -76,7 +76,7 @@ inside the regex.
 Invalid ASCII characters have their own capturing group.
 
 Invalid non-ASCII characters are treated as names, to simplify the matching of
-names.
+names (except unicode spaces which are treated as whitespace).
 
 Regex literals may contain invalid regex syntax. They are still matched as
 regex literals. They may also contain repeated regex flags, to keep the regex
