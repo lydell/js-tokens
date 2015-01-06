@@ -1,3 +1,10 @@
+### Version 0.3.1 (2014-01-06) ###
+
+- Fixed: Support for unicode spaces. They used to be allowed in names (which is
+  very confusing), and some unicode newlines were wrongly allowed in strings and
+  regexes.
+
+
 ### Version 0.3.0 (2014-12-19) ###
 
 - Changed: The `jsTokens.names` array has been replaced with the

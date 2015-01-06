@@ -1,4 +1,4 @@
-// Copyright 2014 Simon Lydell
+// Copyright 2014, 2015 Simon Lydell
 // X11 (“MIT”) Licensed. (See LICENSE.)
 
 var fs       = require("fs")
