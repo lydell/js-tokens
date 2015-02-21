@@ -1,3 +1,10 @@
+### Version 0.4.0 (2015-02-21) ###
+
+- Improved: `jsTokens.matchToToken` performance.
+- Added: Support for octal and binary number literals.
+- Added: Support for template strings.
+
+
 ### Version 0.3.1 (2015-01-06) ###
 
 - Fixed: Support for unicode spaces. They used to be allowed in names (which is
