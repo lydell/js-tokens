@@ -1,3 +1,8 @@
+### Version 0.4.1 (2015-02-21) ###
+
+- Added: Support for the regex `u` flag.
+
+
 ### Version 0.4.0 (2015-02-21) ###
 
 - Improved: `jsTokens.matchToToken` performance.
