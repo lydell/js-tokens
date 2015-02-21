@@ -52,8 +52,8 @@ String, value: String}` object. The following types are available:
 Multi-line comments and strings also have a `closed` property indicating if the
 token was closed or not (see below).
 
-Comments and strings both come in two flavors. To distinguish them, check if the
-token starts with `//`, `/*`, `'` or `"`.
+Comments and strings both come in several flavors. To distinguish them, check if
+the token starts with `//`, `/*`, `'`, `"` or `` ` ``.
 
 For example usage, please see this [gist].
 
@@ -65,10 +65,11 @@ Invalid code handling
 
 Unterminated strings are still matched as strings. JavaScript strings cannot
 contain (unescaped) newlines, so unterminated strings simply end at the end of
-the line.
+the line. Unterminated template strings can contain unescaped newlines, though,
+so they go on to the end of input.
 
 Unterminated multi-line comments are also still matched as comments. They
-simply go on to the end of the string.
+simply go on to the end of the input.
 
 Unterminated regex literals are likely matched as division and whatever is
 inside the regex.
@@ -90,6 +91,16 @@ Limitations
 
 Tokenizing JavaScript using regexes—in fact, _one single regex_—won’t be
 perfect. But that’s not the point either.
+
+### Template string interpolation ###
+
+Template strings are matched as single tokens, from the starting `` ` `` to then
+ending `` ` ``, including interpolations (whose tokens are not matched
+individually).
+
+Matching template string interpolations requires recursive balancing of `{` and
+`}`—something that JavaScript regexes cannot do. Only one level of nesting is
+supported.
 
 ### Division and regex literals collision ###
 
