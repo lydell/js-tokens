@@ -1,4 +1,4 @@
-### Version 0.3.1 (2014-01-06) ###
+### Version 0.3.1 (2015-01-06) ###
 
 - Fixed: Support for unicode spaces. They used to be allowed in names (which is
   very confusing), and some unicode newlines were wrongly allowed in strings and
