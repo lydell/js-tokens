@@ -33,5 +33,5 @@ foo = 1/a/goo
 foo = 1/a/iff
 foo = 1/a/igor
 foo = 1/a/moo
-foo = 1/a/yum
+foo = 1/a/yüm
 foo = 1/a/imgyp

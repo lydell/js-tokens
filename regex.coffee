@@ -79,7 +79,7 @@ module.exports = ///
         )
       )
       |
-      [ g m i y ]{1,4} \b
+      [ g m i y u ]{1,5} \b
       (?!
         [ \u0080-\uFFFF $ \\ ]
         |
