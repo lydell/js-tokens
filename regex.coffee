@@ -117,10 +117,8 @@ module.exports = ///
     (?:
       (?!\s)[ $ \w \u0080-\uFFFF ]
       |
-      # Unicode escape sequence.
       \\u[ \d a-f A-F ]{4}
       |
-      # ES6 unicode escape sequence.
       \\u\{[ \d a-f A-F ]{1,6}\}
     )+
   )
