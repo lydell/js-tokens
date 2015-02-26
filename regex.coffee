@@ -2,6 +2,7 @@
 # X11 (“MIT”) Licensed. (See LICENSE.)
 
 # <http://es5.github.io/#A.1>
+# <http://people.mozilla.org/~jorendorff/es6-draft.html#sec-ecmascript-language-lexical-grammar>
 
 # Don’t worry, you don’t need to know CoffeeScript. It is only used for its
 # readable regex syntax. Everything else is done in JavaScript in index.js.
