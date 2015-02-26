@@ -94,7 +94,6 @@ module.exports = ///
   )
   |
   ( # <number>
-    -?
     (?:
       0[xX][ \d a-f A-F ]+
       |
