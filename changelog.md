@@ -1,3 +1,14 @@
+### Version 1.0.0 (2015-02-26) ###
+
+- Changed: Merged the 'operator' and 'punctuation' types into 'punctuator'. That
+  type is now equivalent to the Punctuator token in the ECMAScript
+  specification. (Backwards-incompatible change.)
+- Fixed: A `-` followed by a number is now correctly matched as a punctuator
+  followed by a number. It used to be matched as just a number, but there is no
+  such thing as negative number literals. (Possibly backwards-incompatible
+  change.)
+
+
 ### Version 0.4.1 (2015-02-21) ###
 
 - Added: Support for the regex `u` flag.
