@@ -123,13 +123,12 @@ module.exports = ///
     )+
   )
   |
-  ( # <operator>
-    # Word operators (such as `instanceof`) are matched as <name>s.
+  ( # <punctuator>
     -- | \+\+
     |
     && | \|\|
     |
-    => # ES6 function arrow.
+    =>
     |
     \.{3}
     |
@@ -142,10 +141,7 @@ module.exports = ///
     )=?
     |
     [ ? : ~ ]
-  )
-  |
-  ( # <punctuation>
-    # A comma can also be an operator, but is matched as <punctuation> only.
+    |
     [ ; , . [ \] ( ) { } ]
   )
   |

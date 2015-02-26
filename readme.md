@@ -44,8 +44,7 @@ String, value: String}` object. The following types are available:
 - regex
 - number
 - name
-- operator
-- punctuation
+- punctuator
 - whitespace
 - invalid
 
@@ -55,8 +54,14 @@ token was closed or not (see below).
 Comments and strings both come in several flavors. To distinguish them, check if
 the token starts with `//`, `/*`, `'`, `"` or `` ` ``.
 
+Names are ECMAScript IdentifierNames, that is, including both identifiers and
+keywords. You may use [is-keyword-js] to tell them apart.
+
+Whitespace includes both line terminators and other whitespace.
+
 For example usage, please see this [gist].
 
+[is-keyword-js]: https://github.com/crissdev/is-keyword-js
 [gist]: https://gist.github.com/lydell/be49dbf80c382c473004
 
 

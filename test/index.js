@@ -627,22 +627,7 @@ suite("tokens", function() {
   })
 
 
-  token("punctuation", function(match) {
-
-    match(";")
-    match(".")
-    match(",")
-    match("[")
-    match("]")
-    match("(")
-    match(")")
-    match("{")
-    match("}")
-
-  })
-
-
-  token("operator", function(match) {
+  token("punctuator", function(match) {
 
     match("+")
     match("++")
@@ -700,13 +685,23 @@ suite("tokens", function() {
     match("=>>", "=>")
 
     match("...")
-    match("..", false)
-    match(".", false)
+    match("..", ".")
+    match(".")
     match("....", "...")
 
     match("?")
     match(":")
     match("~")
+
+    match(";")
+    match(".")
+    match(",")
+    match("[")
+    match("]")
+    match("(")
+    match(")")
+    match("{")
+    match("}")
 
     match("/a/()", "/")
     match("/a/g()", "/")
