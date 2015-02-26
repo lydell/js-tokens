@@ -133,7 +133,7 @@ module.exports = ///
     |
     => # ES6 function arrow.
     |
-    \.{3} # ES6 splat.
+    \.{3}
     |
     (?:
       [ + \- * / % & | ^ ]
