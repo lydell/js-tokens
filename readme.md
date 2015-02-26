@@ -94,7 +94,7 @@ perfect. But that’s not the point either.
 
 ### Template string interpolation ###
 
-Template strings are matched as single tokens, from the starting `` ` `` to then
+Template strings are matched as single tokens, from the starting `` ` `` to the
 ending `` ` ``, including interpolations (whose tokens are not matched
 individually).
 
