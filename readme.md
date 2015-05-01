@@ -97,6 +97,11 @@ Limitations
 Tokenizing JavaScript using regexes—in fact, _one single regex_—won’t be
 perfect. But that’s not the point either.
 
+You may compare jsTokens with [esprima] by using `esprima-compare.js`.
+See `npm run esprima-compare`!
+
+[esprima]: http://esprima.org/
+
 ### Template string interpolation ###
 
 Template strings are matched as single tokens, from the starting `` ` `` to the

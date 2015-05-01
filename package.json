@@ -14,11 +14,14 @@
   "repository": "lydell/js-tokens",
   "scripts": {
     "test": "mocha --ui tdd",
+    "esprima-compare": "node esprima-compare ./index.js everything.js/es5.js",
     "build": "node generate-index.js",
     "dev": "npm run build && npm test"
   },
   "devDependencies": {
     "coffee-script": "^1.8.0",
+    "esprima": "^2.2.0",
+    "everything.js": "^1.0.3",
     "mocha": "^2.0.1"
   }
 }
