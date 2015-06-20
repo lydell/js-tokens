@@ -1,3 +1,8 @@
+### Version 1.0.1 (2015-06-20) ###
+
+- Fixed: Declared an undeclared variable.
+
+
 ### Version 1.0.0 (2015-02-26) ###
 
 - Changed: Merged the 'operator' and 'punctuation' types into 'punctuator'. That
