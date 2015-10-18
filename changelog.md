@@ -1,3 +1,9 @@
+### Version 1.0.2 (2015-10-18) ###
+
+- Improved: Limited npm package contents for a smaller download. Thanks to
+  @zertosh!
+
+
 ### Version 1.0.1 (2015-06-20) ###
 
 - Fixed: Declared an undeclared variable.
