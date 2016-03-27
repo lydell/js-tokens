@@ -1,4 +1,4 @@
-// Copyright 2014, 2015 Simon Lydell
+// Copyright 2014, 2015, 2016 Simon Lydell
 // X11 (“MIT”) Licensed. (See LICENSE.)
 
 // This regex comes from regex.coffee, and is inserted here by generate-index.js
