@@ -690,12 +690,11 @@ suite("tokens", function() {
     match("....", "...")
 
     match("?")
-    match(":")
     match("~")
-
-    match(";")
     match(".")
     match(",")
+    match(":")
+    match(";")
     match("[")
     match("]")
     match("(")
