@@ -1,8 +1,7 @@
 # Copyright 2014, 2015 Simon Lydell
 # X11 (“MIT”) Licensed. (See LICENSE.)
 
-# <http://es5.github.io/#A.1>
-# <http://people.mozilla.org/~jorendorff/es6-draft.html#sec-ecmascript-language-lexical-grammar>
+# <http://www.ecma-international.org/ecma-262/6.0/index.html#sec-lexical-grammar>
 
 # Don’t worry, you don’t need to know CoffeeScript. It is only used for its
 # readable regex syntax. Everything else is done in JavaScript in index.js.
