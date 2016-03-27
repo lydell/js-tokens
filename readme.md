@@ -16,7 +16,7 @@ jsString.match(jsTokens)
 Installation
 ============
 
-- `npm install js-tokens`
+`npm install js-tokens`
 
 ```js
 var jsTokens = require("js-tokens")
