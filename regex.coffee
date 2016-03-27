@@ -95,20 +95,18 @@ module.exports = ///
   )
   |
   ( # <number>
+    0[xX][ \d a-f A-F ]+
+    |
+    0[oO][0-7]+
+    |
+    0[bB][01]+
+    |
     (?:
-      0[xX][ \d a-f A-F ]+
+      \d*\.\d+
       |
-      0[oO][0-7]+
-      |
-      0[bB][01]+
-      |
-      (?:
-        \d*\.\d+
-        |
-        \d+\.? # Support one trailing dot for integers only.
-      )
-      (?: [eE][+-]?\d+ )?
+      \d+\.? # Support one trailing dot for integers only.
     )
+    (?: [eE][+-]?\d+ )?
   )
   |
   ( # <name>
