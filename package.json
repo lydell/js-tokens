@@ -11,6 +11,7 @@
     "tokenize",
     "regex"
   ],
+  "main": "index.js",
   "files": [
     "index.js"
   ],
