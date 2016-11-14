@@ -2,6 +2,7 @@
   "name": "js-tokens",
   "version": "2.0.0",
   "author": "Simon Lydell",
+  "main": "index.js",
   "license": "MIT",
   "description": "A regex that tokenizes JavaScript.",
   "keywords": [
@@ -14,6 +15,7 @@
   "files": [
     "index.js"
   ],
+  
   "repository": "lydell/js-tokens",
   "scripts": {
     "test": "mocha --ui tdd",
