@@ -15,7 +15,6 @@
   "files": [
     "index.js"
   ],
-  
   "repository": "lydell/js-tokens",
   "scripts": {
     "test": "mocha --ui tdd",
