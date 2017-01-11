@@ -1,10 +1,12 @@
-// Copyright 2014, 2015, 2016 Simon Lydell
+// Copyright 2014, 2015, 2016, 2017 Simon Lydell
 // X11 (“MIT”) Licensed. (See LICENSE.)
 
-var fs       = require("fs")
-var util     = require("util")
-var assert   = require("assert")
-var jsTokens = require("../")
+var fs           = require("fs")
+var util         = require("util")
+var assert       = require("assert")
+var jsTokensTmp  = require("../")
+var jsTokens     = jsTokensTmp.default
+var matchToToken = jsTokensTmp.matchToToken
 
 
 suite("jsTokens", function() {
@@ -16,10 +18,10 @@ suite("jsTokens", function() {
 })
 
 
-suite("jsTokens.matchToToken", function() {
+suite("matchToToken", function() {
 
   test("is a function", function() {
-    assert.equal(typeof jsTokens.matchToToken, "function")
+    assert.equal(typeof matchToToken, "function")
   })
 
 })
@@ -38,7 +40,7 @@ suite("tokens", function() {
       expected = undefined
     }
     jsTokens.lastIndex = 0
-    var token = jsTokens.matchToToken(jsTokens.exec(string))
+    var token = matchToToken(jsTokens.exec(string))
 
     test(string, function() {
       if (expected === false) {

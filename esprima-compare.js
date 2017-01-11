@@ -1,9 +1,11 @@
-// Copyright 2015 Simon Lydell
+// Copyright 2015, 2017 Simon Lydell
 // X11 (“MIT”) Licensed. (See LICENSE.)
 
-var fs       = require("fs")
-var esprima  = require("esprima")
-var jsTokens = require("./")
+var fs           = require("fs")
+var esprima      = require("esprima")
+var jsTokensTmp  = require("./")
+var jsTokens     = jsTokensTmp.default
+var matchToToken = jsTokensTmp.matchToToken
 
 
 var typeMap = {
@@ -30,7 +32,7 @@ function jsTokensTokenize(string) {
   var tokens = []
   var match
   while (match = jsTokens.exec(string)) {
-    tokens.push(jsTokens.matchToToken(match))
+    tokens.push(matchToToken(match))
   }
   return tokens
 }

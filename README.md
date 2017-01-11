@@ -4,7 +4,7 @@ Overview [![Build Status](https://travis-ci.org/lydell/js-tokens.png?branch=mast
 A regex that tokenizes JavaScript.
 
 ```js
-var jsTokens = require("js-tokens")
+var jsTokens = require("js-tokens").default
 
 var jsString = "var foo=opts.foo;\n..."
 
@@ -19,7 +19,9 @@ Installation
 `npm install js-tokens`
 
 ```js
-var jsTokens = require("js-tokens")
+import jsTokens from "js-tokens"
+// or:
+var jsTokens = require("js-tokens").default
 ```
 
 
@@ -34,7 +36,13 @@ The regex _always_ matches, even invalid JavaScript and the empty string.
 
 The next match is always directly after the previous.
 
-### `var token = jsTokens.matchToToken(match)` ###
+### `var token = matchToToken(match)` ###
+
+```js
+import {matchToToken} from "js-tokens"
+// or:
+var matchToToken = require("js-tokens").matchToToken
+```
 
 Takes a `match` returned by `jsTokens.exec(string)`, and returns a `{type:
 String, value: String}` object. The following types are available:
