@@ -1,5 +1,5 @@
 // Copyright 2014, 2015, 2016, 2017 Simon Lydell
-// X11 (“MIT”) Licensed. (See LICENSE.)
+// License: MIT. (See LICENSE.)
 
 var fs           = require("fs")
 var util         = require("util")

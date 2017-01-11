@@ -1,5 +1,5 @@
 // Copyright 2014, 2015, 2016, 2017 Simon Lydell
-// X11 (“MIT”) Licensed. (See LICENSE.)
+// License: MIT. (See LICENSE.)
 
 Object.defineProperty(exports, "__esModule", {
   value: true

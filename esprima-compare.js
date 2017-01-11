@@ -1,5 +1,5 @@
 // Copyright 2015, 2017 Simon Lydell
-// X11 (“MIT”) Licensed. (See LICENSE.)
+// License: MIT. (See LICENSE.)
 
 var fs           = require("fs")
 var esprima      = require("esprima")

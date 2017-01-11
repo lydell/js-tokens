@@ -1,5 +1,5 @@
 # Copyright 2014, 2015, 2016 Simon Lydell
-# X11 (“MIT”) Licensed. (See LICENSE.)
+# License: MIT. (See LICENSE.)
 
 # <http://www.ecma-international.org/ecma-262/7.0/index.html#sec-ecmascript-language-lexical-grammar>
 
