@@ -42,7 +42,7 @@ suite("tokens", function() {
     jsTokens.lastIndex = 0
     var token = matchToToken(jsTokens.exec(string))
 
-    test(string, function() {
+    test(String(string), function() {
       if (expected === false) {
         assert.notEqual(token.type, type)
       } else {
