@@ -1,4 +1,4 @@
-# Copyright 2014, 2015, 2016 Simon Lydell
+# Copyright 2014, 2015, 2016, 2017 Simon Lydell
 # License: MIT. (See LICENSE.)
 
 # <http://www.ecma-international.org/ecma-262/7.0/index.html#sec-ecmascript-language-lexical-grammar>
@@ -116,7 +116,7 @@ module.exports = ///
       |
       \\u[ \d a-f A-F ]{4}
       |
-      \\u\{[ \d a-f A-F ]{1,6}\}
+      \\u\{[ \d a-f A-F ]+\}
     )+
   )
   |
