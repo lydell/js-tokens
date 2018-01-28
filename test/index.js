@@ -82,7 +82,6 @@ suite("tokens", function() {
 
     match("\u00a0")
     match("\u1680")
-    match("\u180e")
     match("\u2000")
     match("\u2001")
     match("\u2002")
@@ -588,7 +587,6 @@ suite("tokens", function() {
 
     match("a\u00a0", "a")
     match("a\u1680", "a")
-    match("a\u180e", "a")
     match("a\u2000", "a")
     match("a\u2001", "a")
     match("a\u2002", "a")
