@@ -227,7 +227,7 @@ ES2018 added some nice regex improvements to the language.
 - [Named capture groups] might simplify some things.
 
 These things would be nice to do, but are not critical. They probably have to
-wait until the oldest supported Node.js LTS release supports those features.
+wait until the oldest maintained Node.js LTS release supports those features.
 
 [Unicode property escapes]: http://2ality.com/2017/07/regexp-unicode-property-escapes.html
 [Lookbehind assertions]: http://2ality.com/2017/05/regexp-lookbehind-assertions.html
