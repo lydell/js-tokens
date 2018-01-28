@@ -73,14 +73,13 @@ Whitespace includes both line terminators and other whitespace.
 ECMAScript support
 ==================
 
-The intention is to always support the latest stable ECMAScript version.
+The intention is to always support the latest ECMAScript version whose feature
+set has been finalized.
 
 If adding support for a newer version requires changes, a new version with a
 major verion bump will be released.
 
-Currently, [ECMAScript 2017] is supported.
-
-[ECMAScript 2017]: https://www.ecma-international.org/ecma-262/8.0/index.html
+Currently, ECMAScript 2018 is supported.
 
 
 Invalid code handling
@@ -192,7 +191,7 @@ valid regex flag. I initially wanted to future-proof by allowing `[a-zA-Z]*`
 (any letter) as flags, but it is not worth it since it increases the amount of
 ambigous cases. So only the standard `g`, `m`, `i`, `y` and `u` flags are
 allowed. This means that the above example will be identified as division as
-long as you don’t rename the `e` variable to some permutation of `gmiyu` 1 to 5
+long as you don’t rename the `e` variable to some permutation of `gmiyus` 1 to 6
 characters long.
 
 Lastly, we can look _forward_ for information.

@@ -1,7 +1,7 @@
 # Copyright 2014, 2015, 2016, 2017 Simon Lydell
 # License: MIT. (See LICENSE.)
 
-# <http://www.ecma-international.org/ecma-262/7.0/index.html#sec-ecmascript-language-lexical-grammar>
+# <https://tc39.github.io/ecma262/#sec-ecmascript-language-lexical-grammar>
 
 # Don’t worry, you don’t need to know CoffeeScript. It is only used for its
 # readable regex syntax. Everything else is done in JavaScript in index.js.
@@ -79,7 +79,7 @@ module.exports = ///
         )
       )
       |
-      [ g m i y u ]{1,5} \b
+      [ g m i y u s ]{1,6} \b
       (?!
         [ \u0080-\uFFFF $ \\ ]
         |
