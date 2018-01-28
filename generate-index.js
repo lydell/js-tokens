@@ -3,7 +3,7 @@
 
 var fs = require("fs")
 
-require("coffee-script/register")
+require("coffeescript/register")
 var regex = require("./regex.coffee")
 
 var code = fs.readFileSync("index.js").toString()
