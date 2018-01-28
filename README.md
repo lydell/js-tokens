@@ -99,7 +99,8 @@ inside the regex.
 Invalid ASCII characters have their own capturing group.
 
 Invalid non-ASCII characters are treated as names, to simplify the matching of
-names (except unicode spaces which are treated as whitespace).
+names (except unicode spaces which are treated as whitespace). Note: See also
+the [ES2018](#es2018) section.
 
 Regex literals may contain invalid regex syntax. They are still matched as
 regex literals. They may also contain repeated regex flags, to keep the regex
@@ -143,7 +144,8 @@ var regex = / 2/g
 A human can easily understand that in the `number` line we’re dealing with
 division, and in the `regex` line we’re dealing with a regex literal. How come?
 Because humans can look at the whole code to put the `/` characters in context.
-A JavaScript regex cannot. It only sees forwards.
+A JavaScript regex cannot. It only sees forwards. (Well, ES2018 regexes can also
+look backwards. See the [ES2018](#es2018) section).
 
 When the `jsTokens` regex scans throught the above, it will see the following
 at the end of both the `number` and `regex` rows:
@@ -213,6 +215,23 @@ could sum it up as:
 If the end of a statement looks like a regex literal (even if it isn’t), it
 will be treated as one. Otherwise it should work as expected (if you write sane
 code).
+
+### ES2018 ###
+
+ES2018 added some nice regex improvements to the language.
+
+- [Unicode property escapes] should allow telling names and invalid non-ASCII
+  characters apart without blowing up the regex size.
+- [Lookbehind assertions] should allow matching telling division and regex
+  literals apart in more cases.
+- [Named capture groups] might simplify some things.
+
+These things would be nice to do, but are not critical. They probably have to
+wait until the oldest supported Node.js LTS release supports those features.
+
+[Unicode property escapes]: http://2ality.com/2017/07/regexp-unicode-property-escapes.html
+[Lookbehind assertions]: http://2ality.com/2017/05/regexp-lookbehind-assertions.html
+[Named capture groups]: http://2ality.com/2017/05/regexp-named-capture-groups.html
 
 
 License
