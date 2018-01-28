@@ -1,4 +1,4 @@
-// Copyright 2014, 2015, 2016, 2017 Simon Lydell
+// Copyright 2014, 2015, 2016, 2017, 2018 Simon Lydell
 // License: MIT. (See LICENSE.)
 
 Object.defineProperty(exports, "__esModule", {

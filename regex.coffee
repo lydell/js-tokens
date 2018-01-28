@@ -1,4 +1,4 @@
-# Copyright 2014, 2015, 2016, 2017 Simon Lydell
+# Copyright 2014, 2015, 2016, 2017, 2018 Simon Lydell
 # License: MIT. (See LICENSE.)
 
 # <https://tc39.github.io/ecma262/#sec-ecmascript-language-lexical-grammar>
