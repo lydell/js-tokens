@@ -21,3 +21,5 @@ exports.matchToToken = function(match) {
   else if (match[12]) token.type = "whitespace"
   return token
 }
+
+module.exports = exports.default;
