@@ -4,7 +4,7 @@ Overview [![Build Status](https://travis-ci.org/lydell/js-tokens.svg?branch=mast
 A regex that tokenizes JavaScript.
 
 ```js
-var jsTokens = require("js-tokens").default
+var jsTokens = require("js-tokens")
 
 var jsString = "var foo=opts.foo;\n..."
 
