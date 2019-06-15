@@ -1,7 +1,7 @@
-# Copyright 2014, 2015, 2016, 2017, 2018 Simon Lydell
+# Copyright 2014, 2015, 2016, 2017, 2018, 2019 Simon Lydell
 # License: MIT. (See LICENSE.)
 
-# <https://tc39.github.io/ecma262/#sec-ecmascript-language-lexical-grammar>
+# <https://tc39.es/ecma262/#sec-lexical-grammar>
 
 # Don’t worry, you don’t need to know CoffeeScript. It is only used for its
 # readable regex syntax. Everything else is done in JavaScript in index.js.
@@ -10,7 +10,7 @@ module.exports = ///
   ( # <string>
     ([ ' " ])
     (?:
-      (?! \2 | \\ ).
+      (?! \2 )[^ \\ \n \r ]
       |
       \\(?: \r\n | [\s\S] )
     )*

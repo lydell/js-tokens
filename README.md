@@ -79,7 +79,7 @@ set has been finalized.
 If adding support for a newer version requires changes, a new version with a
 major verion bump will be released.
 
-Currently, ECMAScript 2018 is supported.
+Currently, ECMAScript 2019 is supported.
 
 
 Invalid code handling
