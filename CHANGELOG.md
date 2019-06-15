@@ -1,3 +1,8 @@
+### Version 5.0.0 (2019-06-15) ###
+
+- Added: Support for ES2019. The only change is that `\u2028` and `\u2029` are
+  now allowed unescaped inside string literals.
+
 ### Version 4.0.0 (2018-01-28) ###
 
 - Added: Support for ES2018. The only change needed was recognizing the `s`
