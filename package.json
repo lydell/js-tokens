@@ -22,9 +22,9 @@
     "dev": "npm run build && npm test"
   },
   "devDependencies": {
-    "coffeescript": "2.4.1",
+    "coffeescript": "2.5.0",
     "esprima": "4.0.1",
     "everything.js": "1.0.3",
-    "mocha": "6.1.4"
+    "mocha": "7.0.0"
   }
 }
