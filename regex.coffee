@@ -1,26 +1,33 @@
-# Copyright 2014, 2015, 2016, 2017, 2018, 2019 Simon Lydell
+###
+# Copyright 2014, 2015, 2016, 2017, 2018, 2019, 2020 Simon Lydell
 # License: MIT. (See LICENSE.)
+#
+# https://tc39.es/ecma262/#sec-lexical-grammar
+# https://mathiasbynens.be/notes/javascript-identifiers
+# https://stackoverflow.com/a/27120110/2010616
+###
 
-# <https://tc39.es/ecma262/#sec-lexical-grammar>
+Object.defineProperty(exports, "__esModule", {
+  value: true
+})
 
-# Don’t worry, you don’t need to know CoffeeScript. It is only used for its
-# readable regex syntax. Everything else is done in JavaScript in index.js.
-
-module.exports = ///
-  ( # <string>
+exports.default = ///
+  (?<StringLiteral>
     ([ ' " ])
     (?:
       (?! \2 )[^ \\ \n \r ]
       |
-      \\(?: \r\n | [\s\S] )
+      \\(?: \r\n | [^] )
     )*
-    (\2)?
-    |
+    (?<StringLiteralEnd>\2)?
+  )
+  |
+  (?<Template>
     `
     (?:
       [^ ` \\ $ ]
       |
-      \\[\s\S]
+      \\[^]
       |
       \$(?!\{)
       |
@@ -32,24 +39,54 @@ module.exports = ///
       )*
       \}?
     )*
-    (`)?
+    (?<TemplateEnd>`)?
   )
   |
-  ( # <comment>
-    //.*
-  )
-  |
-  ( # <comment>
+  (?<MultiLineComment>
     /\*
     (?:
       [^*]
       |
       \*(?!/)
     )*
-    ( \*/ )?
+    (?<MultiLineCommentEnd> \*/ )?
   )
   |
-  ( # <regex>
+  (?<SingleLineComment>
+    //.*
+  )
+  |
+  (?<RegularExpressionLiteral>
+    (?<=
+      (?:
+        ^
+        |
+        \b(?:await|case|default|delete|do|else|extends|instanceof|new|return|throw|typeof|void|yield)
+        |
+        [ { ( [ , ; < > = * % & | ^ ! ~ ? : ]
+        |
+        (?<!\+)\+
+        |
+        (?<!\-)\-
+        |
+        [^/]/
+        |
+        \.{3}
+      )
+      (?:
+        \s
+        |
+        //.*(?!.)\s
+        |
+        /\*
+        (?:
+          [^*]
+          |
+          \*(?!/)
+        )*
+        \*/
+      )*
+    )
     /(?!\*)
     (?:
       \[
@@ -64,55 +101,34 @@ module.exports = ///
       |
       \\.
     )+
-    /
-    (?:
-      (?!
-        \s*
-        (?:
-          \b
-          |
-          [ \u0080-\uFFFF $ \\ ' " ~ ( { ]
-          |
-          [ + \- ! ](?!=)
-          |
-          \.?\d
-        )
-      )
-      |
-      [ g m i y u s ]{1,6} \b
-      (?!
-        [ \u0080-\uFFFF $ \\ ]
-        |
-        \s*
-        (?:
-          [ + \- * % & | ^ < > ! = ? ( { ]
-          |
-          /(?! [ / * ] )
-        )
-      )
-    )
+    / [ a-z ]*
   )
   |
-  ( # <number>
-    0[xX][ \d a-f A-F ]+
-    |
-    0[oO][0-7]+
-    |
-    0[bB][01]+
+  (?<NumericLiteral>
+    (?:
+      0[xX][ \d a-f A-F ]+
+      |
+      0[oO][0-7]+
+      |
+      0[bB][01]+
+    )n?
     |
     (?:
       \d*\.\d+
       |
-      \d+\.? # Support one trailing dot for integers only.
+      \d+\.?
     )
     (?: [eE][+-]?\d+ )?
+    |
+    0n
+    |
+    [1-9]\d*n
   )
   |
-  ( # <name>
-    # See <http://mathiasbynens.be/notes/javascript-identifiers>.
-    (?!\d)
+  (?<IdentifierName>
+    (?=[ $ _ \p{L} \p{Nl} \\ ])
     (?:
-      (?!\s)[ $ \w \u0080-\uFFFF ]
+      [$ _ \p{L} \p{Nl} \u200c \u200d \p{Mn} \p{Mc} \p{Nd} \p{Pc} ]
       |
       \\u[ \d a-f A-F ]{4}
       |
@@ -120,7 +136,7 @@ module.exports = ///
     )+
   )
   |
-  ( # <punctuator>
+  (?<Punctuator>
     -- | \+\+
     |
     && | \|\|
@@ -128,6 +144,10 @@ module.exports = ///
     =>
     |
     \.{3}
+    |
+    \?\. (?!\d)
+    |
+    ?.{2}
     |
     (?:
       [ + \- / % & | ^ ]
@@ -142,13 +162,19 @@ module.exports = ///
     [ ? ~ . , : ; [ \] ( ) { } ]
   )
   |
-  ( # <whitespace>
-    \s+
+  (?<LineTerminatorSequence>
+    \r?\n
+    |
+    [ \r \u2028 \u2029 ]
   )
   |
-  ( # <invalid>
-    ^$ # Empty.
-    |
-    [\s\S] # Catch-all rule for anything not matched by the above.
+  (?<WhiteSpace>
+    [ \t \v \f \ufeff \p{Zs} ]+
   )
-///g
+  |
+  (?<Invalid>
+    ^$
+    |
+    [^]
+  )
+///gu
