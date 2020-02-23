@@ -11,7 +11,7 @@ jsString.match(jsTokens);
 // ["var", " ", "foo", "=", "opts", ".", "foo", ";", "\n", ...]
 
 // If you need groups (Node.js 12+):
-jsString.matchAll(jsTokens);
+Array.from(jsString.matchAll(jsTokens));
 ```
 
 ## Installation

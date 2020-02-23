@@ -3,6 +3,99 @@
 const fs = require("fs");
 const { default: jsTokens } = require("../");
 
+function token(name, fn) {
+  describe(name, () => {
+    fn(matchHelper.bind(undefined, name));
+  });
+}
+
+const endSequences = {
+  StringLiteral: /^['"]$/,
+  Template: "`",
+  MultiLineComment: "*/",
+};
+
+function matchHelper(type, string, expected, extra = {}) {
+  if (typeof expected === "object" && !Array.isArray(expected)) {
+    extra = expected;
+    expected = undefined;
+  }
+
+  jsTokens.lastIndex = 0;
+  const match = jsTokens.exec(string);
+
+  test(printInvisibles(String(string)), () => {
+    if (expected === false) {
+      expect(match.groups[type]).toBeUndefined();
+    } else {
+      if (Array.isArray(expected)) {
+        expect(Array.from(string.match(jsTokens))).toEqual(expected);
+      } else {
+        expect(match.groups[type]).toBe(
+          typeof expected === "string" ? expected : string
+        );
+      }
+
+      const expectedEnd = endSequences[type];
+      if (expectedEnd != null) {
+        const end = match.groups[`${type}End`];
+        if (extra.closed === false) {
+          expect(end).toBeUndefined();
+        } else if (expectedEnd instanceof RegExp) {
+          expect(end).toMatch(expectedEnd);
+        } else {
+          expect(end).toBe(expectedEnd);
+        }
+      }
+    }
+  });
+}
+
+const escapeTable = {
+  "\b": "\\b",
+  "\f": "\\f",
+  "\n": "\\n",
+  "\r": "\\r",
+  "\t": "\\t",
+  "\v": "\\v",
+  " ": "\\x20",
+};
+
+function printInvisibles(string) {
+  if (string === "") {
+    return "(empty string)";
+  }
+
+  if (/\S/.test(string)) {
+    return string
+      .replace(/\r/g, "␍")
+      .replace(/\n/g, "␊")
+      .replace(
+        // eslint-disable-next-line no-control-regex
+        /[\x00-\x1f]/g,
+        char =>
+          `\\x${char
+            .charCodeAt(0)
+            .toString(16)
+            .padStart(2, "0")
+            .toUpperCase()}`
+      );
+  }
+
+  return string
+    .split("")
+    .map(
+      char =>
+        escapeTable[char] ||
+        `\\u${char
+          .charCodeAt(0)
+          .toString(16)
+          .padStart(4, "0")
+          .toUpperCase()}`
+    )
+    .join("");
+}
+
 describe("jsTokens", () => {
   test("is a regex", () => {
     expect(jsTokens).toBeInstanceOf(RegExp);
@@ -10,48 +103,6 @@ describe("jsTokens", () => {
 });
 
 describe("tokens", () => {
-  function token(name, fn) {
-    describe(name, () => {
-      fn(matchHelper.bind(undefined, name));
-    });
-  }
-
-  function matchHelper(type, string, expected, extra) {
-    extra = extra || {};
-    if (typeof expected === "object" && !Array.isArray(expected)) {
-      extra = expected;
-      expected = undefined;
-    }
-    jsTokens.lastIndex = 0;
-    let match = jsTokens.exec(string);
-
-    test(String(string), () => {
-      if (expected === false) {
-        expect(match.groups[type]).toBeUndefined();
-      } else {
-        if (Array.isArray(expected)) {
-          expected.forEach(expectedString => {
-            expect(match).not.toBeNull();
-            expect(match[0]).toBe(expectedString);
-            match = jsTokens.exec(string);
-          });
-        } else {
-          expect(match.groups[type]).toBe(
-            typeof expected === "string" ? expected : string
-          );
-        }
-        if ("closed" in extra) {
-          expect(match.groups[`${type}End`]).not.toBeUndefined();
-        } else if (type === "string") {
-          expect(match.groups.StringLiteralEnd).toMatch(/^['"]$/);
-        } else if (type === "template") {
-          expect(match.groups.TemplateEnd).toBe("`");
-        }
-      }
-    });
-  }
-
-  // TODO: Split
   token("WhiteSpace", match => {
     match(" ");
     match("    ");
@@ -59,14 +110,6 @@ describe("tokens", () => {
     match("\t");
     match("\t\t\t");
     match("\ta", "\t");
-    match("\n");
-    match("\n\n\n");
-    match("\na", "\n");
-    match("\r");
-    match("\r\r\r");
-    match("\ra", "\r");
-    match(" \t\n\r \r\n");
-    match(" \t\n\r \r\n-1", " \t\n\r \r\n");
     match("\f");
     match("\v");
 
@@ -83,14 +126,27 @@ describe("tokens", () => {
     match("\u2008");
     match("\u2009");
     match("\u200a");
-    match("\u2028");
-    match("\u2029");
     match("\u202f");
     match("\u205f");
     match("\u3000");
   });
 
-  // TODO: Split
+  token("LineTerminatorSequence", match => {
+    match("\n");
+    match("\n\n\n", ["\n", "\n", "\n"]);
+    match("\na", "\n");
+    match("\r");
+    match("\r\r\r", ["\r", "\r", "\r"]);
+    match("\ra", "\r");
+    match("\r\n");
+    match("\r\n\r\n\r\n", ["\r\n", "\r\n", "\r\n"]);
+    match("\r\na", "\r\n");
+    match("\u2028");
+    match("\u2029");
+    match(" \t\n\r \r\n", [" \t", "\n", "\r", " ", "\r\n"]);
+    match(" \t\n\r \r\n-1", [" \t", "\n", "\r", " ", "\r\n", "-", "1"]);
+  });
+
   token("SingleLineComment", match => {
     match("//");
     match("//comment");
@@ -105,13 +161,15 @@ describe("tokens", () => {
     match("//comment\r\n", "//comment");
     match("//comment \n", "//comment ");
     match("//comment\t\n", "//comment\t");
+  });
 
-    match("/**/", { closed: true });
-    match("/*comment*/", { closed: true });
-    match("/* comment */", { closed: true });
-    match("/***/", { closed: true });
-    match("/*/*/", { closed: true });
-    match("/*\n\r\u2028\u2029 \r\n*/", { closed: true });
+  token("MultiLineComment", match => {
+    match("/**/");
+    match("/*comment*/");
+    match("/* comment */");
+    match("/***/");
+    match("/*/*/");
+    match("/*\n\r\u2028\u2029 \r\n*/");
 
     match("/*", { closed: false });
     match("/*/", { closed: false });
@@ -250,7 +308,7 @@ describe("tokens", () => {
     match("/[\\]/]/");
     match("/[\\\\]/]/", "/[\\\\]/");
     match("/[\\\\\\]/]/");
-    match(/\\u05aF/);
+    match("/\\u05aF/");
     match("/invalid escape sequence is OK: \\u/");
     match("/?foo/");
     match("/*foo/", false);
@@ -264,7 +322,7 @@ describe("tokens", () => {
     match("/a/gmiyus");
     match("/a/myg");
     match("/a/e");
-    match("/a/invalidFlags");
+    match("/a/invalidFlags", "/a/invalid");
     match("/a/f00", "/a/f");
 
     match("/\n/", false);
@@ -319,7 +377,7 @@ describe("tokens", () => {
     match("instanceof/a/g", ["instanceof", "/a/g"]);
     match("new/a/g", ["new", "/a/g"]);
     match("return/a/g", ["return", "/a/g"]);
-    match("throw/a/g", ["thrown", "/a/g"]);
+    match("throw/a/g", ["throw", "/a/g"]);
     match("typeof/a/g", ["typeof", "/a/g"]);
     match("void/a/g", ["void", "/a/g"]);
     match("yield/a/g", ["yield", "/a/g"]);
@@ -369,17 +427,18 @@ describe("tokens", () => {
     match("x!=/a/g", ["x", "!=", "/a/g"]);
     match("x!==/a/g", ["x", "!==", "/a/g"]);
     match("x??/a/g", ["x", "??", "/a/g"]);
-    match("x?/a/g:/b/i", ["x", "?", "/a/g", ":", "/b/g"]);
+    match("x?/a/g:/b/i", ["x", "?", "/a/g", ":", "/b/i"]);
     match("{.../a/g}", ["{", "...", "/a/g", "}"]);
     match("x=>/a/g", ["x", "=>", "/a/g"]);
 
     match("await /a/g", ["await", " ", "/a/g"]);
-    match("await \n /a/g", ["await", " \n ", "/a/g"]);
+    match("await \n /a/g", ["await", " ", "\n", " ", "/a/g"]);
     match("await //comment1\n /*/a*//a/g", [
       "await",
       " ",
       "//comment1",
-      "\n ",
+      "\n",
+      " ",
       "/*/a*/",
       "/a/g",
     ]);
@@ -387,7 +446,8 @@ describe("tokens", () => {
       "&&",
       " ",
       "//comment1",
-      "\n ",
+      "\n",
+      " ",
       "/*/a*/",
       "/a/g",
     ]);
@@ -598,7 +658,7 @@ describe("tokens", () => {
     match("å0");
     match("π0");
     match("a_56åπ");
-    match("Iñtërnâtiônàlizætiøn☃💩"); // The last character is Pile of poo.
+    match("Iñtërnâtiônàlizætiøn");
 
     match("a\u00a0", "a");
     match("a\u1680", "a");
@@ -752,6 +812,8 @@ describe("tokens", () => {
     match("\\xa9", "\\");
     match("\u0000");
     match("\u007F");
+    match("☃");
+    match("💩");
   });
 });
 
@@ -794,10 +856,13 @@ test("switch", () => {
         return { type: "IdentifierName", value };
 
       case match.groups.Punctuator:
-        return { type: "SingleLineComment", value };
+        return { type: "Punctuator", value };
 
       case match.groups.WhiteSpace:
         return { type: "WhiteSpace", value };
+
+      case match.groups.LineTerminatorSequence:
+        return { type: "LineTerminatorSequence", value };
 
       case match.groups.Invalid:
         return { type: "Invalid", value };
@@ -807,11 +872,111 @@ test("switch", () => {
     }
   }
 
-  const code = `TODO: Complete example with all different tokens`;
+  const code = 'console.log("", ``, /**/, /./, 0x1Fn) //\r\n#\'';
 
-  const tokens = code.matchAll(jsTokens).map(token);
+  const tokens = Array.from(code.matchAll(jsTokens)).map(token);
 
-  expect(tokens).toDeepEqual([]);
+  expect(tokens).toMatchInlineSnapshot(`
+    Array [
+      Object {
+        "type": "IdentifierName",
+        "value": "console",
+      },
+      Object {
+        "type": "Punctuator",
+        "value": ".",
+      },
+      Object {
+        "type": "IdentifierName",
+        "value": "log",
+      },
+      Object {
+        "type": "Punctuator",
+        "value": "(",
+      },
+      Object {
+        "closed": true,
+        "type": "StringLiteral",
+        "value": "\\"\\"",
+      },
+      Object {
+        "type": "Punctuator",
+        "value": ",",
+      },
+      Object {
+        "type": "WhiteSpace",
+        "value": " ",
+      },
+      Object {
+        "closed": true,
+        "type": "Template",
+        "value": "\`\`",
+      },
+      Object {
+        "type": "Punctuator",
+        "value": ",",
+      },
+      Object {
+        "type": "WhiteSpace",
+        "value": " ",
+      },
+      Object {
+        "closed": true,
+        "type": "MultiLineComment",
+        "value": "/**/",
+      },
+      Object {
+        "type": "Punctuator",
+        "value": ",",
+      },
+      Object {
+        "type": "WhiteSpace",
+        "value": " ",
+      },
+      Object {
+        "type": "RegularExpressionLiteral",
+        "value": "/./",
+      },
+      Object {
+        "type": "Punctuator",
+        "value": ",",
+      },
+      Object {
+        "type": "WhiteSpace",
+        "value": " ",
+      },
+      Object {
+        "type": "NumericLiteral",
+        "value": "0x1Fn",
+      },
+      Object {
+        "type": "Punctuator",
+        "value": ")",
+      },
+      Object {
+        "type": "WhiteSpace",
+        "value": " ",
+      },
+      Object {
+        "type": "SingleLineComment",
+        "value": "//",
+      },
+      Object {
+        "type": "LineTerminatorSequence",
+        "value": "
+    ",
+      },
+      Object {
+        "type": "Invalid",
+        "value": "#",
+      },
+      Object {
+        "closed": false,
+        "type": "StringLiteral",
+        "value": "'",
+      },
+    ]
+  `);
 });
 
 describe("tokenization", () => {
