@@ -25,15 +25,13 @@ function getEsprimaTokens(code) {
 }
 
 function getJsTokensTokens(code) {
-  return code
-    .matchAll(jsTokens)
-    .filter(
-      match =>
-        match.groups.SingleLineComment === undefined &&
-        match.groups.MultiLineComment === undefined &&
-        match.groups.LineTerminatorSequence === undefined &&
-        match.groups.WhiteSpace === undefined
-    );
+  return Array.from(code.matchAll(jsTokens)).filter(
+    match =>
+      match.groups.SingleLineComment === undefined &&
+      match.groups.MultiLineComment === undefined &&
+      match.groups.LineTerminatorSequence === undefined &&
+      match.groups.WhiteSpace === undefined
+  );
 }
 
 function printGroups(match) {
@@ -78,7 +76,9 @@ function compare(file) {
 
 const results = process.argv.slice(2).map(compare);
 
-if (results.every(Boolean)) {
+if (results.length === 0) {
+  console.log("Nothing to compare.");
+} else if (results.every(Boolean)) {
   console.log(
     "Comparison succeeded: esprima and jsTokens produced the same tokens!"
   );

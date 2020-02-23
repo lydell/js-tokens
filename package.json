@@ -25,7 +25,7 @@
   "devDependencies": {
     "coffeescript": "2.5.0",
     "eslint": "6.8.0",
-    "eslint-plugin-jest": "^23.6.0",
+    "eslint-plugin-jest": "23.6.0",
     "esprima": "4.0.1",
     "everything.js": "1.0.3",
     "jest": "25.1.0",
