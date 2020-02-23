@@ -19,8 +19,8 @@ obj = { re: /a/g }
 re = foo ? /a/ : RegExp(bar)
 re = foo ? /a/g : RegExp(bar)
 
-/a/.exec(foo)
-/a/g.exec(foo)
+;/a/.exec(foo)
+;/a/g.exec(foo)
 
 foo = (1/2) + /a/.exec(bar)[0]
 foo = (1/2) + /a/g.exec(bar)[0]
