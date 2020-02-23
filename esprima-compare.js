@@ -17,28 +17,81 @@ const typeMap = {
 };
 
 function getEsprimaTokens(code) {
-  const tokens = esprima.tokenize(code, { loc: true });
-  tokens.forEach(token => {
-    token.type = typeMap[token.type];
-  });
-  return tokens;
+  return mergeTemplates(
+    esprima.tokenize(code, { loc: true }).map(token => ({
+      type: typeMap[token.type],
+      value: token.value,
+      loc: token.loc,
+    }))
+  );
+}
+
+function mergeTemplates(tokens) {
+  const start = findIndex(
+    tokens,
+    0,
+    token => token.type === "Template" && token.value.startsWith("`")
+  );
+  if (start == null) {
+    return tokens;
+  }
+
+  let end = start - 1;
+  let start2 = undefined;
+  do {
+    const newEnd = findIndex(
+      tokens,
+      end + 1,
+      token => token.type === "Template" && token.value.endsWith("`")
+    );
+    if (newEnd == null) {
+      return tokens;
+    }
+    start2 = findIndex(
+      tokens,
+      end + 2,
+      token => token.type === "Template" && token.value.startsWith("`")
+    );
+    end = newEnd;
+  } while (start2 != null && start2 < end);
+
+  const before = tokens.slice(0, start);
+  const middle = tokens.slice(start, end + 1);
+  const after = tokens.slice(end + 1);
+  const merged = {
+    type: "Template",
+    value: middle.map(token => token.value).join(""),
+    loc: middle[0].loc,
+  };
+  return [...before, merged, ...mergeTemplates(after)];
+}
+
+function findIndex(array, startIndex, f) {
+  for (let i = startIndex; i < array.length; i++) {
+    if (f(array[i])) {
+      return i;
+    }
+  }
+  return undefined;
 }
 
 function getJsTokensTokens(code) {
-  return Array.from(code.matchAll(jsTokens)).filter(
-    match =>
-      match.groups.SingleLineComment === undefined &&
-      match.groups.MultiLineComment === undefined &&
-      match.groups.LineTerminatorSequence === undefined &&
-      match.groups.WhiteSpace === undefined
-  );
+  return Array.from(code.matchAll(jsTokens))
+    .map(match => ({ groups: match.groups }))
+    .filter(
+      match =>
+        match.groups.SingleLineComment === undefined &&
+        match.groups.MultiLineComment === undefined &&
+        match.groups.LineTerminatorSequence === undefined &&
+        match.groups.WhiteSpace === undefined
+    );
 }
 
 function printGroups(match) {
   return Object.entries(match.groups)
     .filter(([, value]) => value !== undefined)
     .map(([key, value]) => `'${key}': ${value}`)
-    .join("\n");
+    .join("  |  ");
 }
 
 function compare(file) {

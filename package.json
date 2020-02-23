@@ -19,7 +19,7 @@
     "eslint": "eslint .",
     "prettier": "prettier --check \"**/*.js\" \"*.md\"",
     "test": "npm run eslint && npm run prettier && jest",
-    "esprima-compare": "node esprima-compare everything.js/es5.js",
+    "esprima-compare": "node esprima-compare everything.js/es2015-module.js",
     "build": "coffee --compile --bare --output index.js regex.coffee"
   },
   "devDependencies": {
