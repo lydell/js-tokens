@@ -32,38 +32,20 @@ The regex _always_ matches, even invalid JavaScript and the empty string.
 
 The next match is always directly after the previous.
 
-Named capture groups:
+One – and only one – of the following named capture groups contains a string for every match:
 
-| Name | Spec | Notes |
-| --- | --- | --- |
-| StringLiteral | [StringLiteral] | StringLiteralClosed TODO |
-| Template | [Template] + [TemplateSubstitutionTail] + [TODO invalid code handling] | TemplateClosed TODO |
-| MultiLineComment | [MultiLineComment] | MultiLineCommentClosed TODO |
-| SingleLineComment | [SingleLineComment] |  |
-| RegularExpressionLiteral | [RegularExpressionLiteral] | TODO invalid code handling links |
-| NumericLiteral | [NumericLiteral] |  |
-| Punctuator | [Punctuator] + [DivPunctuator] + [RightBracePunctuator] |  |
-| WhiteSpace | [WhiteSpace] | Matches multiple whitespace characters in a row, not just one. |
-| LineTerminatorSequence | [LineTerminatorSequence] |  |
-| Invalid | n/a | The empty string, as well as single code points not matched in another group. |
-
-- string
-  - stringEnd
-- template
-  - templateEnd
-- commentSingle
-- commentMulti
-  - commentMultiEnd
-- regex
-- number
-- name
-- punctuator Note: Also includes DivPunctuator and RightBracePunctuator.
-- WhiteSpace Note: Matches several whitespace in a row as a single token.
-- Invalid
-
-Names are ECMAScript IdentifierNames, that is, including both identifiers and keywords. There are other npm packages containing lists of keywords if you need to tell them apart.
-
-WhiteSpace includes both line terminators and other whitespace.
+| Name | Spec | Closed | Notes |
+| --- | --- | --- | --- |
+| StringLiteral | [StringLiteral] | StringLiteralClosed: `'` or `"` |  |
+| Template | [Template] + [TemplateSubstitutionTail] + [TODO invalid code handling] | TemplateClosed: `` ` `` |  |
+| MultiLineComment | [MultiLineComment] | MultiLineCommentClosed: `*/` |  |
+| SingleLineComment | [SingleLineComment] | n/a |  |
+| RegularExpressionLiteral | [RegularExpressionLiteral] | special | TODO invalid code handling links |
+| NumericLiteral | [NumericLiteral] | n/a |  |
+| Punctuator | [Punctuator] + [DivPunctuator] + [RightBracePunctuator] | n/a |  |
+| WhiteSpace | [WhiteSpace] | n/a | Matches multiple whitespace characters in a row, not just one. |
+| LineTerminatorSequence | [LineTerminatorSequence] | n/a |  |
+| Invalid | n/a | n/a | The empty string, as well as single code points not matched in another group. |
 
 ## ECMAScript support
 
