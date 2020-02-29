@@ -16,18 +16,18 @@ jsString.match(jsTokens).join("|");
 
 - [Installation](#installation)
 - [Usage](#usage)
-  - [Named capture groups](#named-capture-groups)
-    - [StringLiteral](#stringliteral)
-    - [Template](#template)
-    - [MultiLineComment](#multilinecomment)
-    - [SingleLineComment](#singlelinecomment)
-    - [RegularExpressionLiteral](#regularexpressionliteral)
-      - [Regex vs division](#regex-vs-division)
-    - [NumericLiteral](#numericliteral)
-    - [Punctuator](#punctuator)
-    - [WhiteSpace](#whitespace)
-    - [LineTerminatorSequence](#lineterminatorsequence)
-    - [Invalid](#invalid)
+- [Named capture groups](#named-capture-groups)
+  - [StringLiteral](#stringliteral)
+  - [Template](#template)
+  - [MultiLineComment](#multilinecomment)
+  - [SingleLineComment](#singlelinecomment)
+  - [RegularExpressionLiteral](#regularexpressionliteral)
+    - [Regex vs division](#regex-vs-division)
+  - [NumericLiteral](#numericliteral)
+  - [Punctuator](#punctuator)
+  - [WhiteSpace](#whitespace)
+  - [LineTerminatorSequence](#lineterminatorsequence)
+  - [Invalid](#invalid)
 - [ECMAScript support](#ecmascript-support)
 - [License](#license)
 
@@ -45,7 +45,7 @@ var jsTokens = require("js-tokens").default;
 
 ## Usage
 
-This package exports a regex with the `g` flag that matches JavaScript tokens.
+This package exports a regex with the `gu` flags that matches JavaScript tokens.
 
 The regex _always_ matches, even invalid JavaScript and the empty string.
 
@@ -53,13 +53,13 @@ The next match is always directly after the previous.
 
 Tokenizing JavaScript using regexes—in fact, _one single regex_—won’t be perfect. But that’s not the point either. See the following sections for limitations of some tokens.
 
-### Named capture groups
+## Named capture groups
 
 One – and only one – of the following named capture groups contains a string for every match.
 
 [example.test.js] shows how to use [String.prototype.matchAll] \(available in Node.js 12+) to get all matches, including named capture groups. The example just converts the match objects into another data structure to show what things looks like, but you can of course do whatever you need, such as constructing a string in the case of a syntax highlighter.
 
-#### StringLiteral
+### StringLiteral
 
 _Spec: [StringLiteral]_
 
@@ -81,7 +81,7 @@ Examples:
 ' unclosed
 ```
 
-#### Template
+### Template
 
 _Spec: [Template] + [TemplateSubstitutionTail]_
 
@@ -105,7 +105,7 @@ Examples:
 ` unclosed ${
 ```
 
-#### MultiLineComment
+### MultiLineComment
 
 _Spec: [MultiLineComment]_
 
@@ -123,7 +123,7 @@ Examples:
 /* unclosed
 ```
 
-#### SingleLineComment
+### SingleLineComment
 
 _Spec: [SingleLineComment]_
 
@@ -136,7 +136,7 @@ Examples:
 //
 ```
 
-#### RegularExpressionLiteral
+### RegularExpressionLiteral
 
 _Spec: [RegularExpressionLiteral]_
 
@@ -157,7 +157,7 @@ Examples:
 /[/]\//
 ```
 
-##### Regex vs division
+#### Regex vs division
 
 Differentiating between regex and division in JavaScript is really tricky. Consider this example:
 
@@ -184,7 +184,7 @@ The first line contains a regex, but js-tokens thinks it’s division just like 
 
 For all the ambigouos tokens `)`, `}`, `++` and `--` js-tokens always division since it is more likely. See [“When parsing Javascript, what determines the meaning of a slash?” on StackOverflow][stackoverflow-slash] for more details.
 
-#### NumericLiteral
+### NumericLiteral
 
 _Spec: [NumericLiteral]_
 
@@ -202,7 +202,7 @@ Examples:
 12n;
 ```
 
-#### Punctuator
+### Punctuator
 
 _Spec: [Punctuator] + [DivPunctuator] + [RightBracePunctuator]_
 
@@ -217,19 +217,19 @@ Examples:
 }
 ```
 
-#### WhiteSpace
+### WhiteSpace
 
 _Spec: [WhiteSpace]_
 
 Unlike the specification, multiple whitespace characters in a row are matched as _one_ token, not one token per character.
 
-#### LineTerminatorSequence
+### LineTerminatorSequence
 
 _Spec: [LineTerminatorSequence]_
 
 CR, LF, CRLF plus `\u2028` and `\u2029`.
 
-#### Invalid
+### Invalid
 
 _Spec: n/a_
 
