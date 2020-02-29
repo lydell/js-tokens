@@ -32,7 +32,29 @@ The regex _always_ matches, even invalid JavaScript and the empty string.
 
 The next match is always directly after the previous.
 
-One – and only one – of the following named capture groups contains a string for every match:
+### Named capture groups
+
+One – and only one – of the following named capture groups contains a string for every match.
+
+#### StringLiteral
+
+**Spec: [StringLiteral]**
+
+When the `StringLiteral` capture group is set, the `StringLiteralClosed` capture group is either `undefined` (which means that the string literal is unclosed) or `'` or `"` (which means that is _is_ closed). JavaScript strings cannot contain (unescaped) newlines, so unclosed strings simply end at the end of the line.
+
+#### Template
+
+**Spec: [Template] + [TemplateSubstitutionTail]**
+
+When the `Template` capture group is set, the `TemplateClosed` capture group is either `undefined` (which means that the template is unclosed) or `` ` `` (which means that is _is_ closed). Templates can contain unescaped newlines, so unclosed templates go on to the end of input.
+
+#### MultiLineComment
+
+**Spec: [MultiLineComment]**
+
+When the `MultiLineComment` capture group is set, the `MultiLineCommentClosed` capture group is either `undefined` (which means that the comment is unclosed) or ``/ (which means that is _is_ closed). Unclosed multi-line comments go on to the end of the input.
+
+---
 
 | Name | Spec | Closed | Notes |
 | --- | --- | --- | --- |
