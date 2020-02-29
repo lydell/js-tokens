@@ -11,6 +11,28 @@ jsString.match(jsTokens).join("|");
 // JSON|.|stringify|(|{|k|:| |3.14|**|2|}|,| |null| |/*replacer*/|,| |"\t"|)
 ```
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Installation](#installation)
+- [Usage](#usage)
+  - [Named capture groups](#named-capture-groups)
+    - [StringLiteral](#stringliteral)
+    - [Template](#template)
+    - [MultiLineComment](#multilinecomment)
+    - [SingleLineComment](#singlelinecomment)
+    - [RegularExpressionLiteral](#regularexpressionliteral)
+      - [Regex vs division](#regex-vs-division)
+    - [NumericLiteral](#numericliteral)
+    - [Punctuator](#punctuator)
+    - [WhiteSpace](#whitespace)
+    - [LineTerminatorSequence](#lineterminatorsequence)
+    - [Invalid](#invalid)
+- [ECMAScript support](#ecmascript-support)
+- [License](#license)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## Installation
 
 `npm install js-tokens`

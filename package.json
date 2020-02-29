@@ -17,13 +17,15 @@
   "repository": "lydell/js-tokens",
   "scripts": {
     "eslint": "eslint .",
-    "prettier": "prettier --check \"**/*.js\" \"*.md\"",
+    "prettier": "prettier --check \"**/*.{js,md}\"",
     "test": "npm run eslint && npm run prettier && jest",
     "esprima-compare": "node esprima-compare everything.js/es2015-module.js",
-    "build": "coffee --compile --bare --output index.js regex.coffee"
+    "build": "coffee --compile --bare --output index.js regex.coffee",
+    "doctoc": "doctoc README.md"
   },
   "devDependencies": {
     "coffeescript": "2.5.1",
+    "doctoc": "1.4.0",
     "eslint": "6.8.0",
     "eslint-plugin-jest": "23.8.0",
     "esprima": "4.0.1",
