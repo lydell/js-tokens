@@ -131,10 +131,13 @@ const results = process.argv.slice(2).map(compare);
 
 if (results.length === 0) {
   console.log("Nothing to compare.");
+  process.exit(1);
 } else if (results.every(Boolean)) {
   console.log(
     "Comparison succeeded: esprima and jsTokens produced the same tokens!"
   );
+  process.exit(0);
 } else {
   console.error("Comparison failed.");
+  process.exit(1);
 }
