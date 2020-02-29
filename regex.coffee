@@ -101,7 +101,7 @@ exports.default = ///
       |
       \\.
     )+
-    / [ a-z ]*
+    / [ a-z A-Z ]*
   )
   |
   (?<NumericLiteral>
