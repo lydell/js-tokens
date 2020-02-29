@@ -39,7 +39,7 @@ One – and only one – of the following named capture groups contains a string
 
 #### StringLiteral
 
-**Spec: [StringLiteral]**
+_Spec: [StringLiteral]_
 
 When the `StringLiteral` capture group is set, the `StringLiteralClosed` capture group is either `undefined` (which means that the string literal is unclosed) or `'` or `"` (which means that is _is_ closed). JavaScript strings cannot contain (unescaped) newlines, so unclosed strings simply end at the end of the line.
 
@@ -61,7 +61,7 @@ Examples:
 
 #### Template
 
-**Spec: [Template] + [TemplateSubstitutionTail]**
+_Spec: [Template] + [TemplateSubstitutionTail]_
 
 When the `Template` capture group is set, the `TemplateClosed` capture group is either `undefined` (which means that the template is unclosed) or `` ` `` (which means that is _is_ closed). Templates can contain unescaped newlines, so unclosed templates go on to the end of input.
 
@@ -85,7 +85,7 @@ Examples:
 
 #### MultiLineComment
 
-**Spec: [MultiLineComment]**
+_Spec: [MultiLineComment]_
 
 When the `MultiLineComment` capture group is set, the `MultiLineCommentClosed` capture group is either `undefined` (which means that the comment is unclosed) or ``/ (which means that is _is_ closed). Unclosed multi-line comments go on to the end of the input.
 
@@ -103,7 +103,7 @@ Examples:
 
 #### SingleLineComment
 
-**Spec: [SingleLineComment]**
+_Spec: [SingleLineComment]_
 
 Examples:
 
@@ -116,7 +116,7 @@ Examples:
 
 #### RegularExpressionLiteral
 
-**Spec: [RegularExpressionLiteral]**
+_Spec: [RegularExpressionLiteral]_
 
 Unterminated regex literals are likely matched as division and whatever is inside the regex.
 
@@ -164,7 +164,7 @@ For all the ambigouos tokens `)`, `}`, `++` and `--` js-tokens always division s
 
 #### NumericLiteral
 
-**Spec: [NumericLiteral]**
+_Spec: [NumericLiteral]_
 
 Examples:
 
@@ -182,7 +182,7 @@ Examples:
 
 #### Punctuator
 
-**Spec: [Punctuator] + [DivPunctuator] + [RightBracePunctuator]**
+_Spec: [Punctuator] + [DivPunctuator] + [RightBracePunctuator]_
 
 Examples:
 
@@ -197,19 +197,19 @@ Examples:
 
 #### WhiteSpace
 
-**Spec: [WhiteSpace]**
+_Spec: [WhiteSpace]_
 
 Unlike the specification, multiple whitespace characters in a row are matched as _one_ token, not one token per character.
 
 #### LineTerminatorSequence
 
-**Spec: [LineTerminatorSequence]**
+_Spec: [LineTerminatorSequence]_
 
 CR, LF, CRLF plus `\u2028` and `\u2029`.
 
 #### Invalid
 
-**Spec: n/a**
+_Spec: n/a_
 
 The empty string, as well as single code points not matched in another group.
 
