@@ -250,7 +250,7 @@ The intention is to always support the latest ECMAScript version whose feature s
 
 If adding support for a newer version requires changes, a new version with a major verion bump will be released.
 
-Currently, ECMAScript 2019 is supported.
+Currently, ECMAScript 2020 is supported.
 
 ## License
 
