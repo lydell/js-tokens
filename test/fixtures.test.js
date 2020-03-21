@@ -16,6 +16,4 @@ describe("fixtures", () => {
 
   testFile("base64");
   testFile("errors");
-  testFile("regex");
-  testFile("division");
 });
