@@ -16,4 +16,5 @@ describe("fixtures", () => {
 
   testFile("base64");
   testFile("errors");
+  testFile("slashes");
 });
