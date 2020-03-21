@@ -47,7 +47,7 @@ var jsTokens = require("js-tokens").default;
 
 This package exports a regex with the `gu` flags that matches JavaScript tokens.
 
-The regex _always_ matches, even invalid JavaScript and the empty string.
+The regex _always_ matches, even for invalid JavaScript and the empty string.
 
 The next match is always directly after the previous.
 
@@ -140,9 +140,9 @@ Examples:
 
 _Spec: [RegularExpressionLiteral]_
 
-Unterminated regex literals are likely matched as division and whatever is inside the regex.
-
 Regex literals may contain invalid regex syntax. They are still matched as regex literals.
+
+Unterminated regex literals are likely matched as division and whatever is inside the regex.
 
 According to the specification, the flags of regular expressions are [IdentifierPart]s (unknown and repeated regex flags become errors at a later stage). This regex only matches `[a-zA-Z]`, which likely catches both typos and future flags.
 
@@ -180,9 +180,9 @@ if(a+b)/2/g.exec("a");
 fn(a+b)/2/g.toString();
 ```
 
-The first line contains a regex, but js-tokens thinks it’s division just like on the next line. In both cases js-tokens looks back one token and sees `)`. It’s way more to have math code like `(a + b) / 2 / g` than putting a regex literal directly after control flow.
+The first line contains a regex, but js-tokens thinks it’s division just like on the next line. In both cases js-tokens looks back one token and sees `)`. It’s way more common to have math code like `(a + b) / 2 / g` than putting a regex literal directly after control flow structures.
 
-For all the ambigouos tokens `)`, `}`, `++` and `--` js-tokens always division since it is more likely. See [“When parsing Javascript, what determines the meaning of a slash?” on StackOverflow][stackoverflow-slash] for more details.
+For all the ambigouos tokens `)`, `}`, `++` and `--`, js-tokens always matches division since it is more likely. See [“When parsing Javascript, what determines the meaning of a slash?” on StackOverflow][stackoverflow-slash] for more details.
 
 ### NumericLiteral
 
@@ -210,9 +210,12 @@ Examples:
 
 <!-- prettier-ignore -->
 ```js
++
 .
 ?.
 <<<
+=>
+(
 /
 }
 ```
@@ -227,7 +230,7 @@ Unlike the specification, multiple whitespace characters in a row are matched as
 
 _Spec: [LineTerminatorSequence]_
 
-CR, LF, CRLF plus `\u2028` and `\u2029`.
+CR, LF and CRLF, plus `\u2028` and `\u2029`.
 
 ### Invalid
 
