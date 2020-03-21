@@ -27,7 +27,7 @@
     "coffeescript": "2.5.1",
     "doctoc": "1.4.0",
     "eslint": "6.8.0",
-    "eslint-plugin-jest": "23.8.0",
+    "eslint-plugin-jest": "23.8.2",
     "esprima": "4.0.1",
     "everything.js": "1.0.3",
     "jest": "25.1.0",
