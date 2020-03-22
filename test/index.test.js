@@ -8,42 +8,28 @@ function token(name, fn) {
   });
 }
 
-const endSequences = {
-  StringLiteral: /^['"]$/,
-  Template: "`",
-  MultiLineComment: "*/",
-};
-
 function matchHelper(type, string, expected, extra = {}) {
   if (typeof expected === "object" && !Array.isArray(expected)) {
     extra = expected;
     expected = undefined;
   }
 
-  jsTokens.lastIndex = 0;
-  const match = jsTokens.exec(string);
+  const tokens = Array.from(jsTokens(string));
 
-  test(printInvisibles(String(string)), () => {
+  test(printInvisibles(string), () => {
+    const [t] = tokens;
+    expect(t).not.toBeUndefined();
     if (expected === false) {
-      expect(match.groups[type]).toBeUndefined();
+      expect(t.type).not.toBe(type);
     } else {
       if (Array.isArray(expected)) {
-        expect(Array.from(string.match(jsTokens))).toEqual(expected);
+        expect(tokens.map(t => t.value)).toEqual(expected);
       } else {
-        expect(match.groups[type]).toBe(
-          typeof expected === "string" ? expected : string
-        );
-      }
-
-      const expectedEnd = endSequences[type];
-      if (expectedEnd != null) {
-        const end = match.groups[`${type}End`];
-        if (extra.closed === false) {
-          expect(end).toBeUndefined();
-        } else if (expectedEnd instanceof RegExp) {
-          expect(end).toMatch(expectedEnd);
-        } else {
-          expect(end).toBe(expectedEnd);
+        expect(t.type).toBe(type);
+        expect(t.value).toBe(typeof expected === "string" ? expected : string);
+        if ("closed" in t) {
+          const { closed = true } = extra;
+          expect(t.closed).toBe(closed);
         }
       }
     }
@@ -96,8 +82,8 @@ function printInvisibles(string) {
 }
 
 describe("jsTokens", () => {
-  test("is a regex", () => {
-    expect(jsTokens).toBeInstanceOf(RegExp);
+  test("is a function", () => {
+    expect(typeof jsTokens).toBe("function");
   });
 });
 
@@ -249,7 +235,7 @@ describe("tokens", () => {
     match('"${"a"}"', '"${"');
   });
 
-  token("Template", match => {
+  token("NoSubstitutionTemplate", match => {
     match("``");
     match("`string`");
     match("`\\``");
@@ -281,19 +267,305 @@ describe("tokens", () => {
     match("`\\\u2029", { closed: false });
     match("`\\\r\n", { closed: false });
 
-    match("`${}`");
-    match("`${a}`");
-    match("`a${b}c`");
-    match("`${`a`}`");
-    match("`${`${a}`}`");
-    match("`${fn({a: b})}`");
-    match("`${fn({a: '{'})}`");
-    match("`a${}${a}${ `${b\r}` + `${`c`}` } d $${\n(x=>{return x*2})(4)}$`");
+    match("`${}`", ["`${", "}`"]);
+    match("`${a}`", ["`${", "a", "}`"]);
+    match("`a${b}c`", ["`a${", "b", "}c`"]);
+    match("`${`a`}`", ["`${", "`a`", "}`"]);
+    match("`${`${a}`}`", ["`${", "`${", "a", "}`", "}`"]);
+    match("`${fn({a: b})}`", [
+      "`${",
+      "fn",
+      "(",
+      "{",
+      "a",
+      ":",
+      " ",
+      "b",
+      "}",
+      ")",
+      "}`",
+    ]);
+    match("`${fn({a: '{'})}`", [
+      "`${",
+      "fn",
+      "(",
+      "{",
+      "a",
+      ":",
+      " ",
+      "'{'",
+      "}",
+      ")",
+      "}`",
+    ]);
     match("`\\${{{}}}a`");
+  });
 
-    match("`a ${b c`.length", { closed: false });
-    match("`a ${`b${c`} d`.length", { closed: false });
-    match("`a ${ {c:d } e`.length", { closed: false });
+  test("Template", () => {
+    expect(
+      Array.from(
+        jsTokens(
+          "`a${}${a}${ `${b\r}` + `${`c${5}`}` } d $${\n(x=>{return x*2})(4)}$`"
+        )
+      )
+    ).toMatchInlineSnapshot(`
+      Array [
+        Object {
+          "type": "TemplateHead",
+          "value": "\`a\${",
+        },
+        Object {
+          "type": "TemplateMiddle",
+          "value": "}\${",
+        },
+        Object {
+          "type": "IdentifierName",
+          "value": "a",
+        },
+        Object {
+          "type": "TemplateMiddle",
+          "value": "}\${",
+        },
+        Object {
+          "type": "WhiteSpace",
+          "value": " ",
+        },
+        Object {
+          "type": "TemplateHead",
+          "value": "\`\${",
+        },
+        Object {
+          "type": "IdentifierName",
+          "value": "b",
+        },
+        Object {
+          "type": "LineTerminatorSequence",
+          "value": "
+      ",
+        },
+        Object {
+          "closed": true,
+          "type": "TemplateTail",
+          "value": "}\`",
+        },
+        Object {
+          "type": "WhiteSpace",
+          "value": " ",
+        },
+        Object {
+          "type": "Punctuator",
+          "value": "+",
+        },
+        Object {
+          "type": "WhiteSpace",
+          "value": " ",
+        },
+        Object {
+          "type": "TemplateHead",
+          "value": "\`\${",
+        },
+        Object {
+          "type": "TemplateHead",
+          "value": "\`c\${",
+        },
+        Object {
+          "type": "NumericLiteral",
+          "value": "5",
+        },
+        Object {
+          "closed": true,
+          "type": "TemplateTail",
+          "value": "}\`",
+        },
+        Object {
+          "closed": true,
+          "type": "TemplateTail",
+          "value": "}\`",
+        },
+        Object {
+          "type": "WhiteSpace",
+          "value": " ",
+        },
+        Object {
+          "type": "TemplateMiddle",
+          "value": "} d $\${",
+        },
+        Object {
+          "type": "LineTerminatorSequence",
+          "value": "
+      ",
+        },
+        Object {
+          "type": "Punctuator",
+          "value": "(",
+        },
+        Object {
+          "type": "IdentifierName",
+          "value": "x",
+        },
+        Object {
+          "type": "Punctuator",
+          "value": "=>",
+        },
+        Object {
+          "type": "Punctuator",
+          "value": "{",
+        },
+        Object {
+          "type": "IdentifierName",
+          "value": "return",
+        },
+        Object {
+          "type": "WhiteSpace",
+          "value": " ",
+        },
+        Object {
+          "type": "IdentifierName",
+          "value": "x",
+        },
+        Object {
+          "type": "Punctuator",
+          "value": "*",
+        },
+        Object {
+          "type": "NumericLiteral",
+          "value": "2",
+        },
+        Object {
+          "type": "Punctuator",
+          "value": "}",
+        },
+        Object {
+          "type": "Punctuator",
+          "value": ")",
+        },
+        Object {
+          "type": "Punctuator",
+          "value": "(",
+        },
+        Object {
+          "type": "NumericLiteral",
+          "value": "4",
+        },
+        Object {
+          "type": "Punctuator",
+          "value": ")",
+        },
+        Object {
+          "closed": true,
+          "type": "TemplateTail",
+          "value": "}$\`",
+        },
+      ]
+    `);
+
+    expect(Array.from(jsTokens("`a ${b c`.length"))).toMatchInlineSnapshot(`
+      Array [
+        Object {
+          "type": "TemplateHead",
+          "value": "\`a \${",
+        },
+        Object {
+          "type": "IdentifierName",
+          "value": "b",
+        },
+        Object {
+          "type": "WhiteSpace",
+          "value": " ",
+        },
+        Object {
+          "type": "IdentifierName",
+          "value": "c",
+        },
+        Object {
+          "closed": false,
+          "type": "NoSubstitutionTemplate",
+          "value": "\`.length",
+        },
+      ]
+    `);
+
+    expect(Array.from(jsTokens("`a ${`b${c`} d`.length")))
+      .toMatchInlineSnapshot(`
+      Array [
+        Object {
+          "type": "TemplateHead",
+          "value": "\`a \${",
+        },
+        Object {
+          "type": "TemplateHead",
+          "value": "\`b\${",
+        },
+        Object {
+          "type": "IdentifierName",
+          "value": "c",
+        },
+        Object {
+          "closed": true,
+          "type": "NoSubstitutionTemplate",
+          "value": "\`} d\`",
+        },
+        Object {
+          "type": "Punctuator",
+          "value": ".",
+        },
+        Object {
+          "type": "IdentifierName",
+          "value": "length",
+        },
+      ]
+    `);
+
+    expect(Array.from(jsTokens("`a ${ {c:d } e`.length")))
+      .toMatchInlineSnapshot(`
+      Array [
+        Object {
+          "type": "TemplateHead",
+          "value": "\`a \${",
+        },
+        Object {
+          "type": "WhiteSpace",
+          "value": " ",
+        },
+        Object {
+          "type": "Punctuator",
+          "value": "{",
+        },
+        Object {
+          "type": "IdentifierName",
+          "value": "c",
+        },
+        Object {
+          "type": "Punctuator",
+          "value": ":",
+        },
+        Object {
+          "type": "IdentifierName",
+          "value": "d",
+        },
+        Object {
+          "type": "WhiteSpace",
+          "value": " ",
+        },
+        Object {
+          "type": "Punctuator",
+          "value": "}",
+        },
+        Object {
+          "type": "WhiteSpace",
+          "value": " ",
+        },
+        Object {
+          "type": "IdentifierName",
+          "value": "e",
+        },
+        Object {
+          "closed": false,
+          "type": "NoSubstitutionTemplate",
+          "value": "\`.length",
+        },
+      ]
+    `);
   });
 
   token("RegularExpressionLiteral", match => {
@@ -323,7 +595,7 @@ describe("tokens", () => {
     match("/a/e");
     match("/a/E");
     match("/a/invalidFlags");
-    match("/a/f00", "/a/f");
+    match("/a/f00", "/a/f00");
 
     match("/\n/", false);
     match("/\r/", false);
@@ -357,15 +629,15 @@ describe("tokens", () => {
     match("/a/ /**/", "/a/");
     match("/a/g /**/", "/a/g");
 
-    match("/a/g0", "/a/g");
-    match("/a/g0.1", "/a/g");
+    match("/a/g0", "/a/g0");
+    match("/a/g0.1", "/a/g0");
     match("/a/g.1", "/a/g");
-    match("/a/g0x1", "/a/g");
+    match("/a/g0x1", "/a/g0x1");
 
     match("/a/ge", "/a/ge");
-    match("/a/g_", "/a/g");
-    match("/a/g$", "/a/g");
-    match("/a/gé", "/a/g");
+    match("/a/g_", "/a/g_");
+    match("/a/g$", "/a/g$");
+    match("/a/gé", "/a/gé");
 
     match("await/a/g", ["await", "/a/g"]);
     match("case/a/g", ["case", "/a/g"]);
@@ -806,7 +1078,6 @@ describe("tokens", () => {
   });
 
   token("Invalid", match => {
-    match("");
     match("@");
     match("#");
     match("\\");
@@ -815,5 +1086,9 @@ describe("tokens", () => {
     match("\u007F");
     match("☃");
     match("💩");
+  });
+
+  test("empty string", () => {
+    expect(Array.from(jsTokens(""))).toEqual([]);
   });
 });

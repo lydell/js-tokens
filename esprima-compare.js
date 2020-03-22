@@ -37,17 +37,15 @@ const jsTokensTypeMap = {
 };
 
 function getJsTokensTokens(code) {
-  return Array.from(jsTokens(code))
-    .map(token => {
-      const type = jsTokensTypeMap[token.type];
-      return type == null
-        ? undefined
-        : {
-            type,
-            value: token.value,
-          };
-    })
-    .filter(Boolean);
+  return Array.from(jsTokens(code), token => {
+    const type = jsTokensTypeMap[token.type];
+    return type == null
+      ? undefined
+      : {
+          type,
+          value: token.value,
+        };
+  }).filter(Boolean);
 }
 
 function compare(file) {

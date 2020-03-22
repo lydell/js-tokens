@@ -153,9 +153,7 @@ exports.default = (input) ->
   templates = []
 
   while lastIndex < length
-    firstChar = input[lastIndex]
-
-    switch firstChar
+    switch input[lastIndex]
       when "`"
         Template.lastIndex = lastIndex
         match = Template.exec(input)
@@ -291,10 +289,11 @@ exports.default = (input) ->
       }
       continue
 
-    lastIndex++
-    lastSignificantToken = firstChar
+    firstCodePoint = String.fromCodePoint(input.codePointAt(lastIndex))
+    lastIndex += firstCodePoint.length
+    lastSignificantToken = firstCodePoint
     yield {
       type: "Invalid",
-      value: firstChar,
+      value: firstCodePoint,
     }
 
