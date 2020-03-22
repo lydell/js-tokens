@@ -12,7 +12,8 @@
     "regex"
   ],
   "files": [
-    "index.js"
+    "index.js",
+    "index.d.ts"
   ],
   "repository": "lydell/js-tokens",
   "scripts": {
