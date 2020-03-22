@@ -4,7 +4,7 @@ const fs = require("fs");
 const esprima = require("esprima");
 const { default: jsTokens } = require("./");
 
-const typeMap = {
+const esprimaTypeMap = {
   Boolean: "IdentifierName",
   Identifier: "IdentifierName",
   Keyword: "IdentifierName",
@@ -17,81 +17,37 @@ const typeMap = {
 };
 
 function getEsprimaTokens(code) {
-  return mergeTemplates(
-    esprima.tokenize(code, { loc: true }).map(token => ({
-      type: typeMap[token.type],
-      value: token.value,
-      loc: token.loc,
-    }))
-  );
+  return esprima.tokenize(code, { loc: true }).map(token => ({
+    type: esprimaTypeMap[token.type],
+    value: token.value,
+    loc: token.loc,
+  }));
 }
 
-function mergeTemplates(tokens) {
-  const start = findIndex(
-    tokens,
-    0,
-    token => token.type === "Template" && token.value.startsWith("`")
-  );
-  if (start == null) {
-    return tokens;
-  }
-
-  let end = start - 1;
-  let start2 = undefined;
-  do {
-    const newEnd = findIndex(
-      tokens,
-      end + 1,
-      token => token.type === "Template" && token.value.endsWith("`")
-    );
-    if (newEnd == null) {
-      return tokens;
-    }
-    start2 = findIndex(
-      tokens,
-      end + 2,
-      token => token.type === "Template" && token.value.startsWith("`")
-    );
-    end = newEnd;
-  } while (start2 != null && start2 < end);
-
-  const before = tokens.slice(0, start);
-  const middle = tokens.slice(start, end + 1);
-  const after = tokens.slice(end + 1);
-  const merged = {
-    type: "Template",
-    value: middle.map(token => token.value).join(""),
-    loc: middle[0].loc,
-  };
-  return [...before, merged, ...mergeTemplates(after)];
-}
-
-function findIndex(array, startIndex, f) {
-  for (let i = startIndex; i < array.length; i++) {
-    if (f(array[i])) {
-      return i;
-    }
-  }
-  return undefined;
-}
+const jsTokensTypeMap = {
+  NoSubstitutionTemplate: "Template",
+  TemplateHead: "Template",
+  TemplateMiddle: "Template",
+  TemplateTail: "Template",
+  IdentifierName: "IdentifierName",
+  NumericLiteral: "NumericLiteral",
+  Punctuator: "Punctuator",
+  RegularExpressionLiteral: "RegularExpressionLiteral",
+  StringLiteral: "StringLiteral",
+};
 
 function getJsTokensTokens(code) {
-  return Array.from(code.matchAll(jsTokens))
-    .map(match => ({ groups: match.groups }))
-    .filter(
-      match =>
-        match.groups.SingleLineComment === undefined &&
-        match.groups.MultiLineComment === undefined &&
-        match.groups.LineTerminatorSequence === undefined &&
-        match.groups.WhiteSpace === undefined
-    );
-}
-
-function printGroups(match) {
-  return Object.entries(match.groups)
-    .filter(([, value]) => value !== undefined)
-    .map(([key, value]) => `'${key}': ${value}`)
-    .join("  |  ");
+  return Array.from(jsTokens(code))
+    .map(token => {
+      const type = jsTokensTypeMap[token.type];
+      return type == null
+        ? undefined
+        : {
+            type,
+            value: token.value,
+          };
+    })
+    .filter(Boolean);
 }
 
 function compare(file) {
@@ -102,14 +58,17 @@ function compare(file) {
   const length = Math.min(esprimaTokens.length, jsTokensTokens.length);
   for (let index = 0; index < length; index++) {
     const esprimaToken = esprimaTokens[index];
-    const jsTokensMatch = jsTokensTokens[index];
-    if (esprimaToken.value !== jsTokensMatch.groups[esprimaToken.type]) {
+    const jsTokensToken = jsTokensTokens[index];
+    if (
+      esprimaToken.type !== jsTokensToken.type ||
+      esprimaToken.value !== jsTokensToken.value
+    ) {
       const loc = esprimaToken.loc.start;
       console.error(
         `${file}:${loc.line}:${loc.column + 1}: ` +
           `(token #${index + 1})\n` +
           `  esprima:  '${esprimaToken.type}': ${esprimaToken.value}\n` +
-          `  jsTokens: ${printGroups(jsTokensMatch)}`
+          `  jsTokens: '${jsTokensToken.type}': ${jsTokensToken.value}`
       );
       return false;
     }

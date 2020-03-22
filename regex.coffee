@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", {
 })
 
 Template = ///
+  [ ` } ]
   (?:
     [^ ` \\ $ ]
     |
@@ -56,11 +57,11 @@ ValidPrecedingRegex = ///
 StringLiteral = ///
   ([ ' " ])
   (?:
-    (?! \2 )[^ \\ \n \r ]
+    (?! \1 )[^ \\ \n \r ]
     |
     \\(?: \r\n | [^] )
   )*
-  (\2)?
+  (\1)?
 ///y
 
 NumericLiteral = ///
@@ -157,7 +158,6 @@ exports.default = (input) ->
 
     switch firstChar
       when "`"
-        lastIndex++
         Template.lastIndex = lastIndex
         match = Template.exec(input)
         lastIndex = Template.lastIndex
@@ -177,17 +177,9 @@ exports.default = (input) ->
         continue
 
       when "{"
-        lastIndex++
         braceNesting++
-        lastSignificantToken = "{"
-        yield {
-          type: "Punctuator",
-          value: "{",
-        }
-        continue
 
       when "}"
-        lastIndex++
         if templates.length > 0
           templateNesting = templates[templates.length - 1]
           if braceNesting == templateNesting
@@ -209,12 +201,6 @@ exports.default = (input) ->
               }
             continue
         braceNesting--
-        lastSignificantToken = "}"
-        yield {
-          type: "Punctuator",
-          value: "}",
-        }
-        continue
 
       when "/"
         MultiLineComment.lastIndex = lastIndex
@@ -247,14 +233,6 @@ exports.default = (input) ->
             }
             continue
 
-        lastIndex++
-        lastSignificantToken = "/"
-        yield {
-          type: "Punctuator",
-          value: "/",
-        }
-        continue
-
     StringLiteral.lastIndex = lastIndex
     if match = StringLiteral.exec(input)
       lastIndex = StringLiteral.lastIndex
@@ -262,7 +240,7 @@ exports.default = (input) ->
       yield {
         type: "StringLiteral",
         value: match[0],
-        closed: match[1] != undefined,
+        closed: match[2] != undefined,
       }
       continue
 
