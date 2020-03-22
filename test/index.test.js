@@ -17,8 +17,8 @@ function matchHelper(type, string, expected, extra = {}) {
   const tokens = Array.from(jsTokens(string));
 
   test(printInvisibles(string), () => {
+    expect(tokens.length).toBeGreaterThanOrEqual(1);
     const [t] = tokens;
-    expect(t).not.toBeUndefined();
     if (expected === false) {
       expect(t.type).not.toBe(type);
     } else {
@@ -26,7 +26,12 @@ function matchHelper(type, string, expected, extra = {}) {
         expect(tokens.map(t => t.value)).toEqual(expected);
       } else {
         expect(t.type).toBe(type);
-        expect(t.value).toBe(typeof expected === "string" ? expected : string);
+        if (typeof expected === "string") {
+          expect(t.value).toBe(expected);
+        } else {
+          expect(tokens).toHaveLength(1);
+          expect(t.value).toBe(string);
+        }
         if ("closed" in t) {
           const { closed = true } = extra;
           expect(t.closed).toBe(closed);
