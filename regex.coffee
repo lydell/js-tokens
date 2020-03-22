@@ -39,8 +39,7 @@ RegularExpressionLiteral = ///
     \\.
   )+
   /
-  [ a-z A-Z ]*
-  (?! [ $ _ \p{L} \p{Nl} \\ ] )
+  [$ _ \p{L} \p{Nl} \u200c \u200d \p{Mn} \p{Mc} \p{Nd} \p{Pc} ]*
 ///yu
 
 ValidPrecedingRegex = ///
