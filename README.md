@@ -1,13 +1,15 @@
 # js-tokens [![Build Status](https://travis-ci.org/lydell/js-tokens.svg?branch=master)](https://travis-ci.org/lydell/js-tokens)
 
-A regex that tokenizes JavaScript.
+The tiny, regex powered, lenient, almost spec-compliant JavaScript tokenizer that never fails.
 
 ```js
-var jsTokens = require("js-tokens").default;
+const jsTokens = require("js-tokens").default;
 
-var jsString = 'JSON.stringify({k:3.14**2}, null /*replacer*/, "\\t")';
+const jsString = 'JSON.stringify({k:3.14**2}, null /*replacer*/, "\\t")';
 
-jsString.match(jsTokens).join("|");
+jsTokens(jsString)
+  .map(t => t.value)
+  .join("|");
 // JSON|.|stringify|(|{|k|:| |3.14|**|2|}|,| |null| |/*replacer*/|,| |"\t"|)
 ```
 
@@ -16,13 +18,13 @@ jsString.match(jsTokens).join("|");
 
 - [Installation](#installation)
 - [Usage](#usage)
-- [Named capture groups](#named-capture-groups)
+- [Tokens](#tokens)
   - [StringLiteral](#stringliteral)
-  - [Template](#template)
+  - [NoSubstitutionLiteral + TemplateHead + TemplateMiddle + TemplateTail](#nosubstitutionliteral--templatehead--templatemiddle--templatetail)
   - [MultiLineComment](#multilinecomment)
   - [SingleLineComment](#singlelinecomment)
   - [RegularExpressionLiteral](#regularexpressionliteral)
-    - [Regex vs division](#regex-vs-division)
+    - [Regex vs division TODO](#regex-vs-division-todo)
   - [NumericLiteral](#numericliteral)
   - [Punctuator](#punctuator)
   - [WhiteSpace](#whitespace)
@@ -45,25 +47,36 @@ var jsTokens = require("js-tokens").default;
 
 ## Usage
 
-This package exports a regex with the `gu` flags that matches JavaScript tokens.
+This package exports a generator function that turns a string of JavaScript code into token objects.
 
-The regex _always_ matches, even for invalid JavaScript and the empty string.
+For the empty string, the function yields nothing (which can be turned into an empty list). For any other input, the function always yields _something,_ even for invalid JavaScript, and never throws. Concatenating the token values reproduces the input.
 
-The next match is always directly after the previous.
+The package is very close to spec compliant, but has taken a couple of shortcuts. See the following sections for limitations of some tokens.
 
-Tokenizing JavaScript using regexes—in fact, _one single regex_—won’t be perfect. But that’s not the point either. See the following sections for limitations of some tokens.
+## Tokens
 
-## Named capture groups
-
-One – and only one – of the following named capture groups contains a string for every match.
-
-[example.test.js] shows how to use [String.prototype.matchAll] \(available in Node.js 12+) to get all matches, including named capture groups. The example just converts the match objects into another data structure to show what things looks like, but you can of course do whatever you need, such as constructing a string in the case of a syntax highlighter.
+```ts
+type Token =
+  | { type: "StringLiteral"; value: string; closed: boolean }
+  | { type: "NoSubstitutionLiteral"; value: string; closed: boolean }
+  | { type: "TemplateHead"; value: string }
+  | { type: "TemplateMiddle"; value: string }
+  | { type: "TemplateTail"; value: string; closed: boolean }
+  | { type: "MultiLineComment"; value: string; closed: boolean }
+  | { type: "SingleLineComment"; value: string }
+  | { type: "RegularExpressionLiteral"; value: string }
+  | { type: "NumericLiteral"; value: string }
+  | { type: "Punctuator"; value: string }
+  | { type: "WhiteSpace"; value: string }
+  | { type: "LineTerminatorSequence"; value: string }
+  | { type: "Invalid"; value: string };
+```
 
 ### StringLiteral
 
 _Spec: [StringLiteral]_
 
-When the `StringLiteral` capture group is set, the `StringLiteralClosed` capture group is either `undefined` (which means that the string literal is unclosed) or `'` or `"` (which means that is _is_ closed). JavaScript strings cannot contain (unescaped) newlines, so unclosed strings simply end at the end of the line.
+If the ending `"` or `'` is missing, the token has `closed: false`. JavaScript strings cannot contain (unescaped) newlines, so unclosed strings simply end at the end of the line.
 
 Escape sequences are supported, but may be invalid. For example, `"\u"` is matched as a `StringLiteral` even though it contains an invalid escape.
 
@@ -81,35 +94,31 @@ Examples:
 ' unclosed
 ```
 
-### Template
+### NoSubstitutionLiteral + TemplateHead + TemplateMiddle + TemplateTail
 
-_Spec: [Template] + [TemplateSubstitutionTail]_
+_Spec: [NoSubstitutionLiteral] + [TemplateHead] + [TemplateMiddle] + [TemplateTail]_
 
-When the `Template` capture group is set, the `TemplateClosed` capture group is either `undefined` (which means that the template is unclosed) or `` ` `` (which means that is _is_ closed). Templates can contain unescaped newlines, so unclosed templates go on to the end of input.
+A template without interpolations is matched as is. Example:
 
-Just like for `StringLiteral`, `Template` can also contain invalid escapes. `` `\u` `` is matched as a `Template` even though it contains an invalid escape. Also note that in _tagged_ templates, invalid escapes are _not_ syntax errors: `` x`\u` `` is syntactically valid JavaScript.
+- `` `abc` ``: NoSubstitutionLiteral
+- `` `abc ``: NoSubstitutionLiteral `closed: false`
 
-Template strings are matched as single tokens, from the starting `` ` `` to the ending `` ` ``, including interpolations (whose tokens are not matched individually).
+A template _with_ interpolations is matched as many tokens. For example, `` `head${1}middle${2}tail` `` is matched as follows (apart from the two NumericLiterals):
 
-Matching template string interpolations requires recursive balancing of `{` and `}`—something that JavaScript regexes cannot do. Only one level of nesting is supported.
+- `` `head${ ``: TemplateHead
+- `}middle${`: TemplateMiddle
+- `` }tail` ``: TemplateTail
+- `}tail`: TemplateTail `closed: false` (if unclosed)
 
-Examples:
+Templates can contain unescaped newlines, so unclosed templates go on to the end of input.
 
-<!-- prettier-ignore -->
-```js
-`template`
-``
-`${1 + 2}`
-`with ${`a ${nested} template`.toUpperCase()}`
-`one pair of braces: ${JSON.stringify({ a: 1, b: 2 })}`
-` unclosed ${
-```
+Just like for StringLiteral, templates can also contain invalid escapes. `` `\u` `` is matched as a NoSubstitutionLiteral even though it contains an invalid escape. Also note that in _tagged_ templates, invalid escapes are _not_ syntax errors: `` x`\u` `` is syntactically valid JavaScript.
 
 ### MultiLineComment
 
 _Spec: [MultiLineComment]_
 
-When the `MultiLineComment` capture group is set, the `MultiLineCommentClosed` capture group is either `undefined` (which means that the comment is unclosed) or ``/ (which means that is _is_ closed). Unclosed multi-line comments go on to the end of the input.
+If the ending `*/` is missing, the token has `closed: false`. Unclosed multi-line comments go on to the end of the input.
 
 Examples:
 
@@ -144,7 +153,7 @@ Regex literals may contain invalid regex syntax. They are still matched as regex
 
 Unterminated regex literals are likely matched as division and whatever is inside the regex.
 
-According to the specification, the flags of regular expressions are [IdentifierPart]s (unknown and repeated regex flags become errors at a later stage). This regex only matches `[a-zA-Z]`, which likely catches both typos and future flags.
+According to the specification, the flags of regular expressions are [IdentifierPart]s (unknown and repeated regex flags become errors at a later stage).
 
 Examples:
 
@@ -152,12 +161,12 @@ Examples:
 ```js
 /a/
 /a/gimsuy
-/a/Invalid
+/a/Inva1id
 /+/
 /[/]\//
 ```
 
-#### Regex vs division
+#### Regex vs division TODO
 
 Differentiating between regex and division in JavaScript is really tricky. Consider this example:
 
@@ -236,7 +245,7 @@ CR, LF and CRLF, plus `\u2028` and `\u2029`.
 
 _Spec: n/a_
 
-The empty string, as well as single code points not matched in another group.
+Single code points not matched in another group.
 
 Examples:
 
@@ -264,6 +273,7 @@ Currently, ECMAScript 2020 is supported.
 [identifierpart]: https://tc39.es/ecma262/#prod-IdentifierPart
 [lineterminatorsequence]: https://tc39.es/ecma262/#prod-LineTerminatorSequence
 [multilinecomment]: https://tc39.es/ecma262/#prod-MultiLineComment
+[nosubstitutiontemplate]: https://tc39.es/ecma262/#prod-NoSubstitutionTemplate
 [numericliteral]: https://tc39.es/ecma262/#prod-NumericLiteral
 [punctuator]: https://tc39.es/ecma262/#prod-Punctuator
 [regularexpressionliteral]: https://tc39.es/ecma262/#prod-RegularExpressionLiteral
@@ -272,6 +282,7 @@ Currently, ECMAScript 2020 is supported.
 [stackoverflow-slash]: https://stackoverflow.com/a/27120110/2010616
 [string.prototype.matchall]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/matchAll
 [stringliteral]: https://tc39.es/ecma262/#prod-StringLiteral
-[template]: https://tc39.es/ecma262/#prod-Template
-[templatesubstitutiontail]: https://tc39.es/ecma262/#prod-TemplateSubstitutionTail
+[templatehead]: https://tc39.es/ecma262/#prod-TemplateHead
+[templatemiddle]: https://tc39.es/ecma262/#prod-TemplateMiddle
+[templatetail]: https://tc39.es/ecma262/#prod-TemplateTail
 [whitespace]: https://tc39.es/ecma262/#prod-WhiteSpace
