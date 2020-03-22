@@ -20,7 +20,7 @@
     "prettier": "prettier --check \"**/*.{js,md}\"",
     "test": "npm run eslint && npm run prettier && npm run build && jest && npm run esprima-compare",
     "esprima-compare": "node esprima-compare everything.js/es2015-module.js",
-    "build": "coffee --compile --bare --output index.js regex.coffee",
+    "build": "coffee --compile --bare index.coffee",
     "doctoc": "doctoc README.md"
   },
   "devDependencies": {
