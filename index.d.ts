@@ -13,6 +13,6 @@ declare type Token =
   | { type: "LineTerminatorSequence"; value: string }
   | { type: "Invalid"; value: string };
 
-declare function tokenize(input: string): Iterable<Token>;
+declare function jsTokens(input: string): Iterable<Token>;
 
-export default tokenize;
+export default jsTokens;
