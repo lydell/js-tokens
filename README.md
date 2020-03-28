@@ -8,7 +8,7 @@ const jsTokens = require("js-tokens").default;
 const jsString = 'JSON.stringify({k:3.14**2}, null /*replacer*/, "\\t")';
 
 jsTokens(jsString)
-  .map(t => t.value)
+  .map((t) => t.value)
   .join("|");
 // JSON|.|stringify|(|{|k|:| |3.14|**|2|}|,| |null| |/*replacer*/|,| |"\t"|)
 ```

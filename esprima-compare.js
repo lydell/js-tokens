@@ -17,7 +17,7 @@ const esprimaTypeMap = {
 };
 
 function getEsprimaTokens(code) {
-  return esprima.tokenize(code, { loc: true }).map(token => ({
+  return esprima.tokenize(code, { loc: true }).map((token) => ({
     type: esprimaTypeMap[token.type],
     value: token.value,
     loc: token.loc,
@@ -37,7 +37,7 @@ const jsTokensTypeMap = {
 };
 
 function getJsTokensTokens(code) {
-  return Array.from(jsTokens(code), token => {
+  return Array.from(jsTokens(code), (token) => {
     const type = jsTokensTypeMap[token.type];
     return type == null
       ? undefined

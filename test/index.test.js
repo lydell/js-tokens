@@ -23,7 +23,7 @@ function matchHelper(type, string, expected, extra = {}) {
       expect(t.type).not.toBe(type);
     } else {
       if (Array.isArray(expected)) {
-        expect(tokens.map(t => t.value)).toEqual(expected);
+        expect(tokens.map((t) => t.value)).toEqual(expected);
       } else {
         expect(t.type).toBe(type);
         if (typeof expected === "string") {
@@ -63,25 +63,17 @@ function printInvisibles(string) {
       .replace(
         // eslint-disable-next-line no-control-regex
         /[\x00-\x1f]/g,
-        char =>
-          `\\x${char
-            .charCodeAt(0)
-            .toString(16)
-            .padStart(2, "0")
-            .toUpperCase()}`
+        (char) =>
+          `\\x${char.charCodeAt(0).toString(16).padStart(2, "0").toUpperCase()}`
       );
   }
 
   return string
     .split("")
     .map(
-      char =>
+      (char) =>
         escapeTable[char] ||
-        `\\u${char
-          .charCodeAt(0)
-          .toString(16)
-          .padStart(4, "0")
-          .toUpperCase()}`
+        `\\u${char.charCodeAt(0).toString(16).padStart(4, "0").toUpperCase()}`
     )
     .join("");
 }
@@ -93,7 +85,7 @@ describe("jsTokens", () => {
 });
 
 describe("tokens", () => {
-  token("WhiteSpace", match => {
+  token("WhiteSpace", (match) => {
     match(" ");
     match("    ");
     match(" a", " ");
@@ -121,7 +113,7 @@ describe("tokens", () => {
     match("\u3000");
   });
 
-  token("LineTerminatorSequence", match => {
+  token("LineTerminatorSequence", (match) => {
     match("\n");
     match("\n\n\n", ["\n", "\n", "\n"]);
     match("\na", "\n");
@@ -137,7 +129,7 @@ describe("tokens", () => {
     match(" \t\n\r \r\n-1", [" \t", "\n", "\r", " ", "\r\n", "-", "1"]);
   });
 
-  token("SingleLineComment", match => {
+  token("SingleLineComment", (match) => {
     match("//");
     match("//comment");
     match("// comment");
@@ -153,7 +145,7 @@ describe("tokens", () => {
     match("//comment\t\n", "//comment\t");
   });
 
-  token("MultiLineComment", match => {
+  token("MultiLineComment", (match) => {
     match("/**/");
     match("/*comment*/");
     match("/* comment */");
@@ -169,7 +161,7 @@ describe("tokens", () => {
     });
   });
 
-  token("StringLiteral", match => {
+  token("StringLiteral", (match) => {
     match("''");
     match('""');
     match("'string'");
@@ -240,7 +232,7 @@ describe("tokens", () => {
     match('"${"a"}"', '"${"');
   });
 
-  token("NoSubstitutionTemplate", match => {
+  token("NoSubstitutionTemplate", (match) => {
     match("``");
     match("`string`");
     match("`\\``");
@@ -573,7 +565,7 @@ describe("tokens", () => {
     `);
   });
 
-  token("RegularExpressionLiteral", match => {
+  token("RegularExpressionLiteral", (match) => {
     match("//", false);
     match("/a/");
     match("/\\//");
@@ -1034,7 +1026,7 @@ describe("tokens", () => {
     ]);
   });
 
-  token("NumericLiteral", match => {
+  token("NumericLiteral", (match) => {
     match("0");
     match("0n");
     match("000");
@@ -1219,7 +1211,7 @@ describe("tokens", () => {
     match(".0b1", ".0");
   });
 
-  token("IdentifierName", match => {
+  token("IdentifierName", (match) => {
     match("$");
     match("_");
     match("a");
@@ -1282,7 +1274,7 @@ describe("tokens", () => {
     match("\\x09", false);
   });
 
-  token("Punctuator", match => {
+  token("Punctuator", (match) => {
     match("+");
     match("++");
     match("+=");
@@ -1477,7 +1469,7 @@ describe("tokens", () => {
     match("+{}--/a/g", ["+", "{", "}", "--", "/", "a", "/", "g"]);
   });
 
-  token("Invalid", match => {
+  token("Invalid", (match) => {
     match("@");
     match("#");
     match("\\");

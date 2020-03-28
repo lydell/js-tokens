@@ -17,9 +17,11 @@
   ],
   "repository": "lydell/js-tokens",
   "scripts": {
-    "eslint": "eslint .",
-    "prettier": "prettier --check \"**/*.{js,md}\"",
-    "test": "npm run eslint && npm run prettier && npm run build && jest && npm run esprima-compare",
+    "eslint": "eslint . --fix",
+    "eslint:check": "eslint .",
+    "prettier": "prettier --write .",
+    "prettier:check": "prettier --check .",
+    "test": "npm run eslint:check && npm run prettier:check && npm run build && jest && npm run esprima-compare",
     "esprima-compare": "node esprima-compare everything.js/es2015-module.js",
     "build": "coffee --compile --bare index.coffee",
     "doctoc": "doctoc README.md"
@@ -31,7 +33,7 @@
     "eslint-plugin-jest": "23.8.2",
     "esprima": "4.0.1",
     "everything.js": "1.0.3",
-    "jest": "25.1.0",
-    "prettier": "1.19.1"
+    "jest": "25.2.3",
+    "prettier": "2.0.2"
   }
 }
