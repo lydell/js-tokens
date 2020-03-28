@@ -1,6 +1,6 @@
 declare type Token =
   | { type: "StringLiteral"; value: string; closed: boolean }
-  | { type: "NoSubstitutionLiteral"; value: string; closed: boolean }
+  | { type: "NoSubstitutionTemplate"; value: string; closed: boolean }
   | { type: "TemplateHead"; value: string }
   | { type: "TemplateMiddle"; value: string }
   | { type: "TemplateTail"; value: string; closed: boolean }

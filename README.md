@@ -20,7 +20,7 @@ jsTokens(jsString)
 - [Usage](#usage)
 - [Tokens](#tokens)
   - [StringLiteral](#stringliteral)
-  - [NoSubstitutionLiteral + TemplateHead + TemplateMiddle + TemplateTail](#nosubstitutionliteral--templatehead--templatemiddle--templatetail)
+  - [NoSubstitutionTemplate + TemplateHead + TemplateMiddle + TemplateTail](#nosubstitutiontemplate--templatehead--templatemiddle--templatetail)
   - [MultiLineComment](#multilinecomment)
   - [SingleLineComment](#singlelinecomment)
   - [RegularExpressionLiteral](#regularexpressionliteral)
@@ -57,7 +57,7 @@ The package is very close to being fully spec compliant, but has taken a couple 
 ```ts
 type Token =
   | { type: "StringLiteral"; value: string; closed: boolean }
-  | { type: "NoSubstitutionLiteral"; value: string; closed: boolean }
+  | { type: "NoSubstitutionTemplate"; value: string; closed: boolean }
   | { type: "TemplateHead"; value: string }
   | { type: "TemplateMiddle"; value: string }
   | { type: "TemplateTail"; value: string; closed: boolean }
@@ -93,14 +93,14 @@ Examples:
 ' unclosed
 ```
 
-### NoSubstitutionLiteral + TemplateHead + TemplateMiddle + TemplateTail
+### NoSubstitutionTemplate + TemplateHead + TemplateMiddle + TemplateTail
 
-_Spec: [NoSubstitutionLiteral] + [TemplateHead] + [TemplateMiddle] + [TemplateTail]_
+_Spec: [NoSubstitutionTemplate] + [TemplateHead] + [TemplateMiddle] + [TemplateTail]_
 
 A template without interpolations is matched as is. Example:
 
-- `` `abc` ``: NoSubstitutionLiteral
-- `` `abc ``: NoSubstitutionLiteral `closed: false`
+- `` `abc` ``: NoSubstitutionTemplate
+- `` `abc ``: NoSubstitutionTemplate `closed: false`
 
 A template _with_ interpolations is matched as many tokens. For example, `` `head${1}middle${2}tail` `` is matched as follows (apart from the two NumericLiterals):
 
@@ -111,7 +111,7 @@ A template _with_ interpolations is matched as many tokens. For example, `` `hea
 
 Templates can contain unescaped newlines, so unclosed templates go on to the end of input.
 
-Just like for StringLiteral, templates can also contain invalid escapes. `` `\u` `` is matched as a NoSubstitutionLiteral even though it contains an invalid escape. Also note that in _tagged_ templates, invalid escapes are _not_ syntax errors: `` x`\u` `` is syntactically valid JavaScript.
+Just like for StringLiteral, templates can also contain invalid escapes. `` `\u` `` is matched as a NoSubstitutionTemplate even though it contains an invalid escape. Also note that in _tagged_ templates, invalid escapes are _not_ syntax errors: `` x`\u` `` is syntactically valid JavaScript.
 
 ### MultiLineComment
 
