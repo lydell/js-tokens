@@ -1,13 +1,15 @@
 async function f(){
-typeof/[//]\//
+typeof/[//]\//g
     /v1/g/ /r1/ /g
     //
     /x++/v2/
-    (a+b)/*
+    'http://example.com'
+    /v3/g
+    /(a+b)/*
     */ //
-    /v3/g + await
+    /v4/g + await
     /**//**//\*/g + avait
-    /**//**//v4/g
+    /**//**//v5/g
 }
 
 v / /r/g;
