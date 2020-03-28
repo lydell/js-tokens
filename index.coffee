@@ -48,9 +48,11 @@ ValidPrecedingRegex = ///
     |
     \.{3}
     |await|case|default|delete|do|else|extends|instanceof|new|return|throw|typeof|void|yield
+    |
+    \?nonExpressionParenEnd
   )?$
   |
-  [ { ( [ , ; < > = * % & | ^ ! ~ ? : ]$
+  [ { } ( [ , ; < > = * % & | ^ ! ~ ? : ]$
 ///
 
 StringLiteral = ///
@@ -151,6 +153,8 @@ exports.default = (input) ->
   lastSignificantToken = ""
   braceNesting = 0
   templates = []
+  parenNesting = 0
+  nonExpressionParenStart = undefined
 
   while lastIndex < length
     switch input[lastIndex]
@@ -254,7 +258,12 @@ exports.default = (input) ->
     IdentifierName.lastIndex = lastIndex
     if match = IdentifierName.exec(input)
       lastIndex = IdentifierName.lastIndex
-      lastSignificantToken = match[0]
+      nextLastSignificantToken = match[0]
+      switch match[0]
+        when "for", "if", "while", "with"
+          if lastSignificantToken != "." && lastSignificantToken != "?."
+            nextLastSignificantToken = "?nonExpressionParenKeyword"
+      lastSignificantToken = nextLastSignificantToken
       yield {
         type: "IdentifierName",
         value: match[0],
@@ -264,7 +273,18 @@ exports.default = (input) ->
     Punctuator.lastIndex = lastIndex
     if match = Punctuator.exec(input)
       lastIndex = Punctuator.lastIndex
-      lastSignificantToken = match[0]
+      nextLastSignificantToken = match[0]
+      switch match[0]
+        when "("
+          if lastSignificantToken == "?nonExpressionParenKeyword"
+            nonExpressionParenStart = parenNesting
+          parenNesting++
+        when ")"
+          parenNesting--
+          if parenNesting == nonExpressionParenStart
+            nonExpressionParenStart = undefined
+            nextLastSignificantToken = "?nonExpressionParenEnd"
+      lastSignificantToken = nextLastSignificantToken
       yield {
         type: "Punctuator",
         value: match[0],
