@@ -47,12 +47,15 @@ ValidPrecedingRegex = ///
     [/+-]
     |
     \.{3}
-    |await|case|default|delete|do|else|extends|instanceof|new|return|throw|typeof|void|yield
     |
-    \?nonExpressionParenEnd
+    \?(?:nonExpressionParenEnd|unaryIncDec)
   )?$
   |
   [ { } ( [ , ; < > = * % & | ^ ! ~ ? : ]$
+///
+
+ValidPrecedingRegexOrUnaryIncDec = ///
+  ^(?:await|case|default|delete|do|else|extends|instanceof|new|return|throw|typeof|void|yield)$
 ///
 
 StringLiteral = ///
@@ -143,6 +146,10 @@ LineTerminatorSequence = ///
   [ \r \u2028 \u2029 ]
 ///y
 
+Newline = ///
+  [ \n \r \u2028 \u2029 ]
+///
+
 WhiteSpace = ///
   [ \t \v \f \ufeff \p{Zs} ]+
 ///yu
@@ -155,6 +162,7 @@ exports.default = (input) ->
   templates = []
   parenNesting = 0
   nonExpressionParenStart = undefined
+  postfixIncDec = false
 
   while lastIndex < length
     switch input[lastIndex]
@@ -165,11 +173,13 @@ exports.default = (input) ->
         lastSignificantToken = match[0]
         if match[1] == "${"
           templates.push(braceNesting)
+          postfixIncDec = false
           yield {
             type: "TemplateHead",
             value: match[0],
           }
         else
+          postfixIncDec = true
           yield {
             type: "NoSubstitutionTemplate",
             value: match[0],
@@ -189,12 +199,14 @@ exports.default = (input) ->
             lastIndex = Template.lastIndex
             lastSignificantToken = match[0]
             if match[1] == "${"
+              postfixIncDec = false
               yield {
                 type: "TemplateMiddle",
                 value: match[0],
               }
             else
               templates.pop()
+              postfixIncDec = true
               yield {
                 type: "TemplateTail",
                 value: match[0],
@@ -207,6 +219,8 @@ exports.default = (input) ->
         MultiLineComment.lastIndex = lastIndex
         if match = MultiLineComment.exec(input)
           lastIndex = MultiLineComment.lastIndex
+          if Newline.test(match[0])
+            postfixIncDec = false
           yield {
             type: "MultiLineComment",
             value: match[0],
@@ -217,17 +231,19 @@ exports.default = (input) ->
         SingleLineComment.lastIndex = lastIndex
         if match = SingleLineComment.exec(input)
           lastIndex = SingleLineComment.lastIndex
+          postfixIncDec = false
           yield {
             type: "SingleLineComment",
             value: match[0],
           }
           continue
 
-        if ValidPrecedingRegex.test(lastSignificantToken)
+        if ValidPrecedingRegex.test(lastSignificantToken) || ValidPrecedingRegexOrUnaryIncDec.test(lastSignificantToken)
           RegularExpressionLiteral.lastIndex = lastIndex
           if match = RegularExpressionLiteral.exec(input)
             lastIndex = RegularExpressionLiteral.lastIndex
             lastSignificantToken = match[0]
+            postfixIncDec = true
             yield {
               type: "RegularExpressionLiteral",
               value: match[0],
@@ -238,6 +254,7 @@ exports.default = (input) ->
     if match = StringLiteral.exec(input)
       lastIndex = StringLiteral.lastIndex
       lastSignificantToken = match[0]
+      postfixIncDec = true
       yield {
         type: "StringLiteral",
         value: match[0],
@@ -249,6 +266,7 @@ exports.default = (input) ->
     if match = NumericLiteral.exec(input)
       lastIndex = NumericLiteral.lastIndex
       lastSignificantToken = match[0]
+      postfixIncDec = true
       yield {
         type: "NumericLiteral",
         value: match[0],
@@ -264,6 +282,7 @@ exports.default = (input) ->
           if lastSignificantToken != "." && lastSignificantToken != "?."
             nextLastSignificantToken = "?nonExpressionParenKeyword"
       lastSignificantToken = nextLastSignificantToken
+      postfixIncDec = !ValidPrecedingRegexOrUnaryIncDec.test(match[0])
       yield {
         type: "IdentifierName",
         value: match[0],
@@ -279,11 +298,21 @@ exports.default = (input) ->
           if lastSignificantToken == "?nonExpressionParenKeyword"
             nonExpressionParenStart = parenNesting
           parenNesting++
+          postfixIncDec = false
         when ")"
           parenNesting--
+          postfixIncDec = true
           if parenNesting == nonExpressionParenStart
             nonExpressionParenStart = undefined
             nextLastSignificantToken = "?nonExpressionParenEnd"
+            postfixIncDec = false
+        when "]"
+          postfixIncDec = true
+        when "++", "--"
+          nextLastSignificantToken =
+            if postfixIncDec then "?postfixIncDec" else "?unaryIncDec"
+        else
+          postfixIncDec = false
       lastSignificantToken = nextLastSignificantToken
       yield {
         type: "Punctuator",
@@ -294,6 +323,7 @@ exports.default = (input) ->
     LineTerminatorSequence.lastIndex = lastIndex
     if match = LineTerminatorSequence.exec(input)
       lastIndex = LineTerminatorSequence.lastIndex
+      postfixIncDec = false
       yield {
         type: "LineTerminatorSequence",
         value: match[0],
@@ -312,8 +342,10 @@ exports.default = (input) ->
     firstCodePoint = String.fromCodePoint(input.codePointAt(lastIndex))
     lastIndex += firstCodePoint.length
     lastSignificantToken = firstCodePoint
+    postfixIncDec = false
     yield {
       type: "Invalid",
       value: firstCodePoint,
     }
 
+  undefined
