@@ -1,6 +1,6 @@
 # js-tokens [![Build Status](https://travis-ci.org/lydell/js-tokens.svg?branch=master)](https://travis-ci.org/lydell/js-tokens)
 
-The tiny, regex powered, lenient, almost spec-compliant JavaScript tokenizer that never fails.
+The tiny, regex powered, lenient, _almost_ spec-compliant JavaScript tokenizer that never fails.
 
 ```js
 const jsTokens = require("js-tokens").default;
@@ -24,7 +24,6 @@ jsTokens(jsString)
   - [MultiLineComment](#multilinecomment)
   - [SingleLineComment](#singlelinecomment)
   - [RegularExpressionLiteral](#regularexpressionliteral)
-    - [Regex vs division TODO](#regex-vs-division-todo)
   - [NumericLiteral](#numericliteral)
   - [Punctuator](#punctuator)
   - [WhiteSpace](#whitespace)
@@ -51,7 +50,7 @@ This package exports a generator function that turns a string of JavaScript code
 
 For the empty string, the function yields nothing (which can be turned into an empty list). For any other input, the function always yields _something,_ even for invalid JavaScript, and never throws. Concatenating the token values reproduces the input.
 
-The package is very close to spec compliant, but has taken a couple of shortcuts. See the following sections for limitations of some tokens.
+The package is very close to being fully spec compliant, but has taken a couple of shortcuts. See the following sections for limitations of some tokens.
 
 ## Tokens
 
@@ -155,6 +154,8 @@ Unterminated regex literals are likely matched as division and whatever is insid
 
 According to the specification, the flags of regular expressions are [IdentifierPart]s (unknown and repeated regex flags become errors at a later stage).
 
+Differentiating between regex and division in JavaScript is really tricky. js-tokens looks at the previous token to tell them apart. As long as the previous tokens are valid, it should do the right thing. For invalid code, js-tokens might be confused and start matching division as regex or vice versa.
+
 Examples:
 
 <!-- prettier-ignore -->
@@ -165,33 +166,6 @@ Examples:
 /+/
 /[/]\//
 ```
-
-#### Regex vs division TODO
-
-Differentiating between regex and division in JavaScript is really tricky. Consider this example:
-
-<!-- prettier-ignore -->
-```js
-var g = 9.82;
-// Regex:
-return/2/g;
-// Division:
-saturn/2/g;
-```
-
-Note how two lines end with `/2/g`, but only one of them contains a regex. The trick to knowing which is which is by looking at the _previous_ token. js-tokens uses regex lookbehind (requires ES2018+) for this.
-
-There are still some edge cases that it can’t get right, such as:
-
-<!-- prettier-ignore -->
-```js
-if(a+b)/2/g.exec("a");
-fn(a+b)/2/g.toString();
-```
-
-The first line contains a regex, but js-tokens thinks it’s division just like on the next line. In both cases js-tokens looks back one token and sees `)`. It’s way more common to have math code like `(a + b) / 2 / g` than putting a regex literal directly after control flow structures.
-
-For all the ambigouos tokens `)`, `}`, `++` and `--`, js-tokens always matches division since it is more likely. See [“When parsing Javascript, what determines the meaning of a slash?” on StackOverflow][stackoverflow-slash] for more details.
 
 ### NumericLiteral
 
