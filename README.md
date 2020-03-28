@@ -1,4 +1,4 @@
-# js-tokens [![Build Status](https://travis-ci.org/lydell/js-tokens.svg?branch=master)](https://travis-ci.org/lydell/js-tokens)
+# js-tokens
 
 The tiny, regex powered, lenient, _almost_ spec-compliant JavaScript tokenizer that never fails.
 
