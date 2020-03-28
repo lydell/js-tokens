@@ -48,7 +48,7 @@ ValidPrecedingRegex = ///
     |
     \.{3}
     |
-    \?(?:nonExpressionParenEnd|unaryIncDec)
+    \?(?:nonExpressionParenEnd|unaryIncDec|templateInterpolation)
   )?$
   |
   [ { } ( [ , ; < > = * % & | ^ ! ~ ? : ]$
@@ -126,6 +126,14 @@ Punctuator = ///
   [ ? ~ . , : ; [ \] ( ) { } ]
 ///y
 
+PunctuatorsNotPrecedingObjectLiteral = ///
+  ^(?:
+    =>
+    |
+    [ ; \] ) { } ]
+  )$
+///
+
 MultiLineComment = ///
   /\*
   (?:
@@ -158,7 +166,7 @@ exports.default = (input) ->
   {length} = input
   lastIndex = 0
   lastSignificantToken = ""
-  braceNesting = 0
+  braces = []
   templates = []
   parenNesting = 0
   nonExpressionParenStart = undefined
@@ -172,7 +180,8 @@ exports.default = (input) ->
         lastIndex = Template.lastIndex
         lastSignificantToken = match[0]
         if match[1] == "${"
-          templates.push(braceNesting)
+          lastSignificantToken = "?templateInterpolation"
+          templates.push(braces.length)
           postfixIncDec = false
           yield {
             type: "TemplateHead",
@@ -188,17 +197,25 @@ exports.default = (input) ->
         continue
 
       when "{"
-        braceNesting++
+        Punctuator.lastIndex = 0
+        isExpression =
+          lastSignificantToken == "?templateInterpolation" ||
+          lastSignificantToken == "?unaryIncDec" ||
+          (Punctuator.test(lastSignificantToken) &&
+           Punctuator.lastIndex == lastSignificantToken.length &&
+           !PunctuatorsNotPrecedingObjectLiteral.test(lastSignificantToken))
+        braces.push(isExpression)
 
       when "}"
         if templates.length > 0
           templateNesting = templates[templates.length - 1]
-          if braceNesting == templateNesting
+          if braces.length == templateNesting
             Template.lastIndex = lastIndex
             match = Template.exec(input)
             lastIndex = Template.lastIndex
             lastSignificantToken = match[0]
             if match[1] == "${"
+              lastSignificantToken = "?templateInterpolation"
               postfixIncDec = false
               yield {
                 type: "TemplateMiddle",
@@ -213,7 +230,6 @@ exports.default = (input) ->
                 closed: match[1] == "`",
               }
             continue
-        braceNesting--
 
       when "/"
         MultiLineComment.lastIndex = lastIndex
@@ -308,6 +324,10 @@ exports.default = (input) ->
             postfixIncDec = false
         when "]"
           postfixIncDec = true
+        when "}"
+          postfixIncDec = braces.pop()
+          nextLastSignificantToken =
+            if postfixIncDec then "?expressionBraceEnd" else "}"
         when "++", "--"
           nextLastSignificantToken =
             if postfixIncDec then "?postfixIncDec" else "?unaryIncDec"
