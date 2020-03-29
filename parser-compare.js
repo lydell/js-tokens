@@ -1,6 +1,7 @@
 "use strict";
 
 const fs = require("fs");
+const path = require("path");
 const babelParser = require("@babel/parser");
 const esprimaLib = require("esprima");
 const { default: jsTokens } = require("./");
@@ -198,10 +199,28 @@ function getParser(param) {
   }
 }
 
+function getFiles(params) {
+  try {
+    return [].concat(
+      ...params.map((param) =>
+        fs.lstatSync(param).isDirectory()
+          ? fs
+              .readdirSync(param)
+              .filter((file) => file.endsWith(".js"))
+              .map((file) => path.join(param, file))
+          : param
+      )
+    );
+  } catch (error) {
+    console.error(error.message);
+    process.exit(1);
+  }
+}
+
 const [parser, jsTokensTransform] = getParser(process.argv[2]);
-const results = process.argv
-  .slice(3)
-  .map((file) => compare(file, parser, jsTokensTransform));
+const results = getFiles(process.argv.slice(3)).map((file) =>
+  compare(file, parser, jsTokensTransform)
+);
 const numSucceeded = results.filter(Boolean).length;
 
 if (results.length === 0) {
@@ -209,12 +228,10 @@ if (results.length === 0) {
   process.exit(1);
 } else if (numSucceeded === results.length) {
   console.log(
-    `Comparison succeeded: ${parser.name} and jsTokens produced the same tokens!`
+    `${numSucceeded} succeeded: ${parser.name} and jsTokens produced the same tokens!`
   );
   process.exit(0);
 } else {
-  console.error(
-    `\n${results.length - numSucceeded}/${results.length} comparison(s) failed.`
-  );
+  console.error(`\n${results.length - numSucceeded}/${results.length} failed.`);
   process.exit(1);
 }

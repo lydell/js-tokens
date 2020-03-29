@@ -23,8 +23,8 @@
     "prettier": "prettier --write .",
     "prettier:check": "prettier --check .",
     "test": "npm run eslint:check && npm run prettier:check && npm run build && jest && npm run esprima-compare",
-    "esprima-compare": "node parser-compare.js esprima ./node_modules/everything.js/es2015-module.js",
-    "babel-compare": "node parser-compare.js babel ./node_modules/test262-parser-tests/pass/*.js",
+    "esprima-compare": "node parser-compare.js esprima ./node_modules/everything.js",
+    "babel-compare": "node parser-compare.js babel ./node_modules/everything.js ./node_modules/test262-parser-tests/pass ./node_modules/test262-parser-tests/pass-explicit",
     "build": "coffee --compile --bare index.coffee",
     "prepublishOnly": "npm test"
   },
