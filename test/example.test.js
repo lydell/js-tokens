@@ -3,7 +3,7 @@
 const { default: jsTokens } = require("../");
 
 test("switch", () => {
-  const code = 'console.log("", `a${1}b${2}`, /**/, /./, 0x1Fn) //\r\n#\'';
+  const code = 'console.log("", `a${1}b${2}`, /**/ /./, 0x1Fn) //\r\n#\'';
 
   const tokens = Array.from(jsTokens(code));
 
@@ -71,10 +71,6 @@ test("switch", () => {
         "closed": true,
         "type": "MultiLineComment",
         "value": "/**/",
-      },
-      Object {
-        "type": "Punctuator",
-        "value": ",",
       },
       Object {
         "type": "WhiteSpace",
