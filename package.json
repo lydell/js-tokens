@@ -17,6 +17,7 @@
   ],
   "repository": "lydell/js-tokens",
   "scripts": {
+    "doctoc": "doctoc README.md",
     "eslint": "eslint . --fix",
     "eslint:check": "eslint .",
     "prettier": "prettier --write .",
@@ -24,7 +25,7 @@
     "test": "npm run eslint:check && npm run prettier:check && npm run build && jest && npm run esprima-compare",
     "esprima-compare": "node esprima-compare everything.js/es2015-module.js",
     "build": "coffee --compile --bare index.coffee",
-    "doctoc": "doctoc README.md"
+    "prepublishOnly": "npm test"
   },
   "devDependencies": {
     "coffeescript": "2.5.1",
