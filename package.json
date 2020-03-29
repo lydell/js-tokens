@@ -3,7 +3,7 @@
   "version": "5.0.0",
   "author": "Simon Lydell",
   "license": "MIT",
-  "description": "A regex that tokenizes JavaScript.",
+  "description": "Tiny JavaScript tokenizer.",
   "keywords": [
     "JavaScript",
     "js",
