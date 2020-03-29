@@ -24,6 +24,7 @@ jsTokens(jsString)
   - [MultiLineComment](#multilinecomment)
   - [SingleLineComment](#singlelinecomment)
   - [RegularExpressionLiteral](#regularexpressionliteral)
+    - [Edge cases](#edge-cases)
   - [NumericLiteral](#numericliteral)
   - [Punctuator](#punctuator)
   - [WhiteSpace](#whitespace)
@@ -169,7 +170,9 @@ Examples:
 
 #### Edge cases
 
-Here are two problematic cases:
+<details>
+
+<summary>Here are two problematic cases:</summary>
 
 <!-- prettier-ignore -->
 ```js
@@ -235,6 +238,8 @@ label: {}/a/g
 ```
 
 Luckily, neither of these edge cases are likely to occur in real code.
+
+</details>
 
 ### NumericLiteral
 
