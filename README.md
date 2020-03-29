@@ -167,6 +167,75 @@ Examples:
 /[/]\//
 ```
 
+#### Edge cases
+
+Here are two problematic cases:
+
+<!-- prettier-ignore -->
+```js
+switch (x) {
+  case 1: {}/a/g
+}
+
+label: {}/a/g
+```
+
+This is what they mean:
+
+```js
+switch (x) {
+  case 1:
+    {
+    }
+    /a/g;
+}
+
+label: {
+}
+/a/g;
+```
+
+But js-tokens thinks they mean:
+
+```js
+switch (x) {
+  case 1:
+    ({} / a / g);
+}
+
+label: ({} / a / g);
+```
+
+In other words, js-tokens mis-identifies regex as division in these cases.
+
+This happens because js-tokens looks at the previous token when deciding whether to parse as regex or division. In these cases, the previous token is `}`, which either means “end of block” (→ regex) or “end of object literal” (→ division). How does js-tokens determine if the `}` belongs to a block or an object literal? By looking at the token before the matching `{`. In these cases, that’s a `:`. A `:` _usually_ means that we have an object literal:
+
+```js
+let some = weird ? { value: {}/a/g } : {}/a/g;
+```
+
+It’s not easy to look for `case` before the `:` as an exception to the rule:
+
+<!-- prettier-ignore -->
+```js
+switch (x) {
+  case weird ? true : {}/a/g: {}/a/g
+}
+```
+
+The first `{}/a/g` is a division, while the second `{}/a/g` is an empty block followed by a regex. Both are preceded by a colon with a `case` on the same line, and it does not seem like you can distinguish between the two without implementing a parser.
+
+The case with the labeled statement is simlarly difficult, since it is so similar to an object literal:
+
+<!-- prettier-ignore -->
+```js
+label: {}/a/g
+
+({ label: {}/a/g })
+```
+
+Luckily, neither of these edge cases are likely to occur in real code.
+
 ### NumericLiteral
 
 _Spec: [NumericLiteral]_
