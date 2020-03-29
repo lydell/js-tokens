@@ -85,6 +85,21 @@ describe("jsTokens", () => {
 });
 
 describe("tokens", () => {
+  test("empty string", () => {
+    expect(Array.from(jsTokens(""))).toEqual([]);
+  });
+
+  token("Invalid", (match) => {
+    match("@");
+    match("#");
+    match("\\");
+    match("\\xa9", "\\");
+    match("\u0000");
+    match("\u007F");
+    match("☃");
+    match("💩");
+  });
+
   token("WhiteSpace", (match) => {
     match(" ");
     match("    ");
@@ -298,271 +313,252 @@ describe("tokens", () => {
     match("`\\${{{}}}a`");
   });
 
-  test("Template", () => {
-    expect(
-      Array.from(
-        jsTokens(
-          "`a${}${a}${ `${b\r}` + `${`c${5}`}` } d $${\n(x=>{return x*2})(4)}$`"
-        )
-      )
-    ).toMatchInlineSnapshot(`
-      Array [
-        Object {
-          "type": "TemplateHead",
-          "value": "\`a\${",
-        },
-        Object {
-          "type": "TemplateMiddle",
-          "value": "}\${",
-        },
-        Object {
-          "type": "IdentifierName",
-          "value": "a",
-        },
-        Object {
-          "type": "TemplateMiddle",
-          "value": "}\${",
-        },
-        Object {
-          "type": "WhiteSpace",
-          "value": " ",
-        },
-        Object {
-          "type": "TemplateHead",
-          "value": "\`\${",
-        },
-        Object {
-          "type": "IdentifierName",
-          "value": "b",
-        },
-        Object {
-          "type": "LineTerminatorSequence",
-          "value": "
-      ",
-        },
-        Object {
-          "closed": true,
-          "type": "TemplateTail",
-          "value": "}\`",
-        },
-        Object {
-          "type": "WhiteSpace",
-          "value": " ",
-        },
-        Object {
-          "type": "Punctuator",
-          "value": "+",
-        },
-        Object {
-          "type": "WhiteSpace",
-          "value": " ",
-        },
-        Object {
-          "type": "TemplateHead",
-          "value": "\`\${",
-        },
-        Object {
-          "type": "TemplateHead",
-          "value": "\`c\${",
-        },
-        Object {
-          "type": "NumericLiteral",
-          "value": "5",
-        },
-        Object {
-          "closed": true,
-          "type": "TemplateTail",
-          "value": "}\`",
-        },
-        Object {
-          "closed": true,
-          "type": "TemplateTail",
-          "value": "}\`",
-        },
-        Object {
-          "type": "WhiteSpace",
-          "value": " ",
-        },
-        Object {
-          "type": "TemplateMiddle",
-          "value": "} d $\${",
-        },
-        Object {
-          "type": "LineTerminatorSequence",
-          "value": "
-      ",
-        },
-        Object {
-          "type": "Punctuator",
-          "value": "(",
-        },
-        Object {
-          "type": "IdentifierName",
-          "value": "x",
-        },
-        Object {
-          "type": "Punctuator",
-          "value": "=>",
-        },
-        Object {
-          "type": "Punctuator",
-          "value": "{",
-        },
-        Object {
-          "type": "IdentifierName",
-          "value": "return",
-        },
-        Object {
-          "type": "WhiteSpace",
-          "value": " ",
-        },
-        Object {
-          "type": "IdentifierName",
-          "value": "x",
-        },
-        Object {
-          "type": "Punctuator",
-          "value": "*",
-        },
-        Object {
-          "type": "NumericLiteral",
-          "value": "2",
-        },
-        Object {
-          "type": "Punctuator",
-          "value": "}",
-        },
-        Object {
-          "type": "Punctuator",
-          "value": ")",
-        },
-        Object {
-          "type": "Punctuator",
-          "value": "(",
-        },
-        Object {
-          "type": "NumericLiteral",
-          "value": "4",
-        },
-        Object {
-          "type": "Punctuator",
-          "value": ")",
-        },
-        Object {
-          "closed": true,
-          "type": "TemplateTail",
-          "value": "}$\`",
-        },
-      ]
-    `);
+  token("NumericLiteral", (match) => {
+    match("0");
+    match("0n");
+    match("000");
+    match("000n", "000");
+    match("1000");
+    match("1000n");
+    match("1");
+    match("1n");
+    match("1.");
+    match("1n.", "1n");
+    match("1.n", "1.");
+    match("1..", "1.");
+    match("0.1");
+    match("0.1n", "0.1");
+    match(".1");
+    match(".1n", ".1");
+    match("0.1.", "0.1");
 
-    expect(Array.from(jsTokens("`a ${b c`.length"))).toMatchInlineSnapshot(`
-      Array [
-        Object {
-          "type": "TemplateHead",
-          "value": "\`a \${",
-        },
-        Object {
-          "type": "IdentifierName",
-          "value": "b",
-        },
-        Object {
-          "type": "WhiteSpace",
-          "value": " ",
-        },
-        Object {
-          "type": "IdentifierName",
-          "value": "c",
-        },
-        Object {
-          "closed": false,
-          "type": "NoSubstitutionTemplate",
-          "value": "\`.length",
-        },
-      ]
-    `);
+    match("-1", false);
+    match("-1.", false);
+    match("-1..", false);
+    match("-0.1", false);
+    match("-.1", false);
+    match("-0.1.", false);
+    match("-", false);
 
-    expect(Array.from(jsTokens("`a ${`b${c`} d`.length")))
-      .toMatchInlineSnapshot(`
-      Array [
-        Object {
-          "type": "TemplateHead",
-          "value": "\`a \${",
-        },
-        Object {
-          "type": "TemplateHead",
-          "value": "\`b\${",
-        },
-        Object {
-          "type": "IdentifierName",
-          "value": "c",
-        },
-        Object {
-          "closed": true,
-          "type": "NoSubstitutionTemplate",
-          "value": "\`} d\`",
-        },
-        Object {
-          "type": "Punctuator",
-          "value": ".",
-        },
-        Object {
-          "type": "IdentifierName",
-          "value": "length",
-        },
-      ]
-    `);
+    match("1e1");
+    match("1ne1", "1n");
+    match("1e1n", "1e1");
+    match("1.e1");
+    match("1.e1.", "1.e1");
+    match("0.1e1");
+    match(".1e1");
+    match("0.1e1.", "0.1e1");
 
-    expect(Array.from(jsTokens("`a ${ {c:d } e`.length")))
-      .toMatchInlineSnapshot(`
-      Array [
-        Object {
-          "type": "TemplateHead",
-          "value": "\`a \${",
-        },
-        Object {
-          "type": "WhiteSpace",
-          "value": " ",
-        },
-        Object {
-          "type": "Punctuator",
-          "value": "{",
-        },
-        Object {
-          "type": "IdentifierName",
-          "value": "c",
-        },
-        Object {
-          "type": "Punctuator",
-          "value": ":",
-        },
-        Object {
-          "type": "IdentifierName",
-          "value": "d",
-        },
-        Object {
-          "type": "WhiteSpace",
-          "value": " ",
-        },
-        Object {
-          "type": "Punctuator",
-          "value": "}",
-        },
-        Object {
-          "type": "WhiteSpace",
-          "value": " ",
-        },
-        Object {
-          "type": "IdentifierName",
-          "value": "e",
-        },
-        Object {
-          "closed": false,
-          "type": "NoSubstitutionTemplate",
-          "value": "\`.length",
-        },
-      ]
-    `);
+    match("1e+1");
+    match("1e-1");
+    match("1e0123");
+    match("1e0.123", "1e0");
+    match("1e0x123", "1e0");
+    match("1E1");
+    match("1E+1");
+    match("1E-1");
+    match("1E0123");
+    match("1E0.123", "1E0");
+    match("1E0x123", "1E0");
+    match("1E0o123", "1E0");
+    match("1E0b123", "1E0");
+
+    match("e1", false);
+    match("e+1", false);
+    match("e-1", false);
+    match("E1", false);
+    match("E+1", false);
+    match("E-1", false);
+
+    match("-e1", false);
+    match("-e+1", false);
+    match("-e-1", false);
+    match("-E1", false);
+    match("-E+1", false);
+    match("-E-1", false);
+
+    match("0x1");
+    match("0x1n");
+    match("0xa");
+    match("0xan");
+    match("0x015cF");
+    match("0x015cFn");
+    match("0x1e1");
+    match("0x1e1n");
+    match("0x1E1");
+    match("0x1E1n");
+    match("0x1g1", "0x1");
+    match("0x1g1n", "0x1");
+
+    match("0X1");
+    match("0X1n");
+    match("0Xa");
+    match("0Xan");
+    match("0X015cF");
+    match("0X015cFn");
+    match("0X1e1");
+    match("0X1e1n");
+    match("0X1E1");
+    match("0X1E1n");
+    match("0X1g1", "0X1");
+    match("0X1g1n", "0X1");
+
+    match("-0x1", false);
+    match("-0xa", false);
+    match("-0x015cF", false);
+    match("-0x1e1", false);
+    match("-0x1E1", false);
+    match("-0x1g1", false);
+
+    match("0x", "0");
+    match("1x1", "1");
+    match("0x1.", "0x1");
+    match("0x1.1", "0x1");
+    match("0.0x1", "0.0");
+    match(".0x1", ".0");
+
+    match("0o1");
+    match("0o1n");
+    match("0oa", "0");
+    match("0oan", "0");
+    match("0o01574");
+    match("0o01574n");
+    match("0o1e1", "0o1");
+    match("0o1e1n", "0o1");
+    match("0o1E1", "0o1");
+    match("0o1E1n", "0o1");
+    match("0o1g1", "0o1");
+    match("0o1g1n", "0o1");
+
+    match("0O1");
+    match("0O1n");
+    match("0Oa", "0");
+    match("0Oan", "0");
+    match("0O01574");
+    match("0O01574n");
+    match("0O1e1", "0O1");
+    match("0O1e1n", "0O1");
+    match("0O1E1", "0O1");
+    match("0O1E1n", "0O1");
+    match("0O1g1", "0O1");
+    match("0O1g1n", "0O1");
+
+    match("-0o1", false);
+    match("-0oa", false);
+    match("-0o01574", false);
+    match("-0o1e1", false);
+    match("-0o1E1", false);
+    match("-0o1g1", false);
+
+    match("0o", "0");
+    match("1o1", "1");
+    match("0o1.", "0o1");
+    match("0o1.1", "0o1");
+    match("0.0o1", "0.0");
+    match(".0o1", ".0");
+
+    match("0b1");
+    match("0b1n");
+    match("0ba", "0");
+    match("0ban", "0");
+    match("0b01011");
+    match("0b01011n");
+    match("0b1e1", "0b1");
+    match("0b1e1n", "0b1");
+    match("0b1E1", "0b1");
+    match("0b1E1n", "0b1");
+    match("0b1g1", "0b1");
+    match("0b1g1n", "0b1");
+
+    match("0B1");
+    match("0B1n");
+    match("0Ba", "0");
+    match("0Ban", "0");
+    match("0B01011");
+    match("0B01011n");
+    match("0B1e1", "0B1");
+    match("0B1e1n", "0B1");
+    match("0B1E1", "0B1");
+    match("0B1E1n", "0B1");
+    match("0B1g1", "0B1");
+    match("0B1g1m", "0B1");
+
+    match("-0b1", false);
+    match("-0ba", false);
+    match("-0b01011", false);
+    match("-0b1e1", false);
+    match("-0b1E1", false);
+    match("-0b1g1", false);
+
+    match("0b", "0");
+    match("1b1", "1");
+    match("0b1.", "0b1");
+    match("0b1.1", "0b1");
+    match("0.0b1", "0.0");
+    match(".0b1", ".0");
+  });
+
+  token("IdentifierName", (match) => {
+    match("$");
+    match("_");
+    match("a");
+    match("z");
+    match("A");
+    match("Z");
+    match("å");
+    match("π");
+    match("0", false);
+    match("0a", false);
+    match("$0");
+    match("_0");
+    match("a0");
+    match("z0");
+    match("A0");
+    match("Z0");
+    match("å0");
+    match("π0");
+    match("a_56åπ");
+    match("Iñtërnâtiônàlizætiøn");
+
+    match("a\u00a0", "a");
+    match("a\u1680", "a");
+    match("a\u2000", "a");
+    match("a\u2001", "a");
+    match("a\u2002", "a");
+    match("a\u2003", "a");
+    match("a\u2004", "a");
+    match("a\u2005", "a");
+    match("a\u2006", "a");
+    match("a\u2007", "a");
+    match("a\u2008", "a");
+    match("a\u2009", "a");
+    match("a\u200a", "a");
+    match("a\u2028", "a");
+    match("a\u2029", "a");
+    match("a\u202f", "a");
+    match("a\u205f", "a");
+    match("a\u3000", "a");
+
+    match("\\u0000");
+    match("\\u15cF");
+    match("\\u15cG", false);
+    match("\\u000", false);
+    match("\\u00000");
+    match("a\\u0000b");
+
+    match("\\u{0}");
+    match("\\u{01}");
+    match("\\u{012}");
+    match("\\u{0123}");
+    match("\\u{01234}");
+    match("\\u{012345}");
+    match("\\u{0123456}");
+    match("\\u{00000000000000a0}");
+    match("\\u{15cF}");
+    match("\\u{15cG}", false);
+    match("a\\u{0000}b");
+
+    match("\\x09", false);
   });
 
   token("RegularExpressionLiteral", (match) => {
@@ -1026,254 +1022,6 @@ describe("tokens", () => {
     ]);
   });
 
-  token("NumericLiteral", (match) => {
-    match("0");
-    match("0n");
-    match("000");
-    match("000n", "000");
-    match("1000");
-    match("1000n");
-    match("1");
-    match("1n");
-    match("1.");
-    match("1n.", "1n");
-    match("1.n", "1.");
-    match("1..", "1.");
-    match("0.1");
-    match("0.1n", "0.1");
-    match(".1");
-    match(".1n", ".1");
-    match("0.1.", "0.1");
-
-    match("-1", false);
-    match("-1.", false);
-    match("-1..", false);
-    match("-0.1", false);
-    match("-.1", false);
-    match("-0.1.", false);
-    match("-", false);
-
-    match("1e1");
-    match("1ne1", "1n");
-    match("1e1n", "1e1");
-    match("1.e1");
-    match("1.e1.", "1.e1");
-    match("0.1e1");
-    match(".1e1");
-    match("0.1e1.", "0.1e1");
-
-    match("1e+1");
-    match("1e-1");
-    match("1e0123");
-    match("1e0.123", "1e0");
-    match("1e0x123", "1e0");
-    match("1E1");
-    match("1E+1");
-    match("1E-1");
-    match("1E0123");
-    match("1E0.123", "1E0");
-    match("1E0x123", "1E0");
-    match("1E0o123", "1E0");
-    match("1E0b123", "1E0");
-
-    match("e1", false);
-    match("e+1", false);
-    match("e-1", false);
-    match("E1", false);
-    match("E+1", false);
-    match("E-1", false);
-
-    match("-e1", false);
-    match("-e+1", false);
-    match("-e-1", false);
-    match("-E1", false);
-    match("-E+1", false);
-    match("-E-1", false);
-
-    match("0x1");
-    match("0x1n");
-    match("0xa");
-    match("0xan");
-    match("0x015cF");
-    match("0x015cFn");
-    match("0x1e1");
-    match("0x1e1n");
-    match("0x1E1");
-    match("0x1E1n");
-    match("0x1g1", "0x1");
-    match("0x1g1n", "0x1");
-
-    match("0X1");
-    match("0X1n");
-    match("0Xa");
-    match("0Xan");
-    match("0X015cF");
-    match("0X015cFn");
-    match("0X1e1");
-    match("0X1e1n");
-    match("0X1E1");
-    match("0X1E1n");
-    match("0X1g1", "0X1");
-    match("0X1g1n", "0X1");
-
-    match("-0x1", false);
-    match("-0xa", false);
-    match("-0x015cF", false);
-    match("-0x1e1", false);
-    match("-0x1E1", false);
-    match("-0x1g1", false);
-
-    match("0x", "0");
-    match("1x1", "1");
-    match("0x1.", "0x1");
-    match("0x1.1", "0x1");
-    match("0.0x1", "0.0");
-    match(".0x1", ".0");
-
-    match("0o1");
-    match("0o1n");
-    match("0oa", "0");
-    match("0oan", "0");
-    match("0o01574");
-    match("0o01574n");
-    match("0o1e1", "0o1");
-    match("0o1e1n", "0o1");
-    match("0o1E1", "0o1");
-    match("0o1E1n", "0o1");
-    match("0o1g1", "0o1");
-    match("0o1g1n", "0o1");
-
-    match("0O1");
-    match("0O1n");
-    match("0Oa", "0");
-    match("0Oan", "0");
-    match("0O01574");
-    match("0O01574n");
-    match("0O1e1", "0O1");
-    match("0O1e1n", "0O1");
-    match("0O1E1", "0O1");
-    match("0O1E1n", "0O1");
-    match("0O1g1", "0O1");
-    match("0O1g1n", "0O1");
-
-    match("-0o1", false);
-    match("-0oa", false);
-    match("-0o01574", false);
-    match("-0o1e1", false);
-    match("-0o1E1", false);
-    match("-0o1g1", false);
-
-    match("0o", "0");
-    match("1o1", "1");
-    match("0o1.", "0o1");
-    match("0o1.1", "0o1");
-    match("0.0o1", "0.0");
-    match(".0o1", ".0");
-
-    match("0b1");
-    match("0b1n");
-    match("0ba", "0");
-    match("0ban", "0");
-    match("0b01011");
-    match("0b01011n");
-    match("0b1e1", "0b1");
-    match("0b1e1n", "0b1");
-    match("0b1E1", "0b1");
-    match("0b1E1n", "0b1");
-    match("0b1g1", "0b1");
-    match("0b1g1n", "0b1");
-
-    match("0B1");
-    match("0B1n");
-    match("0Ba", "0");
-    match("0Ban", "0");
-    match("0B01011");
-    match("0B01011n");
-    match("0B1e1", "0B1");
-    match("0B1e1n", "0B1");
-    match("0B1E1", "0B1");
-    match("0B1E1n", "0B1");
-    match("0B1g1", "0B1");
-    match("0B1g1m", "0B1");
-
-    match("-0b1", false);
-    match("-0ba", false);
-    match("-0b01011", false);
-    match("-0b1e1", false);
-    match("-0b1E1", false);
-    match("-0b1g1", false);
-
-    match("0b", "0");
-    match("1b1", "1");
-    match("0b1.", "0b1");
-    match("0b1.1", "0b1");
-    match("0.0b1", "0.0");
-    match(".0b1", ".0");
-  });
-
-  token("IdentifierName", (match) => {
-    match("$");
-    match("_");
-    match("a");
-    match("z");
-    match("A");
-    match("Z");
-    match("å");
-    match("π");
-    match("0", false);
-    match("0a", false);
-    match("$0");
-    match("_0");
-    match("a0");
-    match("z0");
-    match("A0");
-    match("Z0");
-    match("å0");
-    match("π0");
-    match("a_56åπ");
-    match("Iñtërnâtiônàlizætiøn");
-
-    match("a\u00a0", "a");
-    match("a\u1680", "a");
-    match("a\u2000", "a");
-    match("a\u2001", "a");
-    match("a\u2002", "a");
-    match("a\u2003", "a");
-    match("a\u2004", "a");
-    match("a\u2005", "a");
-    match("a\u2006", "a");
-    match("a\u2007", "a");
-    match("a\u2008", "a");
-    match("a\u2009", "a");
-    match("a\u200a", "a");
-    match("a\u2028", "a");
-    match("a\u2029", "a");
-    match("a\u202f", "a");
-    match("a\u205f", "a");
-    match("a\u3000", "a");
-
-    match("\\u0000");
-    match("\\u15cF");
-    match("\\u15cG", false);
-    match("\\u000", false);
-    match("\\u00000");
-    match("a\\u0000b");
-
-    match("\\u{0}");
-    match("\\u{01}");
-    match("\\u{012}");
-    match("\\u{0123}");
-    match("\\u{01234}");
-    match("\\u{012345}");
-    match("\\u{0123456}");
-    match("\\u{00000000000000a0}");
-    match("\\u{15cF}");
-    match("\\u{15cG}", false);
-    match("a\\u{0000}b");
-
-    match("\\x09", false);
-  });
-
   token("Punctuator", (match) => {
     match("+");
     match("++");
@@ -1467,20 +1215,5 @@ describe("tokens", () => {
     ]);
     match("+{}++/a/g", ["+", "{", "}", "++", "/", "a", "/", "g"]);
     match("+{}--/a/g", ["+", "{", "}", "--", "/", "a", "/", "g"]);
-  });
-
-  token("Invalid", (match) => {
-    match("@");
-    match("#");
-    match("\\");
-    match("\\xa9", "\\");
-    match("\u0000");
-    match("\u007F");
-    match("☃");
-    match("💩");
-  });
-
-  test("empty string", () => {
-    expect(Array.from(jsTokens(""))).toEqual([]);
   });
 });
