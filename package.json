@@ -36,7 +36,7 @@
     "eslint-plugin-jest": "23.8.2",
     "esprima": "4.0.1",
     "everything.js": "1.0.3",
-    "jest": "25.2.3",
+    "jest": "25.2.4",
     "prettier": "2.0.2",
     "test262-parser-tests": "0.0.5"
   }
