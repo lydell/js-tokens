@@ -2,7 +2,7 @@
 "var"," ","multiLineString"," ","="," ","'\\\nWhile I was writing along\\\nI suddenly forgot to","\n",
 "add"," ","a"," ","backslash"," ","@"," ","the"," ","end"," ","of"," ","a"," ","line","'","\n","\n",
 
-"var"," ","unterminatedRegex"," ","="," ","/","3","?","2",":","1","\n","\n",
+"var"," ","unterminatedRegex"," ","="," ","/3?2:1","\n","\n",
 
 "#"," ","Oops",","," ","forgot"," ","that"," ","this"," ","isn","’","t"," ","coffee","-","script",".","\n","\n",
 

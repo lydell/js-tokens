@@ -11,6 +11,45 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 })
 
+RegularExpressionLiteral = ///
+  /(?![ * / ])
+  (?:
+    \[
+    (?:
+      (?![ \] \\ ]).
+      |
+      \\.
+    )*
+    \]
+    |
+    (?![ / \] \\ ]).
+    |
+    \\.
+  )*
+  (
+    /
+    [$ _ \p{L} \p{Nl} \u200c \u200d \p{Mn} \p{Mc} \p{Nd} \p{Pc} ]*
+    |
+    \\
+  )?
+///yu
+
+ValidPrecedingRegex = ///
+  ^(?:
+    [/+-]
+    |
+    \.{3}
+    |
+    \?(?:nonExpressionParenEnd|unaryIncDec|templateInterpolation)
+  )?$
+  |
+  [ { } ( [ , ; < > = * % & | ^ ! ~ ? : ]$
+///
+
+ValidPrecedingRegexOrUnaryIncDec = ///
+  ^(?:await|case|default|delete|do|else|extends|instanceof|new|return|throw|typeof|void|yield)$
+///
+
 Punctuator = ///
   -- | \+\+
   |
@@ -45,41 +84,6 @@ PunctuatorsNotPrecedingObjectLiteral = ///
     |
     [ ; \] ) { } ]
   )$
-///
-
-RegularExpressionLiteral = ///
-  /(?!\*)
-  (?:
-    \[
-    (?:
-      (?![ \] \\ ]).
-      |
-      \\.
-    )*
-    \]
-    |
-    (?![ / \] \\ ]).
-    |
-    \\.
-  )+
-  /
-  [$ _ \p{L} \p{Nl} \u200c \u200d \p{Mn} \p{Mc} \p{Nd} \p{Pc} ]*
-///yu
-
-ValidPrecedingRegex = ///
-  ^(?:
-    [/+-]
-    |
-    \.{3}
-    |
-    \?(?:nonExpressionParenEnd|unaryIncDec|templateInterpolation)
-  )?$
-  |
-  [ { } ( [ , ; < > = * % & | ^ ! ~ ? : ]$
-///
-
-ValidPrecedingRegexOrUnaryIncDec = ///
-  ^(?:await|case|default|delete|do|else|extends|instanceof|new|return|throw|typeof|void|yield)$
 ///
 
 IdentifierName = ///
@@ -175,6 +179,22 @@ exports.default = (input) ->
   postfixIncDec = false
 
   while lastIndex < length
+    if input[lastIndex] == "/" && (
+      ValidPrecedingRegex.test(lastSignificantToken) ||
+      ValidPrecedingRegexOrUnaryIncDec.test(lastSignificantToken)
+    )
+      RegularExpressionLiteral.lastIndex = lastIndex
+      if match = RegularExpressionLiteral.exec(input)
+        lastIndex = RegularExpressionLiteral.lastIndex
+        lastSignificantToken = match[0]
+        postfixIncDec = true
+        yield {
+          type: "RegularExpressionLiteral",
+          value: match[0],
+          closed: match[1] != undefined && match[1] != "\\",
+        }
+        continue
+
     Punctuator.lastIndex = lastIndex
     if match = Punctuator.exec(input)
       punctuator = match[0]
@@ -237,20 +257,6 @@ exports.default = (input) ->
 
         when "]"
           postfixIncDec = true
-
-        when "/", "/="
-          if ValidPrecedingRegex.test(lastSignificantToken) || ValidPrecedingRegexOrUnaryIncDec.test(lastSignificantToken)
-            RegularExpressionLiteral.lastIndex = lastIndex
-            if match = RegularExpressionLiteral.exec(input)
-              lastIndex = RegularExpressionLiteral.lastIndex
-              lastSignificantToken = match[0]
-              postfixIncDec = true
-              yield {
-                type: "RegularExpressionLiteral",
-                value: match[0],
-              }
-              continue
-          postfixIncDec = false
 
         when "++", "--"
           nextLastSignificantToken =

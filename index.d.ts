@@ -4,9 +4,9 @@ declare type Token =
   | { type: "TemplateHead"; value: string }
   | { type: "TemplateMiddle"; value: string }
   | { type: "TemplateTail"; value: string; closed: boolean }
+  | { type: "RegularExpressionLiteral"; value: string; closed: boolean }
   | { type: "MultiLineComment"; value: string; closed: boolean }
   | { type: "SingleLineComment"; value: string }
-  | { type: "RegularExpressionLiteral"; value: string }
   | { type: "NumericLiteral"; value: string }
   | { type: "Punctuator"; value: string }
   | { type: "WhiteSpace"; value: string }

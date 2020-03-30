@@ -77,6 +77,7 @@ test("switch", () => {
         "value": " ",
       },
       Object {
+        "closed": true,
         "type": "RegularExpressionLiteral",
         "value": "/./",
       },

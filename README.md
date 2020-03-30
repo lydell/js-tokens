@@ -21,10 +21,10 @@ jsTokens(jsString)
 - [Tokens](#tokens)
   - [StringLiteral](#stringliteral)
   - [NoSubstitutionTemplate + TemplateHead + TemplateMiddle + TemplateTail](#nosubstitutiontemplate--templatehead--templatemiddle--templatetail)
-  - [MultiLineComment](#multilinecomment)
-  - [SingleLineComment](#singlelinecomment)
   - [RegularExpressionLiteral](#regularexpressionliteral)
     - [Edge cases](#edge-cases)
+  - [MultiLineComment](#multilinecomment)
+  - [SingleLineComment](#singlelinecomment)
   - [NumericLiteral](#numericliteral)
   - [Punctuator](#punctuator)
   - [WhiteSpace](#whitespace)
@@ -62,9 +62,9 @@ type Token =
   | { type: "TemplateHead"; value: string }
   | { type: "TemplateMiddle"; value: string }
   | { type: "TemplateTail"; value: string; closed: boolean }
+  | { type: "RegularExpressionLiteral"; value: string; closed: boolean }
   | { type: "MultiLineComment"; value: string; closed: boolean }
   | { type: "SingleLineComment"; value: string }
-  | { type: "RegularExpressionLiteral"; value: string }
   | { type: "NumericLiteral"; value: string }
   | { type: "Punctuator"; value: string }
   | { type: "WhiteSpace"; value: string }
@@ -114,44 +114,13 @@ Templates can contain unescaped newlines, so unclosed templates go on to the end
 
 Just like for StringLiteral, templates can also contain invalid escapes. `` `\u` `` is matched as a NoSubstitutionTemplate even though it contains an invalid escape. Also note that in _tagged_ templates, invalid escapes are _not_ syntax errors: `` x`\u` `` is syntactically valid JavaScript.
 
-### MultiLineComment
-
-_Spec: [MultiLineComment]_
-
-If the ending `*/` is missing, the token has `closed: false`. Unclosed multi-line comments go on to the end of the input.
-
-Examples:
-
-<!-- prettier-ignore -->
-```js
-/* comment */
-/* console.log(
-    "commented", out + code);
-    */
-/**/
-/* unclosed
-```
-
-### SingleLineComment
-
-_Spec: [SingleLineComment]_
-
-Examples:
-
-<!-- prettier-ignore -->
-```js
-// comment
-// console.log("commented", out + code);
-//
-```
-
 ### RegularExpressionLiteral
 
 _Spec: [RegularExpressionLiteral]_
 
 Regex literals may contain invalid regex syntax. They are still matched as regex literals.
 
-Unterminated regex literals are likely matched as division and whatever is inside the regex.
+If the ending `/` is missing, the token has `closed: false`. JavaScript regex literals cannot contain newlines (not even escaped ones), so unclosed regex literals simply end at the end of the line.
 
 According to the specification, the flags of regular expressions are [IdentifierPart]s (unknown and repeated regex flags become errors at a later stage).
 
@@ -240,6 +209,37 @@ label: {}/a/g
 Luckily, neither of these edge cases are likely to occur in real code.
 
 </details>
+
+### MultiLineComment
+
+_Spec: [MultiLineComment]_
+
+If the ending `*/` is missing, the token has `closed: false`. Unclosed multi-line comments go on to the end of the input.
+
+Examples:
+
+<!-- prettier-ignore -->
+```js
+/* comment */
+/* console.log(
+    "commented", out + code);
+    */
+/**/
+/* unclosed
+```
+
+### SingleLineComment
+
+_Spec: [SingleLineComment]_
+
+Examples:
+
+<!-- prettier-ignore -->
+```js
+// comment
+// console.log("commented", out + code);
+//
+```
 
 ### NumericLiteral
 
