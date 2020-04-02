@@ -98,6 +98,7 @@ describe("tokens", () => {
     match("\u007F");
     match("☃");
     match("💩");
+    match("\ud83d"); // First half of 💩
   });
 
   token("WhiteSpace", (match) => {
