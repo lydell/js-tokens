@@ -518,6 +518,17 @@ describe("tokens", () => {
     match("å0");
     match("π0");
     match("a_56åπ");
+    match("℮");
+    match("℘");
+    match("゛");
+    match("゜");
+    match("℮℘");
+    match("·", false);
+    match("℮·");
+    match("·", false);
+    match("℮·");
+    match("᧚", false);
+    match("℮᧚");
     match("Iñtërnâtiônàlizætiøn");
 
     match("a\u00a0", "a");
