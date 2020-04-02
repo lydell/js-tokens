@@ -322,7 +322,7 @@ Currently, ECMAScript 2020 is supported.
 [lineterminatorsequence]: https://tc39.es/ecma262/#prod-LineTerminatorSequence
 [multilinecomment]: https://tc39.es/ecma262/#prod-MultiLineComment
 [nosubstitutiontemplate]: https://tc39.es/ecma262/#prod-NoSubstitutionTemplate
-[numericliteral]: https://tc39.es/ecma262/#prod-NumericLiteral
+[numericliteral]: https://tc39.es/ecma262/#prod-annexB-NumericLiteral
 [punctuator]: https://tc39.es/ecma262/#prod-Punctuator
 [regularexpressionliteral]: https://tc39.es/ecma262/#prod-RegularExpressionLiteral
 [rightbracepunctuator]: https://tc39.es/ecma262/#prod-RightBracePunctuator

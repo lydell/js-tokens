@@ -320,9 +320,22 @@ describe("tokens", () => {
     match("000n", "000");
     match("1000");
     match("1000n");
+    match("0001");
+    match("0008");
+    match("00090");
     match("1");
     match("1n");
     match("1.");
+    match("0.");
+    match("00.", "00");
+    match("07.", "07");
+    match("08.", "08.");
+    match("09.", "09.");
+    match("00.0", "00");
+    match("07.0", "07");
+    match("08.0", "08.0");
+    match("09.5", "09.5");
+    match("019.5", "019.5");
     match("1n.", "1n");
     match("1.n", "1.");
     match("1..", "1.");
@@ -362,6 +375,9 @@ describe("tokens", () => {
     match("1E0x123", "1E0");
     match("1E0o123", "1E0");
     match("1E0b123", "1E0");
+    match("08e1");
+    match("07e1", "07");
+    match("00e1", "00");
 
     match("e1", false);
     match("e+1", false);
