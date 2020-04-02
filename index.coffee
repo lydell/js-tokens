@@ -161,7 +161,7 @@ MultiLineComment = ///
     |
     \*(?!/)
   )*
-  (?<MultiLineCommentEnd> \*/ )?
+  (\*/)?
 ///y
 
 SingleLineComment = ///
