@@ -4,6 +4,7 @@
 #
 # https://tc39.es/ecma262/#sec-lexical-grammar
 # https://mathiasbynens.be/notes/javascript-identifiers
+# https://github.com/tc39/proposal-regexp-unicode-property-escapes/blob/fe6d07fad74cd0192d154966baa1e95e7cda78a1/README.md#other-examples
 # https://stackoverflow.com/a/27120110/2010616
 ###
 
@@ -28,7 +29,7 @@ RegularExpressionLiteral = ///
   )*
   (
     /
-    [$ _ \p{L} \p{Nl} \u200c \u200d \p{Mn} \p{Mc} \p{Nd} \p{Pc} ]*
+    [ $ _ \u200C \u200D \p{ID_Continue} ]*
     |
     \\
   )?
@@ -87,9 +88,9 @@ PunctuatorsNotPrecedingObjectLiteral = ///
 ///
 
 IdentifierName = ///
-  (?=[ $ _ \p{L} \p{Nl} \\ ])
+  (?=[ $ _ \p{ID_Start} \\ ])
   (?:
-    [$ _ \p{L} \p{Nl} \u200c \u200d \p{Mn} \p{Mc} \p{Nd} \p{Pc} ]
+    [ $ _ \u200C \u200D \p{ID_Continue} ]
     |
     \\u[ \d a-f A-F ]{4}
     |
