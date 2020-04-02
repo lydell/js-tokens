@@ -141,15 +141,17 @@ Examples:
 
 <details>
 
-<summary>Here are two problematic cases:</summary>
+<summary>Here are some problematic cases:</summary>
 
 <!-- prettier-ignore -->
 ```js
 switch (x) {
-  case 1: {}/a/g
+  case 1: {}/a/g;
 }
 
-label: {}/a/g
+label: {}/a/g;
+
+(function f() {}/a/g);
 ```
 
 This is what they mean:
@@ -165,6 +167,8 @@ switch (x) {
 label: {
 }
 /a/g;
+
+(function f() {} / a / g);
 ```
 
 But js-tokens thinks they mean:
@@ -176,11 +180,16 @@ switch (x) {
 }
 
 label: ({} / a / g);
+
+function f() {}
+/a/g;
 ```
 
 In other words, js-tokens mis-identifies regex as division in these cases.
 
-This happens because js-tokens looks at the previous token when deciding whether to parse as regex or division. In these cases, the previous token is `}`, which either means “end of block” (→ regex) or “end of object literal” (→ division). How does js-tokens determine if the `}` belongs to a block or an object literal? By looking at the token before the matching `{`. In these cases, that’s a `:`. A `:` _usually_ means that we have an object literal:
+This happens because js-tokens looks at the previous token when deciding whether to parse as regex or division. In these cases, the previous token is `}`, which either means “end of block” (→ regex) or “end of object literal” (→ division). How does js-tokens determine if the `}` belongs to a block or an object literal? By looking at the token before the matching `{`.
+
+In the first two cases, that’s a `:`. A `:` _usually_ means that we have an object literal:
 
 ```js
 let some = weird ? { value: {}/a/g } : {}/a/g;
@@ -206,7 +215,20 @@ label: {}/a/g
 ({ label: {}/a/g })
 ```
 
-Luckily, neither of these edge cases are likely to occur in real code.
+The `(function () {}/a/g);` case is difficult, because a `)` before a `{` means that the `{` is part of a _block,_ and blocks are _usually_ statements:
+
+```js
+if (x) {
+}
+/a/g;
+
+function f() {}
+/a/g;
+```
+
+But it’s difficult to tell an function _expression_ from a function _statement._
+
+Luckily, none of these edge cases are likely to occur in real code.
 
 </details>
 

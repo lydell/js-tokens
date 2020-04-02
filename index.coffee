@@ -42,14 +42,18 @@ ValidPrecedingRegex = ///
     |
     \.{3}
     |
-    \?(?:nonExpressionParenEnd|unaryIncDec|templateInterpolation)
+    \?(?:noLineTerminatorHere|nonExpressionParenEnd|unaryIncDec|templateInterpolation)
   )?$
   |
   [ { } ( [ , ; < > = * % & | ^ ! ~ ? : ]$
 ///
 
-ValidPrecedingRegexOrUnaryIncDec = ///
+KeywordsWithExpressionAfter = ///
   ^(?:await|case|default|delete|do|else|extends|instanceof|new|return|throw|typeof|void|yield)$
+///
+
+NoLineTerminatorHere = ///
+  ^(?:return|throw|yield)$
 ///
 
 Punctuator = ///
@@ -192,7 +196,7 @@ exports.default = (input) ->
   while lastIndex < length
     if input[lastIndex] == "/" && (
       ValidPrecedingRegex.test(lastSignificantToken) ||
-      ValidPrecedingRegexOrUnaryIncDec.test(lastSignificantToken)
+      KeywordsWithExpressionAfter.test(lastSignificantToken)
     )
       RegularExpressionLiteral.lastIndex = lastIndex
       if match = RegularExpressionLiteral.exec(input)
@@ -232,9 +236,10 @@ exports.default = (input) ->
           isExpression =
             lastSignificantToken == "?templateInterpolation" ||
             lastSignificantToken == "?unaryIncDec" ||
+            KeywordsWithExpressionAfter.test(lastSignificantToken) ||
             (Punctuator.test(lastSignificantToken) &&
-            Punctuator.lastIndex == lastSignificantToken.length &&
-            !PunctuatorsNotPrecedingObjectLiteral.test(lastSignificantToken))
+             Punctuator.lastIndex == lastSignificantToken.length &&
+             !PunctuatorsNotPrecedingObjectLiteral.test(lastSignificantToken))
           braces.push(isExpression)
           postfixIncDec = false
 
@@ -293,7 +298,7 @@ exports.default = (input) ->
           if lastSignificantToken != "." && lastSignificantToken != "?."
             nextLastSignificantToken = "?nonExpressionParenKeyword"
       lastSignificantToken = nextLastSignificantToken
-      postfixIncDec = !ValidPrecedingRegexOrUnaryIncDec.test(match[0])
+      postfixIncDec = !KeywordsWithExpressionAfter.test(match[0])
       yield {
         type: "IdentifierName",
         value: match[0],
@@ -313,6 +318,8 @@ exports.default = (input) ->
     if match = LineTerminatorSequence.exec(input)
       lastIndex = LineTerminatorSequence.lastIndex
       postfixIncDec = false
+      if NoLineTerminatorHere.test(lastSignificantToken)
+        lastSignificantToken = "?noLineTerminatorHere"
       yield {
         type: "LineTerminatorSequence",
         value: match[0],

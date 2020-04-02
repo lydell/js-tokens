@@ -669,10 +669,13 @@ describe("tokens", () => {
     match("instanceof/a/g", ["instanceof", "/a/g"]);
     match("new/a/g", ["new", "/a/g"]);
     match("return/a/g", ["return", "/a/g"]);
+    match("return\n/a/g", ["return", "\n", "/a/g"]);
     match("throw/a/g", ["throw", "/a/g"]);
+    match("throw\n/a/g", ["throw", "\n", "/a/g"]);
     match("typeof/a/g", ["typeof", "/a/g"]);
     match("void/a/g", ["void", "/a/g"]);
     match("yield/a/g", ["yield", "/a/g"]);
+    match("yield\n/a/g", ["yield", "\n", "/a/g"]);
 
     match("if(x){/a/g", ["if", "(", "x", ")", "{", "/a/g"]);
     match("if(x)/a/g", ["if", "(", "x", ")", "/a/g"]);
@@ -991,15 +994,31 @@ describe("tokens", () => {
     match("instanceof++/a/g", ["instanceof", "++", "/a/g"]);
     match("instanceof--/a/g", ["instanceof", "--", "/a/g"]);
     match("return++/a/g", ["return", "++", "/a/g"]);
+    match("return\n++/a/g", ["return", "\n", "++", "/a/g"]);
     match("return--/a/g", ["return", "--", "/a/g"]);
+    match("return\n--/a/g", ["return", "\n", "--", "/a/g"]);
     match("throw++/a/g", ["throw", "++", "/a/g"]);
+    match("throw\n++/a/g", ["throw", "\n", "++", "/a/g"]);
     match("throw--/a/g", ["throw", "--", "/a/g"]);
+    match("throw\n--/a/g", ["throw", "\n", "--", "/a/g"]);
     match("typeof++/a/g", ["typeof", "++", "/a/g"]);
     match("typeof--/a/g", ["typeof", "--", "/a/g"]);
     match("void++/a/g", ["void", "++", "/a/g"]);
     match("void--/a/g", ["void", "--", "/a/g"]);
     match("yield++/a/g", ["yield", "++", "/a/g"]);
+    match("yield\n++/a/g", ["yield", "\n", "++", "/a/g"]);
     match("yield--/a/g", ["yield", "--", "/a/g"]);
+    match("yield\n--/a/g", ["yield", "\n", "--", "/a/g"]);
+
+    // TODO: Maybe more exhaustive tests.
+    // And maybe some more newlines for division.
+    match("xreturn\n++/a/g", ["xreturn", "\n", "++", "/a/g"]);
+    match("xreturn\u2028++/a/g", ["xreturn", "\u2028", "++", "/a/g"]);
+    match("xreturn\n--/a/g", ["xreturn", "\n", "--", "/a/g"]);
+    match("xthrow\n++/a/g", ["xthrow", "\n", "++", "/a/g"]);
+    match("xthrow\n--/a/g", ["xthrow", "\n", "--", "/a/g"]);
+    match("xyield\n++/a/g", ["xyield", "\n", "++", "/a/g"]);
+    match("xyield\n--/a/g", ["xyield", "\n", "--", "/a/g"]);
 
     match("{}/a/g", ["{", "}", "/a/g"]);
     match(";{}/a/g", [";", "{", "}", "/a/g"]);
@@ -1014,6 +1033,9 @@ describe("tokens", () => {
     match("`${1}${/a/g}`", ["`${", "1", "}${", "/a/g", "}`"]);
     match("`${1}${++/a/g}`", ["`${", "1", "}${", "++", "/a/g", "}`"]);
     match("`${1}${--/a/g}`", ["`${", "1", "}${", "--", "/a/g", "}`"]);
+    match("return\n{}/a/g", ["return", "\n", "{", "}", "/a/g"]);
+    match("throw\n{}/a/g", ["throw", "\n", "{", "}", "/a/g"]);
+    match("yield\n{}/a/g", ["yield", "\n", "{", "}", "/a/g"]);
 
     match("await /a/g", ["await", " ", "/a/g"]);
     match("await \n /a/g", ["await", " ", "\n", " ", "/a/g"]);
@@ -1140,10 +1162,13 @@ describe("tokens", () => {
     match("xinstanceof/a/g", ["xinstanceof", "/", "a", "/", "g"]);
     match("xnew/a/g", ["xnew", "/", "a", "/", "g"]);
     match("xreturn/a/g", ["xreturn", "/", "a", "/", "g"]);
+    match("xreturn\n/a/g", ["xreturn", "\n", "/", "a", "/", "g"]);
     match("xthrow/a/g", ["xthrow", "/", "a", "/", "g"]);
+    match("xthrow\n/a/g", ["xthrow", "\n", "/", "a", "/", "g"]);
     match("xtypeof/a/g", ["xtypeof", "/", "a", "/", "g"]);
     match("xvoid/a/g", ["xvoid", "/", "a", "/", "g"]);
     match("xyield/a/g", ["xyield", "/", "a", "/", "g"]);
+    match("xyield\n/a/g", ["xyield", "\n", "/", "a", "/", "g"]);
 
     match("`a`++/a/g", ["`a`", "++", "/", "a", "/", "g"]);
     match("`a`--/a/g", ["`a`", "--", "/", "a", "/", "g"]);
@@ -1242,5 +1267,9 @@ describe("tokens", () => {
     ]);
     match("+{}++/a/g", ["+", "{", "}", "++", "/", "a", "/", "g"]);
     match("+{}--/a/g", ["+", "{", "}", "--", "/", "a", "/", "g"]);
+    match("return {}/a/g", ["return", " ", "{", "}", "/", "a", "/", "g"]);
+    match("return{}/a/g", ["return", "{", "}", "/", "a", "/", "g"]);
+    match("throw{}/a/g", ["throw", "{", "}", "/", "a", "/", "g"]);
+    match("yield{}/a/g", ["yield", "{", "}", "/", "a", "/", "g"]);
   });
 });
