@@ -52,7 +52,7 @@ KeywordsWithExpressionAfter = ///
   ^(?:await|case|default|delete|do|else|extends|instanceof|new|return|throw|typeof|void|yield)$
 ///
 
-NoLineTerminatorHere = ///
+KeywordsWithNoLineTerminatorAfter = ///
   ^(?:return|throw|yield)$
 ///
 
@@ -318,7 +318,7 @@ exports.default = (input) ->
     if match = LineTerminatorSequence.exec(input)
       lastIndex = LineTerminatorSequence.lastIndex
       postfixIncDec = false
-      if NoLineTerminatorHere.test(lastSignificantToken)
+      if KeywordsWithNoLineTerminatorAfter.test(lastSignificantToken)
         lastSignificantToken = "?noLineTerminatorHere"
       yield {
         type: "LineTerminatorSequence",
