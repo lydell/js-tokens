@@ -7,9 +7,7 @@ const jsTokens = require("js-tokens").default;
 
 const jsString = 'JSON.stringify({k:3.14**2}, null /*replacer*/, "\\t")';
 
-jsTokens(jsString)
-  .map((t) => t.value)
-  .join("|");
+Array.from(jsTokens(jsString, (token) => token.value)).join("|");
 // JSON|.|stringify|(|{|k|:| |3.14|**|2|}|,| |null| |/*replacer*/|,| |"\t"|)
 ```
 
@@ -52,7 +50,7 @@ This package exports a generator function that turns a string of JavaScript code
 
 For the empty string, the function yields nothing (which can be turned into an empty list). For any other input, the function always yields _something,_ even for invalid JavaScript, and never throws. Concatenating the token values reproduces the input.
 
-The package is very close to being fully spec compliant, but has taken a couple of shortcuts. See the following sections for limitations of some tokens.
+The package is very close to being fully spec compliant (it passes all [but 3](#edge-cases) of [test262-parser-tests]), but has taken a couple of shortcuts. See the following sections for limitations of some tokens.
 
 ## Tokens
 
@@ -366,4 +364,5 @@ Currently, ECMAScript 2020 is supported.
 [templatehead]: https://tc39.es/ecma262/#prod-TemplateHead
 [templatemiddle]: https://tc39.es/ecma262/#prod-TemplateMiddle
 [templatetail]: https://tc39.es/ecma262/#prod-TemplateTail
+[test262-parser-tests]: https://github.com/tc39/test262-parser-tests
 [whitespace]: https://tc39.es/ecma262/#prod-WhiteSpace
