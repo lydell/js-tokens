@@ -1,30 +1,13 @@
 {
-  "name": "js-tokens",
-  "version": "5.0.0",
-  "author": "Simon Lydell",
-  "license": "MIT",
-  "description": "Tiny JavaScript tokenizer.",
-  "keywords": [
-    "JavaScript",
-    "js",
-    "token",
-    "tokenize",
-    "regex"
-  ],
-  "files": [
-    "index.js",
-    "index.d.ts"
-  ],
-  "repository": "lydell/js-tokens",
+  "private": true,
   "scripts": {
     "doctoc": "doctoc README.md",
     "eslint": "eslint . --fix",
     "eslint:check": "eslint .",
     "prettier": "prettier --write .",
     "prettier:check": "prettier --check .",
-    "build": "coffee --compile --bare index.coffee",
-    "test": "npm run eslint:check && npm run prettier:check && npm run build && jest",
-    "prepublishOnly": "npm test"
+    "build": "coffee --compile --bare --output package/index.js index.coffee",
+    "test": "npm run eslint:check && npm run prettier:check && npm run build && jest"
   },
   "devDependencies": {
     "@babel/parser": "7.9.4",

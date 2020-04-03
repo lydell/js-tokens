@@ -1,6 +1,6 @@
 "use strict";
 
-const { default: jsTokens } = require("../");
+const { default: jsTokens } = require("../package/index");
 
 test("switch", () => {
   const code = 'console.log("", `a${1}b${2}`, /**/ /./, 0x1Fn) //\r\n#\'';

@@ -1,7 +1,7 @@
 "use strict";
 
 const fs = require("fs");
-const { default: jsTokens } = require("../");
+const { default: jsTokens } = require("../package/index");
 
 describe("fixtures", () => {
   function testFile(file) {

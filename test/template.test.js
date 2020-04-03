@@ -1,6 +1,6 @@
 "use strict";
 
-const { default: jsTokens } = require("../");
+const { default: jsTokens } = require("../package/index");
 
 describe("Template", () => {
   test("Complex", () => {
