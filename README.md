@@ -31,6 +31,7 @@ jsTokens(jsString)
   - [LineTerminatorSequence](#lineterminatorsequence)
   - [Invalid](#invalid)
 - [ECMAScript support](#ecmascript-support)
+  - [Annex B](#annex-b)
 - [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -279,6 +280,8 @@ Examples:
 0xDeadbeef;
 0b110;
 12n;
+07;
+09.5;
 ```
 
 ### Punctuator
@@ -330,14 +333,22 @@ Examples:
 
 The intention is to always support the latest ECMAScript version whose feature set has been finalized.
 
-If adding support for a newer version requires changes, a new version with a major verion bump will be released.
-
 Currently, ECMAScript 2020 is supported.
+
+### Annex B
+
+[Annex B: Additional ECMAScript Features for Web Browsers][annexb] of the spec is optional if the ECMAScript host is not a web browser, and specifies some additional syntax.
+
+- Numeric literals: js-tokens supports legacy octal and octal like numeric literals. It was easy enough, so why not.
+- String literals: js-tokens supports legacy octal escapes, since it allows any invalid escapes.
+- HTML-like comments: **Not supported.** js-tokens prefers treating `5<!--x` as `5 < !(--x)` rather than as `5 //x`.
+- Regular expression patterns: js-tokens doesn’t care what’s between the starting and ending `/`, so this is supported.
 
 ## License
 
 [MIT](LICENSE).
 
+[annexb]: https://tc39.es/ecma262/#sec-additional-ecmascript-features-for-web-browsers
 [divpunctuator]: https://tc39.es/ecma262/#prod-DivPunctuator
 [example.test.js]: https://github.com/lydell/js-tokens/blob/master/test/example.test.js
 [identifierpart]: https://tc39.es/ecma262/#prod-IdentifierPart
