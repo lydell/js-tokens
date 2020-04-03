@@ -28,7 +28,8 @@ function babel(code, sourceType) {
     if (token.type.label === "`") {
       const next2 = tokens[index + 2];
       result.push({
-        type: "Template",
+        type:
+          next2.type.label === "`" ? "NoSubstitutionTemplate" : "TemplateHead",
         value: code.slice(token.start, next2.end),
       });
       index += 2;
@@ -40,7 +41,7 @@ function babel(code, sourceType) {
       const next2 = tokens[index + 2];
       if (next1 && next1.type.label === "template") {
         result.push({
-          type: "Template",
+          type: next2.type.label === "`" ? "TemplateTail" : "TemplateMiddle",
           value: code.slice(token.start, next2.end),
         });
         index += 2;
@@ -70,31 +71,11 @@ function babel(code, sourceType) {
   return result;
 }
 
-const jsTokensTypeMap = {
-  NoSubstitutionTemplate: "Template",
-  TemplateHead: "Template",
-  TemplateMiddle: "Template",
-  TemplateTail: "Template",
-  IdentifierName: "IdentifierName",
-  Invalid: "Invalid",
-  NumericLiteral: "NumericLiteral",
-  Punctuator: "Punctuator",
-  RegularExpressionLiteral: "RegularExpressionLiteral",
-  StringLiteral: "StringLiteral",
-  SingleLineComment: "SingleLineComment",
-  MultiLineComment: "MultiLineComment",
-};
-
 function jsTokens(code) {
-  return Array.from(jsTokensLib(code), (token) => {
-    const type = jsTokensTypeMap[token.type];
-    return type == null
-      ? undefined
-      : {
-          type,
-          value: token.value,
-        };
-  }).filter(Boolean);
+  return Array.from(jsTokensLib(code), ({ type, value }) => ({
+    type,
+    value,
+  })).filter((token) => !/^\s*$/.test(token.value));
 }
 
 function runFile(file) {
