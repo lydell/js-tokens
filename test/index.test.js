@@ -14,9 +14,8 @@ function matchHelper(type, string, expected, extra = {}) {
     expected = undefined;
   }
 
-  const tokens = Array.from(jsTokens(string));
-
   test(printInvisibles(string), () => {
+    const tokens = Array.from(jsTokens(string));
     expect(tokens.length).toBeGreaterThanOrEqual(1);
     const [t] = tokens;
     if (expected === false) {
@@ -87,6 +86,12 @@ describe("jsTokens", () => {
 describe("tokens", () => {
   test("empty string", () => {
     expect(Array.from(jsTokens(""))).toEqual([]);
+  });
+
+  test("succeeds for any single character", () => {
+    for (let c = 0; c <= 0xffff; c++) {
+      expect(() => jsTokens(String.fromCharCode(c))).not.toThrow();
+    }
   });
 
   token("Invalid", (match) => {
