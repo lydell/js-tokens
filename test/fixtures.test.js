@@ -15,10 +15,11 @@ const babelTypeMap = {
   string: "StringLiteral",
 };
 
-function babel(code, sourceType) {
+function babel(code, sourceType, fileType) {
   const { tokens } = babelParser.parse(code, {
     tokens: true,
     sourceType,
+    plugins: [fileType === "ts" ? "typescript" : undefined].filter(Boolean),
   });
 
   const result = [];
@@ -79,13 +80,13 @@ function readJsonIfExists(file) {
 
 function runFile(file, { compareWithBabel = true } = {}) {
   const code = fs.readFileSync(file, "utf8");
-  const json = readJsonIfExists(file.replace(/\.[jt]s$/, ".json"));
+  const json = readJsonIfExists(file.replace(/\.\w+$/, ".json"));
 
-  const sourceType = /[.-]module\.[jt]s$/.test(file) ? "module" : "script";
-  const isTypeScript = file.endsWith(".ts");
+  const sourceType = /[.-]module\.\w+$/.test(file) ? "module" : "script";
+  const fileType = path.extname(file).slice(1);
 
   const features = [
-    isTypeScript ? "TS" : "JS",
+    fileType.toUpperCase(),
     sourceType,
     compareWithBabel ? "Babel" : undefined,
     json ? "JSON" : undefined,
@@ -95,7 +96,7 @@ function runFile(file, { compareWithBabel = true } = {}) {
 
   test(`${features}: ${file}`, () => {
     const babelTokens = compareWithBabel
-      ? babel(code, sourceType, isTypeScript)
+      ? babel(code, sourceType, fileType)
       : [];
 
     const jsTokens = Array.from(jsTokensLib(code), ({ type, value }) => ({
