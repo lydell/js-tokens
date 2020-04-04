@@ -13,6 +13,13 @@ export declare type Token =
   | { type: "LineTerminatorSequence"; value: string }
   | { type: "Invalid"; value: string };
 
-declare function jsTokens(input: string): Iterable<Token>;
+export declare type JSXToken =
+  | { type: "JSXString"; value: string; closed: boolean }
+  | { type: "JSXText"; value: string }
+  | { type: "JSXIdentifier"; value: string }
+  | { type: "JSXPunctuator"; value: string }
+  | { type: "JSXInvalid"; value: string };
 
-export default jsTokens;
+export default function jsTokens(input: string): Iterable<Token>;
+
+export function jsxTokens(input: string): Iterable<Token | JSXToken>;
