@@ -28,7 +28,7 @@ Array.from(jsTokens(jsString, (token) => token.value)).join("|");
   - [WhiteSpace](#whitespace)
   - [LineTerminatorSequence](#lineterminatorsequence)
   - [Invalid](#invalid)
-- [ECMAScript support](#ecmascript-support)
+- [Compatibility](#compatibility)
   - [Annex B](#annex-b)
 - [License](#license)
 
@@ -327,11 +327,13 @@ Examples:
 💩
 ```
 
-## ECMAScript support
+## Compatibility
 
 The intention is to always support the latest ECMAScript version whose feature set has been finalized.
 
 Currently, ECMAScript 2020 is supported.
+
+js-tokens should work in any JavaScript environment that supports [Unicode property escapes].
 
 ### Annex B
 
@@ -365,4 +367,5 @@ Currently, ECMAScript 2020 is supported.
 [templatemiddle]: https://tc39.es/ecma262/#prod-TemplateMiddle
 [templatetail]: https://tc39.es/ecma262/#prod-TemplateTail
 [test262-parser-tests]: https://github.com/tc39/test262-parser-tests
+[unicode property escapes]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions/Unicode_Property_Escapes
 [whitespace]: https://tc39.es/ecma262/#prod-WhiteSpace
