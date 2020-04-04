@@ -29,7 +29,11 @@ Array.from(jsTokens(jsString, (token) => token.value)).join("|");
   - [LineTerminatorSequence](#lineterminatorsequence)
   - [Invalid](#invalid)
 - [Compatibility](#compatibility)
-  - [Annex B](#annex-b)
+  - [ECMAScript](#ecmascript)
+    - [Annex B](#annex-b)
+  - [TypeScript](#typescript)
+  - [JSX](#jsx)
+  - [JavaScript runtimes](#javascript-runtimes)
 - [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -329,13 +333,13 @@ Examples:
 
 ## Compatibility
 
+### ECMAScript
+
 The intention is to always support the latest ECMAScript version whose feature set has been finalized.
 
 Currently, ECMAScript 2020 is supported.
 
-js-tokens should work in any JavaScript environment that supports [Unicode property escapes].
-
-### Annex B
+#### Annex B
 
 [Annex B: Additional ECMAScript Features for Web Browsers][annexb] of the spec is optional if the ECMAScript host is not a web browser, and specifies some additional syntax.
 
@@ -343,6 +347,26 @@ js-tokens should work in any JavaScript environment that supports [Unicode prope
 - String literals: js-tokens supports legacy octal escapes, since it allows any invalid escapes.
 - HTML-like comments: **Not supported.** js-tokens prefers treating `5<!--x` as `5 < !(--x)` rather than as `5 //x`.
 - Regular expression patterns: js-tokens doesn’t care what’s between the starting and ending `/`, so this is supported.
+
+### TypeScript
+
+Supporting TypeScript is not an explicit goal, but js-tokens and Babel both tokenize this [TypeScript fixture] the same way, with one edge case:
+
+<!-- prettier-ignore -->
+```ts
+type A = Array<Array<string>>
+type B = Array<Array<Array<string>>>
+```
+
+Both lines above should end with a couple of `>` tokens, but js-tokens matches as the `>>` and `>>>` operators.
+
+### JSX
+
+JSX is _not_ supported.
+
+### JavaScript runtimes
+
+js-tokens should work in any JavaScript runtime that supports [Unicode property escapes].
 
 ## License
 

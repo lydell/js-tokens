@@ -19,7 +19,10 @@ function babel(code, sourceType, fileType) {
   const { tokens } = babelParser.parse(code, {
     tokens: true,
     sourceType,
-    plugins: [fileType === "ts" ? "typescript" : undefined].filter(Boolean),
+    plugins: [
+      "classProperties",
+      fileType === "ts" ? "typescript" : undefined,
+    ].filter(Boolean),
   });
 
   const result = [];
@@ -74,7 +77,7 @@ function babel(code, sourceType, fileType) {
 
 function readJsonIfExists(file) {
   return fs.existsSync(file)
-    ? JSON.parse(fs.readFileSync(file, "utf8"))
+    ? () => JSON.parse(fs.readFileSync(file, "utf8"))
     : undefined;
 }
 
@@ -119,7 +122,7 @@ function runFile(file, { compareWithBabel = true } = {}) {
     }
 
     if (json) {
-      expect(jsTokensValues).toEqual(json);
+      expect(jsTokensValues).toEqual(json());
     }
 
     expect(jsTokensValues.join("")).toBe(code);

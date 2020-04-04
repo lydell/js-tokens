@@ -1,6 +1,6 @@
-/*
- * https://github.com/davidchambers/Base64.js
- */
+// Copied from:
+// https://github.com/davidchambers/Base64.js/blob/5789b86310cd5ba7cc19c870f7fa7750bba6fdaf/base64.js
+// License: WTFPL.
 ;(function () {
 
   var object = typeof exports != 'undefined' ? exports : this; // #8: web workers

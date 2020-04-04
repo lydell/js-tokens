@@ -1,6 +1,6 @@
 ###
 # Copyright 2014, 2015, 2016, 2017, 2018, 2019, 2020 Simon Lydell
-# License: MIT. (See LICENSE.)
+# License: MIT.
 #
 # https://tc39.es/ecma262/#sec-lexical-grammar
 # https://mathiasbynens.be/notes/javascript-identifiers
