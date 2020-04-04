@@ -1,9 +1,9 @@
 "use strict";
 
-const { default: jsTokens } = require("../package/index");
+const { default: jsTokens } = require("../build");
 
-test("switch", () => {
-  const code = 'console.log("", `a${1}b${2}`, /**/ /./, 0x1Fn) //\r\n#\'';
+test("all tokens", () => {
+  const code = 'console.log("", ``, `a${1}b${2}`, /**/ /./, 0x1Fn) //\r\n#\'';
 
   const tokens = Array.from(jsTokens(code));
 

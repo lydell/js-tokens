@@ -1,4 +1,4 @@
-declare type Token =
+export declare type Token =
   | { type: "StringLiteral"; value: string; closed: boolean }
   | { type: "NoSubstitutionTemplate"; value: string; closed: boolean }
   | { type: "TemplateHead"; value: string }

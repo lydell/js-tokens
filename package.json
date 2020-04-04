@@ -3,11 +3,10 @@
   "scripts": {
     "doctoc": "doctoc README.md",
     "eslint": "eslint . --fix",
-    "eslint:check": "eslint .",
     "prettier": "prettier --write .",
-    "prettier:check": "prettier --check .",
-    "build": "coffee --compile --bare --output package/index.js index.coffee",
-    "test": "npm run eslint:check && npm run prettier:check && npm run build && jest"
+    "coffee": "coffee --compile --bare --output build index.coffee",
+    "build": "node build.js && npm run coffee",
+    "test": "eslint . && prettier --check . && tsd && npm run build && jest"
   },
   "devDependencies": {
     "@babel/parser": "7.9.4",
@@ -18,6 +17,7 @@
     "everything.js": "1.0.3",
     "jest": "25.2.7",
     "prettier": "2.0.2",
-    "test262-parser-tests": "0.0.5"
+    "test262-parser-tests": "0.0.5",
+    "tsd": "0.11.0"
   }
 }
