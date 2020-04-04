@@ -39,6 +39,19 @@ test("all tokens", () => {
         "value": " ",
       },
       Object {
+        "closed": true,
+        "type": "NoSubstitutionTemplate",
+        "value": "\`\`",
+      },
+      Object {
+        "type": "Punctuator",
+        "value": ",",
+      },
+      Object {
+        "type": "WhiteSpace",
+        "value": " ",
+      },
+      Object {
         "type": "TemplateHead",
         "value": "\`a\${",
       },
