@@ -236,7 +236,8 @@ exports.default = (input) ->
           isExpression =
             lastSignificantToken == "?templateInterpolation" ||
             lastSignificantToken == "?unaryIncDec" ||
-            KeywordsWithExpressionAfter.test(lastSignificantToken) ||
+            (KeywordsWithExpressionAfter.test(lastSignificantToken) &&
+             lastSignificantToken != "else") ||
             (Punctuator.test(lastSignificantToken) &&
              Punctuator.lastIndex == lastSignificantToken.length &&
              !PunctuatorsNotPrecedingObjectLiteral.test(lastSignificantToken))

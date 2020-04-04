@@ -649,6 +649,7 @@ describe("tokens", () => {
     match("/a/g/**/", "/a/g");
     match("/a/ /**/", "/a/");
     match("/a/g /**/", "/a/g");
+    match("/a/**/", ["/a/", "**", "/"]);
 
     match("/a/g0", "/a/g0");
     match("/a/g0.1", "/a/g0");
@@ -659,6 +660,8 @@ describe("tokens", () => {
     match("/a/g_", "/a/g_");
     match("/a/g$", "/a/g$");
     match("/a/gé", "/a/gé");
+
+    ////// Regex vs division
 
     match("await/a/g", ["await", "/a/g"]);
     match("case/a/g", ["case", "/a/g"]);
@@ -677,6 +680,9 @@ describe("tokens", () => {
     match("void/a/g", ["void", "/a/g"]);
     match("yield/a/g", ["yield", "/a/g"]);
     match("yield\n/a/g", ["yield", "\n", "/a/g"]);
+
+    match("else{}/a/g", ["else", "{", "}", "/a/g"]);
+    match("else\n{}/a/g", ["else", "\n", "{", "}", "/a/g"]);
 
     match("if(x){/a/g", ["if", "(", "x", ")", "{", "/a/g"]);
     match("if(x)/a/g", ["if", "(", "x", ")", "/a/g"]);
@@ -702,8 +708,7 @@ describe("tokens", () => {
       ")",
       "/a/g",
     ]);
-    match("v.if(x)/a/g", ["v", ".", "if", "(", "x", ")", "/", "a", "/", "g"]);
-    match("v?.if(x)/a/g", ["v", "?.", "if", "(", "x", ")", "/", "a", "/", "g"]);
+
     match("(/a/g)", ["(", "/a/g", ")"]);
     match("[/a/g]", ["[", "/a/g", "]"]);
     match("x,/a/g", ["x", ",", "/a/g"]);
@@ -804,58 +809,7 @@ describe("tokens", () => {
       "--",
       "/a/g",
     ]);
-    match("v.if(x)++/a/g", [
-      "v",
-      ".",
-      "if",
-      "(",
-      "x",
-      ")",
-      "++",
-      "/",
-      "a",
-      "/",
-      "g",
-    ]);
-    match("v.if(x)--/a/g", [
-      "v",
-      ".",
-      "if",
-      "(",
-      "x",
-      ")",
-      "--",
-      "/",
-      "a",
-      "/",
-      "g",
-    ]);
-    match("v?.if(x)++/a/g", [
-      "v",
-      "?.",
-      "if",
-      "(",
-      "x",
-      ")",
-      "++",
-      "/",
-      "a",
-      "/",
-      "g",
-    ]);
-    match("v?.if(x)--/a/g", [
-      "v",
-      "?.",
-      "if",
-      "(",
-      "x",
-      ")",
-      "--",
-      "/",
-      "a",
-      "/",
-      "g",
-    ]);
+
     match("(++/a/g)", ["(", "++", "/a/g", ")"]);
     match("(--/a/g)", ["(", "--", "/a/g", ")"]);
     match("[++/a/g]", ["[", "++", "/a/g", "]"]);
@@ -981,19 +935,47 @@ describe("tokens", () => {
     match("x/*\u2029*/--/a/g", ["x", "/*\u2029*/", "--", "/a/g"]);
 
     match("await++/a/g", ["await", "++", "/a/g"]);
+    match("await\n++/a/g", ["await", "\n", "++", "/a/g"]);
     match("await--/a/g", ["await", "--", "/a/g"]);
+    match("await\n--/a/g", ["await", "\n", "--", "/a/g"]);
     match("case++/a/g", ["case", "++", "/a/g"]);
+    match("case\n++/a/g", ["case", "\n", "++", "/a/g"]);
     match("case--/a/g", ["case", "--", "/a/g"]);
+    match("case\n--/a/g", ["case", "\n", "--", "/a/g"]);
     match("export default++/a/g", ["export", " ", "default", "++", "/a/g"]);
+    match("export\n default++/a/g", [
+      "export",
+      "\n",
+      " ",
+      "default",
+      "++",
+      "/a/g",
+    ]);
     match("export default--/a/g", ["export", " ", "default", "--", "/a/g"]);
+    match("export\n default--/a/g", [
+      "export",
+      "\n",
+      " ",
+      "default",
+      "--",
+      "/a/g",
+    ]);
     match("delete++/a/g", ["delete", "++", "/a/g"]);
+    match("delete\n++/a/g", ["delete", "\n", "++", "/a/g"]);
     match("delete--/a/g", ["delete", "--", "/a/g"]);
+    match("delete\n--/a/g", ["delete", "\n", "--", "/a/g"]);
     match("do++/a/g", ["do", "++", "/a/g"]);
+    match("do\n++/a/g", ["do", "\n", "++", "/a/g"]);
     match("do--/a/g", ["do", "--", "/a/g"]);
+    match("do\n--/a/g", ["do", "\n", "--", "/a/g"]);
     match("else++/a/g", ["else", "++", "/a/g"]);
+    match("else\n++/a/g", ["else", "\n", "++", "/a/g"]);
     match("else--/a/g", ["else", "--", "/a/g"]);
+    match("else\n--/a/g", ["else", "\n", "--", "/a/g"]);
     match("instanceof++/a/g", ["instanceof", "++", "/a/g"]);
+    match("instanceof\n++/a/g", ["instanceof", "\n", "++", "/a/g"]);
     match("instanceof--/a/g", ["instanceof", "--", "/a/g"]);
+    match("instanceof\n--/a/g", ["instanceof", "\n", "--", "/a/g"]);
     match("return++/a/g", ["return", "++", "/a/g"]);
     match("return\n++/a/g", ["return", "\n", "++", "/a/g"]);
     match("return--/a/g", ["return", "--", "/a/g"]);
@@ -1003,21 +985,48 @@ describe("tokens", () => {
     match("throw--/a/g", ["throw", "--", "/a/g"]);
     match("throw\n--/a/g", ["throw", "\n", "--", "/a/g"]);
     match("typeof++/a/g", ["typeof", "++", "/a/g"]);
+    match("typeof\n++/a/g", ["typeof", "\n", "++", "/a/g"]);
     match("typeof--/a/g", ["typeof", "--", "/a/g"]);
+    match("typeof\n--/a/g", ["typeof", "\n", "--", "/a/g"]);
     match("void++/a/g", ["void", "++", "/a/g"]);
+    match("void\n++/a/g", ["void", "\n", "++", "/a/g"]);
     match("void--/a/g", ["void", "--", "/a/g"]);
+    match("void\n--/a/g", ["void", "\n", "--", "/a/g"]);
     match("yield++/a/g", ["yield", "++", "/a/g"]);
     match("yield\n++/a/g", ["yield", "\n", "++", "/a/g"]);
     match("yield--/a/g", ["yield", "--", "/a/g"]);
     match("yield\n--/a/g", ["yield", "\n", "--", "/a/g"]);
 
-    // TODO: Maybe more exhaustive tests.
-    // And maybe some more newlines for division.
+    match("xawait\n++/a/g", ["xawait", "\n", "++", "/a/g"]);
+    match("xawait\n--/a/g", ["xawait", "\n", "--", "/a/g"]);
+    match("xcase\n++/a/g", ["xcase", "\n", "++", "/a/g"]);
+    match("xcase\n--/a/g", ["xcase", "\n", "--", "/a/g"]);
+    match("xdefault\n++/a/g", ["xdefault", "\n", "++", "/a/g"]);
+    match("xdefault\n--/a/g", ["xdefault", "\n", "--", "/a/g"]);
+    match("xdelete\n++/a/g", ["xdelete", "\n", "++", "/a/g"]);
+    match("xdelete\n--/a/g", ["xdelete", "\n", "--", "/a/g"]);
+    match("xdo\n++/a/g", ["xdo", "\n", "++", "/a/g"]);
+    match("xdo\n--/a/g", ["xdo", "\n", "--", "/a/g"]);
+    match("xelse\n++/a/g", ["xelse", "\n", "++", "/a/g"]);
+    match("xelse\n--/a/g", ["xelse", "\n", "--", "/a/g"]);
+    match("xextends\n++/a/g", ["xextends", "\n", "++", "/a/g"]);
+    match("xextends\n--/a/g", ["xextends", "\n", "--", "/a/g"]);
+    match("xinstanceof\n++/a/g", ["xinstanceof", "\n", "++", "/a/g"]);
+    match("xinstanceof\n--/a/g", ["xinstanceof", "\n", "--", "/a/g"]);
+    match("xnew\n++/a/g", ["xnew", "\n", "++", "/a/g"]);
+    match("xnew\n--/a/g", ["xnew", "\n", "--", "/a/g"]);
     match("xreturn\n++/a/g", ["xreturn", "\n", "++", "/a/g"]);
+    match("xreturn\r++/a/g", ["xreturn", "\r", "++", "/a/g"]);
+    match("xreturn\r\n++/a/g", ["xreturn", "\r\n", "++", "/a/g"]);
     match("xreturn\u2028++/a/g", ["xreturn", "\u2028", "++", "/a/g"]);
+    match("xreturn\u2029++/a/g", ["xreturn", "\u2029", "++", "/a/g"]);
     match("xreturn\n--/a/g", ["xreturn", "\n", "--", "/a/g"]);
     match("xthrow\n++/a/g", ["xthrow", "\n", "++", "/a/g"]);
     match("xthrow\n--/a/g", ["xthrow", "\n", "--", "/a/g"]);
+    match("xtypeof\n++/a/g", ["xtypeof", "\n", "++", "/a/g"]);
+    match("xtypeof\n--/a/g", ["xtypeof", "\n", "--", "/a/g"]);
+    match("xvoid\n++/a/g", ["xvoid", "\n", "++", "/a/g"]);
+    match("xvoid\n--/a/g", ["xvoid", "\n", "--", "/a/g"]);
     match("xyield\n++/a/g", ["xyield", "\n", "++", "/a/g"]);
     match("xyield\n--/a/g", ["xyield", "\n", "--", "/a/g"]);
 
@@ -1034,7 +1043,12 @@ describe("tokens", () => {
     match("`${1}${/a/g}`", ["`${", "1", "}${", "/a/g", "}`"]);
     match("`${1}${++/a/g}`", ["`${", "1", "}${", "++", "/a/g", "}`"]);
     match("`${1}${--/a/g}`", ["`${", "1", "}${", "--", "/a/g", "}`"]);
+
     match("return\n{}/a/g", ["return", "\n", "{", "}", "/a/g"]);
+    match("return\r{}/a/g", ["return", "\r", "{", "}", "/a/g"]);
+    match("return\r\n{}/a/g", ["return", "\r\n", "{", "}", "/a/g"]);
+    match("return\u2028{}/a/g", ["return", "\u2028", "{", "}", "/a/g"]);
+    match("return\u2029{}/a/g", ["return", "\u2029", "{", "}", "/a/g"]);
     match("throw\n{}/a/g", ["throw", "\n", "{", "}", "/a/g"]);
     match("yield\n{}/a/g", ["yield", "\n", "{", "}", "/a/g"]);
 
@@ -1153,21 +1167,120 @@ describe("tokens", () => {
     match("{");
     match("}");
 
+    ////// Division vs regex
+
+    match("v.if(x)/a/g", ["v", ".", "if", "(", "x", ")", "/", "a", "/", "g"]);
+    match("v?.if(x)/a/g", ["v", "?.", "if", "(", "x", ")", "/", "a", "/", "g"]);
+    match("v.if(x)++/a/g", [
+      "v",
+      ".",
+      "if",
+      "(",
+      "x",
+      ")",
+      "++",
+      "/",
+      "a",
+      "/",
+      "g",
+    ]);
+    match("v.if(x)--/a/g", [
+      "v",
+      ".",
+      "if",
+      "(",
+      "x",
+      ")",
+      "--",
+      "/",
+      "a",
+      "/",
+      "g",
+    ]);
+    match("v?.if(x)++/a/g", [
+      "v",
+      "?.",
+      "if",
+      "(",
+      "x",
+      ")",
+      "++",
+      "/",
+      "a",
+      "/",
+      "g",
+    ]);
+    match("v?.if(x)--/a/g", [
+      "v",
+      "?.",
+      "if",
+      "(",
+      "x",
+      ")",
+      "--",
+      "/",
+      "a",
+      "/",
+      "g",
+    ]);
+
+    match("await{}/a/g", ["await", "{", "}", "/", "a", "/", "g"]);
+    match("await\n{}/a/g", ["await", "\n", "{", "}", "/", "a", "/", "g"]);
+    match("case{}/a/g", ["case", "{", "}", "/", "a", "/", "g"]);
+    match("case\n{}/a/g", ["case", "\n", "{", "}", "/", "a", "/", "g"]);
+    match("default{}/a/g", ["default", "{", "}", "/", "a", "/", "g"]);
+    match("default\n{}/a/g", ["default", "\n", "{", "}", "/", "a", "/", "g"]);
+    match("delete{}/a/g", ["delete", "{", "}", "/", "a", "/", "g"]);
+    match("delete\n{}/a/g", ["delete", "\n", "{", "}", "/", "a", "/", "g"]);
+    match("else++{}/a/g", ["else", "++", "{", "}", "/", "a", "/", "g"]);
+    match("else\n++{}/a/g", ["else", "\n", "++", "{", "}", "/", "a", "/", "g"]);
+    match("instanceof{}/a/g", ["instanceof", "{", "}", "/", "a", "/", "g"]);
+    match("instanceof\n{}/a/g", [
+      "instanceof",
+      "\n",
+      "{",
+      "}",
+      "/",
+      "a",
+      "/",
+      "g",
+    ]);
+    match("new{}/a/g", ["new", "{", "}", "/", "a", "/", "g"]);
+    match("new\n{}/a/g", ["new", "\n", "{", "}", "/", "a", "/", "g"]);
+    match("return{}/a/g", ["return", "{", "}", "/", "a", "/", "g"]);
+    match("throw{}/a/g", ["throw", "{", "}", "/", "a", "/", "g"]);
+    match("typeof{}/a/g", ["typeof", "{", "}", "/", "a", "/", "g"]);
+    match("typeof\n{}/a/g", ["typeof", "\n", "{", "}", "/", "a", "/", "g"]);
+    match("void{}/a/g", ["void", "{", "}", "/", "a", "/", "g"]);
+    match("void\n{}/a/g", ["void", "\n", "{", "}", "/", "a", "/", "g"]);
+    match("yield{}/a/g", ["yield", "{", "}", "/", "a", "/", "g"]);
+
     match("xawait/a/g", ["xawait", "/", "a", "/", "g"]);
+    match("xawait\n/a/g", ["xawait", "\n", "/", "a", "/", "g"]);
     match("xcase/a/g", ["xcase", "/", "a", "/", "g"]);
+    match("xcase\n/a/g", ["xcase", "\n", "/", "a", "/", "g"]);
     match("xdefault/a/g", ["xdefault", "/", "a", "/", "g"]);
+    match("xdefault\n/a/g", ["xdefault", "\n", "/", "a", "/", "g"]);
     match("xdelete/a/g", ["xdelete", "/", "a", "/", "g"]);
+    match("xdelete\n/a/g", ["xdelete", "\n", "/", "a", "/", "g"]);
     match("xdo/a/g", ["xdo", "/", "a", "/", "g"]);
+    match("xdo\n/a/g", ["xdo", "\n", "/", "a", "/", "g"]);
     match("xelse/a/g", ["xelse", "/", "a", "/", "g"]);
+    match("xelse\n/a/g", ["xelse", "\n", "/", "a", "/", "g"]);
     match("xextends/a/g", ["xextends", "/", "a", "/", "g"]);
+    match("xextends\n/a/g", ["xextends", "\n", "/", "a", "/", "g"]);
     match("xinstanceof/a/g", ["xinstanceof", "/", "a", "/", "g"]);
+    match("xinstanceof\n/a/g", ["xinstanceof", "\n", "/", "a", "/", "g"]);
     match("xnew/a/g", ["xnew", "/", "a", "/", "g"]);
+    match("xnew\n/a/g", ["xnew", "\n", "/", "a", "/", "g"]);
     match("xreturn/a/g", ["xreturn", "/", "a", "/", "g"]);
     match("xreturn\n/a/g", ["xreturn", "\n", "/", "a", "/", "g"]);
     match("xthrow/a/g", ["xthrow", "/", "a", "/", "g"]);
     match("xthrow\n/a/g", ["xthrow", "\n", "/", "a", "/", "g"]);
     match("xtypeof/a/g", ["xtypeof", "/", "a", "/", "g"]);
+    match("xtypeof\n/a/g", ["xtypeof", "\n", "/", "a", "/", "g"]);
     match("xvoid/a/g", ["xvoid", "/", "a", "/", "g"]);
+    match("xvoid\n/a/g", ["xvoid", "\n", "/", "a", "/", "g"]);
     match("xyield/a/g", ["xyield", "/", "a", "/", "g"]);
     match("xyield\n/a/g", ["xyield", "\n", "/", "a", "/", "g"]);
 
@@ -1268,9 +1381,5 @@ describe("tokens", () => {
     ]);
     match("+{}++/a/g", ["+", "{", "}", "++", "/", "a", "/", "g"]);
     match("+{}--/a/g", ["+", "{", "}", "--", "/", "a", "/", "g"]);
-    match("return {}/a/g", ["return", " ", "{", "}", "/", "a", "/", "g"]);
-    match("return{}/a/g", ["return", "{", "}", "/", "a", "/", "g"]);
-    match("throw{}/a/g", ["throw", "{", "}", "/", "a", "/", "g"]);
-    match("yield{}/a/g", ["yield", "{", "}", "/", "a", "/", "g"]);
   });
 });
