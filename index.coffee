@@ -509,6 +509,7 @@ tokenize = (input, enableJSX) ->
           yield {
             type: "JSXString",
             value: match[0],
+            closed: match[2] != undefined,
           }
           continue
 
