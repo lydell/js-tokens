@@ -1,13 +1,11 @@
-###
 # Copyright 2014, 2015, 2016, 2017, 2018, 2019, 2020 Simon Lydell
 # License: MIT.
-#
+
 # https://tc39.es/ecma262/#sec-lexical-grammar
 # https://mathiasbynens.be/notes/javascript-identifiers
-# https://github.com/tc39/proposal-regexp-unicode-property-escapes/blob/fe6d07fad74cd0192d154966baa1e95e7cda78a1/README.md#other-examples
+# https://github.com/tc39/proposal-regexp-unicode-property-escapes/#other-examples
 # https://unicode.org/reports/tr31/#Backward_Compatibility
 # https://stackoverflow.com/a/27120110/2010616
-###
 
 RegularExpressionLiteral = ///
   /(?![ * / ])

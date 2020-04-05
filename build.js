@@ -1,5 +1,6 @@
 "use strict";
 
+const coffee = require("coffeescript");
 const fs = require("fs");
 const path = require("path");
 
@@ -15,6 +16,16 @@ const FILES_TO_COPY = [
   {
     src: "README.md",
     transform: (content) => content.replace(/<!--[^]*$/, READ_MORE),
+  },
+  {
+    src: "index.coffee",
+    dest: "index.js",
+    transform: (content) =>
+      coffee
+        .compile(content, { bare: true })
+        .replace(/ {2}/g, "\t")
+        .replace(/\/\/ https.*\n/g, "")
+        .replace(/\n\n/g, "\n"),
   },
 ];
 

@@ -5,8 +5,7 @@
     "doctoc": "doctoc README.md",
     "eslint": "eslint . --fix",
     "prettier": "prettier --write .",
-    "coffee": "coffee --compile --bare --output build index.coffee",
-    "build": "node build.js && npm run coffee",
+    "build": "node build.js",
     "test": "eslint . && prettier --check . && tsd && npm run build && jest"
   },
   "devDependencies": {
