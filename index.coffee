@@ -201,9 +201,7 @@ JSXString = ///
 ///y
 
 JSXText = ///
-  [ < { ]
-  |
-  [^ < { ]+
+  [^ < > { } ]+
 ///y
 
 tokenize = (input, enableJSX) ->
@@ -448,15 +446,6 @@ tokenize = (input, enableJSX) ->
             }
           continue
 
-        firstCodePoint = String.fromCodePoint(input.codePointAt(lastIndex))
-        lastIndex += firstCodePoint.length
-        lastSignificantToken = firstCodePoint
-        postfixIncDec = false
-        yield {
-          type: "Invalid",
-          value: firstCodePoint,
-        }
-
       when "JSXTag", "JSXTagEnd"
         JSXPunctuator.lastIndex = lastIndex
         if match = JSXPunctuator.exec(input)
@@ -513,26 +502,25 @@ tokenize = (input, enableJSX) ->
           }
           continue
 
-        firstCodePoint = String.fromCodePoint(input.codePointAt(lastIndex))
-        lastIndex += firstCodePoint.length
-        lastSignificantToken = firstCodePoint
-        yield {
-          type: "JSXInvalid",
-          value: firstCodePoint,
-        }
-
       when "JSXChildren"
         JSXText.lastIndex = lastIndex
-        match = JSXText.exec(input)
-        lastIndex = JSXText.lastIndex
-        lastSignificantToken = match[0]
-        switch match[0]
+        if match = JSXText.exec(input)
+          lastIndex = JSXText.lastIndex
+          lastSignificantToken = match[0]
+          yield {
+            type: "JSXText",
+            value: match[0],
+          }
+          continue
+
+        switch input[0]
           when "<"
             modes.push("JSXTag")
             yield {
               type: "JSXPunctuator",
               value: match[0],
             }
+            continue
           when "{"
             modes.push("JS")
             jsxInterpolations.push(braces.length)
@@ -542,11 +530,16 @@ tokenize = (input, enableJSX) ->
               type: "JSXPunctuator",
               value: match[0],
             }
-          else
-            yield {
-              type: "JSXText",
-              value: match[0],
-            }
+            continue
+
+    firstCodePoint = String.fromCodePoint(input.codePointAt(lastIndex))
+    lastIndex += firstCodePoint.length
+    lastSignificantToken = firstCodePoint
+    postfixIncDec = false
+    yield {
+      type: if mode == "JS" then "Invalid" else "JSXInvalid",
+      value: firstCodePoint,
+    }
 
   undefined
 
