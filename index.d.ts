@@ -20,6 +20,14 @@ export declare type JSXToken =
   | { type: "JSXPunctuator"; value: string }
   | { type: "JSXInvalid"; value: string };
 
-export default function jsTokens(input: string): Iterable<Token>;
+export default function jsTokens(
+  input: string,
+  options: { jsx: true }
+): Iterable<Token | JSXToken>;
 
-export function jsxTokens(input: string): Iterable<Token | JSXToken>;
+export default function jsTokens(
+  input: string,
+  options?: { jsx?: boolean }
+): Iterable<Token>;
+
+export default function jsTokens(input: string): Iterable<Token>;

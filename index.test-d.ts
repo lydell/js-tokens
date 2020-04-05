@@ -1,5 +1,6 @@
 import { expectType, expectError } from "tsd";
 import jsTokens, { Token } from ".";
+import { JSXToken } from "./build";
 
 // Requires one string:
 expectError(jsTokens());
@@ -10,6 +11,9 @@ expectError(jsTokens("", ""));
 expectError(jsTokens("").slice());
 
 expectType<Array<Token>>([...jsTokens("")]);
+expectType<Array<Token>>([...jsTokens("", {})]);
+expectType<Array<Token>>([...jsTokens("", { jsx: false })]);
+expectType<Array<Token | JSXToken>>([...jsTokens("", { jsx: true })]);
 
 for (const token of jsTokens("")) {
   expectType<Token>(token);

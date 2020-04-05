@@ -3,7 +3,7 @@
 const fs = require("fs");
 const path = require("path");
 const babelParser = require("@babel/parser");
-const { default: jsTokensLib } = require("../build/index");
+const jsTokensLib = require("../build/index");
 
 const babelTypeMap = {
   bigint: "NumericLiteral",

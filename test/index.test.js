@@ -1,6 +1,6 @@
 "use strict";
 
-const { default: jsTokens } = require("../build/index");
+const jsTokens = require("../build/index");
 
 function token(name, fn) {
   describe(name, () => {

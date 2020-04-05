@@ -9,10 +9,6 @@
 # https://stackoverflow.com/a/27120110/2010616
 ###
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-})
-
 RegularExpressionLiteral = ///
   /(?![ * / ])
   (?:
@@ -204,7 +200,7 @@ JSXText = ///
   [^ < > { } ]+
 ///y
 
-tokenize = (input, enableJSX) ->
+module.exports = jsTokens = (input, {jsx = false} = {}) ->
   {length} = input
   lastIndex = 0
   lastSignificantToken = ""
@@ -361,7 +357,7 @@ tokenize = (input, enableJSX) ->
                 if postfixIncDec then "?postfixIncDec" else "?unaryIncDec"
 
             when "<"
-              if enableJSX && (
+              if jsx && (
                 ValidPrecedingRegex.test(lastSignificantToken) ||
                 KeywordsWithExpressionAfter.test(lastSignificantToken)
               )
@@ -542,6 +538,3 @@ tokenize = (input, enableJSX) ->
     }
 
   undefined
-
-module.exports.default = (input) -> tokenize(input, false)
-module.exports.jsxTokens = (input) -> tokenize(input, true)
