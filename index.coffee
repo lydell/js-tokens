@@ -211,50 +211,52 @@ module.exports = jsTokens = (input, {jsx = false} = {}) ->
   postfixIncDec = false
 
   while lastIndex < length
-    WhiteSpace.lastIndex = lastIndex
-    if match = WhiteSpace.exec(input)
-      lastIndex = WhiteSpace.lastIndex
-      yield {
-        type: "WhiteSpace",
-        value: match[0],
-      }
-      continue
-
-    LineTerminatorSequence.lastIndex = lastIndex
-    if match = LineTerminatorSequence.exec(input)
-      lastIndex = LineTerminatorSequence.lastIndex
-      postfixIncDec = false
-      if KeywordsWithNoLineTerminatorAfter.test(lastSignificantToken)
-        lastSignificantToken = "?noLineTerminatorHere"
-      yield {
-        type: "LineTerminatorSequence",
-        value: match[0],
-      }
-      continue
-
-    MultiLineComment.lastIndex = lastIndex
-    if match = MultiLineComment.exec(input)
-      lastIndex = MultiLineComment.lastIndex
-      if Newline.test(match[0])
-        postfixIncDec = false
-      yield {
-        type: "MultiLineComment",
-        value: match[0],
-        closed: match[1] != undefined,
-      }
-      continue
-
-    SingleLineComment.lastIndex = lastIndex
-    if match = SingleLineComment.exec(input)
-      lastIndex = SingleLineComment.lastIndex
-      postfixIncDec = false
-      yield {
-        type: "SingleLineComment",
-        value: match[0],
-      }
-      continue
-
     mode = modes[modes.length - 1]
+
+    if mode != "JSXChildren"
+      WhiteSpace.lastIndex = lastIndex
+      if match = WhiteSpace.exec(input)
+        lastIndex = WhiteSpace.lastIndex
+        yield {
+          type: "WhiteSpace",
+          value: match[0],
+        }
+        continue
+
+      LineTerminatorSequence.lastIndex = lastIndex
+      if match = LineTerminatorSequence.exec(input)
+        lastIndex = LineTerminatorSequence.lastIndex
+        postfixIncDec = false
+        if KeywordsWithNoLineTerminatorAfter.test(lastSignificantToken)
+          lastSignificantToken = "?noLineTerminatorHere"
+        yield {
+          type: "LineTerminatorSequence",
+          value: match[0],
+        }
+        continue
+
+      MultiLineComment.lastIndex = lastIndex
+      if match = MultiLineComment.exec(input)
+        lastIndex = MultiLineComment.lastIndex
+        if Newline.test(match[0])
+          postfixIncDec = false
+        yield {
+          type: "MultiLineComment",
+          value: match[0],
+          closed: match[1] != undefined,
+        }
+        continue
+
+      SingleLineComment.lastIndex = lastIndex
+      if match = SingleLineComment.exec(input)
+        lastIndex = SingleLineComment.lastIndex
+        postfixIncDec = false
+        yield {
+          type: "SingleLineComment",
+          value: match[0],
+        }
+        continue
+
     switch mode
       when "JS"
         if input[lastIndex] == "/" && (
@@ -507,22 +509,25 @@ module.exports = jsTokens = (input, {jsx = false} = {}) ->
           }
           continue
 
-        switch input[0]
+        switch input[lastIndex]
           when "<"
             modes.push("JSXTag")
+            lastIndex++
+            lastSignificantToken = "<"
             yield {
               type: "JSXPunctuator",
-              value: match[0],
+              value: "<",
             }
             continue
           when "{"
             modes.push("JS")
             jsxInterpolations.push(braces.length)
+            lastIndex++
             lastSignificantToken = ""
             postfixIncDec = false
             yield {
               type: "JSXPunctuator",
-              value: match[0],
+              value: "{",
             }
             continue
 
