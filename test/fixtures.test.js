@@ -9,6 +9,10 @@ const babelTypeMap = {
   bigint: "NumericLiteral",
   CommentBlock: "MultiLineComment",
   CommentLine: "SingleLineComment",
+  jsxName: "JSXIdentifier",
+  jsxTagEnd: "JSXPunctuator",
+  jsxTagStart: "JSXPunctuator",
+  jsxText: "JSXText",
   name: "IdentifierName",
   num: "NumericLiteral",
   regexp: "RegularExpressionLiteral",
@@ -21,7 +25,8 @@ function babel(code, sourceType, fileType) {
     sourceType,
     plugins: [
       "classProperties",
-      fileType === "ts" ? "typescript" : undefined,
+      fileType === "ts" || fileType === "tsx" ? "typescript" : undefined,
+      fileType === "jsx" || fileType === "tsx" ? "jsx" : undefined,
     ].filter(Boolean),
   });
 
@@ -75,6 +80,21 @@ function babel(code, sourceType, fileType) {
   return result;
 }
 
+function jsTokensHelper(code, fileType) {
+  return Array.from(
+    jsTokensLib(code, { jsx: fileType === "jsx" || fileType === "tsx" }),
+    ({ type, value }) => ({
+      type:
+        type === "JSXPunctuator" && value !== "<" && value !== ">"
+          ? "Punctuator"
+          : type === "JSXString"
+          ? "StringLiteral"
+          : type,
+      value,
+    })
+  );
+}
+
 function readJsonIfExists(file) {
   return fs.existsSync(file)
     ? () => JSON.parse(fs.readFileSync(file, "utf8"))
@@ -102,15 +122,11 @@ function runFile(file, { compareWithBabel = true } = {}) {
       ? babel(code, sourceType, fileType)
       : [];
 
-    const jsTokens = Array.from(jsTokensLib(code), ({ type, value }) => ({
-      type,
-      value,
-    }));
-
+    const jsTokens = jsTokensHelper(code, fileType);
     const jsTokensValues = jsTokens.map((token) => token.value);
-
     const jsTokensWithoutBlanks = jsTokens.filter(
-      (token) => !/^\s*$/.test(token.value)
+      (token) =>
+        token.type !== "WhiteSpace" && token.type !== "LineTerminatorSequence"
     );
 
     if (babelTokens.some((token) => token.type === "HTMLLikeComment")) {
@@ -132,7 +148,7 @@ function runFile(file, { compareWithBabel = true } = {}) {
 function getFiles(dir) {
   return fs
     .readdirSync(dir)
-    .filter((file) => /\.[jt]s$/.test(file))
+    .filter((file) => /\.[jt]sx?$/.test(file))
     .map((file) => path.join(dir, file));
 }
 
