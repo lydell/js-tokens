@@ -7,6 +7,7 @@ export declare type Token =
   | { type: "RegularExpressionLiteral"; value: string; closed: boolean }
   | { type: "MultiLineComment"; value: string; closed: boolean }
   | { type: "SingleLineComment"; value: string }
+  | { type: "IdentifierName"; value: string }
   | { type: "NumericLiteral"; value: string }
   | { type: "Punctuator"; value: string }
   | { type: "WhiteSpace"; value: string }

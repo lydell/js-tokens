@@ -53,6 +53,10 @@ const tokens: Array<string> = Array.from(jsTokens(""), (token) => {
       expectError(token.closed);
       return token.value;
 
+    case "IdentifierName":
+      expectError(token.closed);
+      return token.value;
+
     case "NumericLiteral":
       expectError(token.closed);
       return token.value;

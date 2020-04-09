@@ -23,11 +23,18 @@ Array.from(jsTokens(jsString, (token) => token.value)).join("|");
     - [Edge cases](#edge-cases)
   - [MultiLineComment](#multilinecomment)
   - [SingleLineComment](#singlelinecomment)
+  - [IdentifierName](#identifiername)
   - [NumericLiteral](#numericliteral)
   - [Punctuator](#punctuator)
   - [WhiteSpace](#whitespace)
   - [LineTerminatorSequence](#lineterminatorsequence)
   - [Invalid](#invalid)
+- [JSX Tokens](#jsx-tokens)
+  - [JSXString](#jsxstring)
+  - [JSXText](#jsxtext)
+  - [JSXIdentifier](#jsxidentifier)
+  - [JSXPunctuator](#jsxpunctuator)
+  - [JSXInvalid](#jsxinvalid)
 - [Compatibility](#compatibility)
   - [ECMAScript](#ecmascript)
     - [Annex B](#annex-b)
@@ -50,7 +57,15 @@ var jsTokens = require("js-tokens");
 
 ## Usage
 
-This package exports a generator function that turns a string of JavaScript code into token objects.
+```js
+jsTokens(string, options?)
+```
+
+| Option | Default | Description         |
+| ------ | ------- | ------------------- |
+| jsx    | `false` | Enable JSX support. |
+
+This package exports a generator function, `jsTokens`, that turns a string of JavaScript code into token objects.
 
 For the empty string, the function yields nothing (which can be turned into an empty list). For any other input, the function always yields _something,_ even for invalid JavaScript, and never throws. Concatenating the token values reproduces the input.
 
@@ -58,7 +73,11 @@ The package is very close to being fully spec compliant (it passes all [but 3](#
 
 ## Tokens
 
+_Spec: [ECMAScript Language: Lexical Grammar] + [Additional Syntax]_
+
 ```ts
+export default function jsTokens(input: string): Iterable<Token>;
+
 type Token =
   | { type: "StringLiteral"; value: string; closed: boolean }
   | { type: "NoSubstitutionTemplate"; value: string; closed: boolean }
@@ -68,6 +87,7 @@ type Token =
   | { type: "RegularExpressionLiteral"; value: string; closed: boolean }
   | { type: "MultiLineComment"; value: string; closed: boolean }
   | { type: "SingleLineComment"; value: string }
+  | { type: "IdentifierName"; value: string }
   | { type: "NumericLiteral"; value: string }
   | { type: "Punctuator"; value: string }
   | { type: "WhiteSpace"; value: string }
@@ -91,8 +111,14 @@ Examples:
 'string'
 ""
 ''
+"\""
+'\''
 "valid: \u00a0, invalid: \u"
 'valid: \u00a0, invalid: \u'
+"multi-\
+line"
+'multi-\
+line'
 " unclosed
 ' unclosed
 ```
@@ -266,6 +292,33 @@ Examples:
 //
 ```
 
+### IdentifierName
+
+_Spec: [IdentifierName]_
+
+Keywords, reserved words, `null`, `true`, `false`, variable names and property names.
+
+Examples:
+
+<!-- prettier-ignore -->
+```js
+if
+for
+var
+instanceof
+package
+null
+true
+false
+Infinity
+undefined
+NaN
+$variab1e_name
+π
+ಠ_ಠ
+\u006C\u006F\u006C\u0077\u0061\u0074
+```
+
 ### NumericLiteral
 
 _Spec: [NumericLiteral]_
@@ -290,18 +343,19 @@ Examples:
 
 _Spec: [Punctuator] + [DivPunctuator] + [RightBracePunctuator]_
 
-Examples:
+All possible values:
 
 <!-- prettier-ignore -->
 ```js
-+
-.
-?.
-<<<
-=>
-(
-/
-}
+&&  ||  ??
+--  ++
+.   ?.
+<   <=   >   >=
+!=  !==  ==  ===
+   +   -   %   &   |   ^   /   *   **   <<   >>   >>>
+=  +=  -=  %=  &=  |=  ^=  /=  *=  **=  <<=  >>=  >>>=
+(  )  [  ]  {  }
+?  :  ;  ,  ~  ...  =>
 ```
 
 ### WhiteSpace
@@ -320,7 +374,7 @@ CR, LF and CRLF, plus `\u2028` and `\u2029`.
 
 _Spec: n/a_
 
-Single code points not matched in another group.
+Single code points not matched in another tokens.
 
 Examples:
 
@@ -329,6 +383,116 @@ Examples:
 #
 @
 💩
+```
+
+## JSX Tokens
+
+_Spec: [JSX Specification]_
+
+```ts
+export default function jsTokens(
+  input: string,
+  options: { jsx: true }
+): Iterable<Token | JSXToken>;
+
+export declare type JSXToken =
+  | { type: "JSXString"; value: string; closed: boolean }
+  | { type: "JSXText"; value: string }
+  | { type: "JSXIdentifier"; value: string }
+  | { type: "JSXPunctuator"; value: string }
+  | { type: "JSXInvalid"; value: string };
+```
+
+- The tokenizer switches between outputting runs of `Token` and runs of `JSXToken`.
+- Runs of `JSXToken` can also contain `WhiteSpace`, `LineTerminatorSequence`, `MultiLineComment` and `SingleLineComment`.
+
+### JSXString
+
+_Spec: `"` JSXDoubleStringCharacters `"` + `'` JSXSingleStringCharacters `'`_
+
+If the ending `"` or `'` is missing, the token has `closed: false`. JSX strings can contain unescaped newlines, so unclosed JSX strings go on to the end of input.
+
+Note that JSX don’t support escape sequences as part of the token grammar. A `"` or `'` always closes the string, even with a backslash before.
+
+Examples:
+
+<!-- prettier-ignore -->
+```
+"string"
+'string'
+""
+''
+"\"
+'\'
+"multi-
+line"
+'multi-
+line'
+" unclosed
+' unclosed
+```
+
+### JSXText
+
+_Spec: JSXText_
+
+Anything but `<`, `>`, `{` and `}`.
+
+### JSXIdentifier
+
+_Spec: JSXIdentifier_
+
+Examples:
+
+<!-- prettier-ignore -->
+```js
+div
+class
+xml
+x-element
+x------
+$htm1_element
+ಠ_ಠ
+```
+
+### JSXPunctuator
+
+_Spec: n/a_
+
+All possible values:
+
+```js
+<
+>
+/
+.
+:
+=
+{
+}
+```
+
+### JSXInvalid
+
+_Spec: n/a_
+
+Single code points not matched in another token.
+
+Examples in JSX tags:
+
+```js
+1
+`
+#
+@
+💩
+```
+
+All possible values in JSX children:
+
+```js
+>
+}
 ```
 
 ## Compatibility
@@ -362,7 +526,7 @@ Both lines above should end with a couple of `>` tokens, but js-tokens matches a
 
 ### JSX
 
-JSX is _not_ supported.
+JSX is supported, via `{ jsx: true }`.
 
 ### JavaScript runtimes
 
@@ -372,10 +536,14 @@ js-tokens should work in any JavaScript runtime that supports [Unicode property 
 
 [MIT](LICENSE).
 
+[additional syntax]: https://tc39.es/ecma262/#sec-additional-syntax
 [annexb]: https://tc39.es/ecma262/#sec-additional-ecmascript-features-for-web-browsers
 [divpunctuator]: https://tc39.es/ecma262/#prod-DivPunctuator
+[ecmascript language: lexical grammar]: https://tc39.es/ecma262/#sec-ecmascript-language-lexical-grammar
 [example.test.js]: https://github.com/lydell/js-tokens/blob/master/test/example.test.js
+[identifiername]: https://tc39.es/ecma262/#prod-IdentifierName
 [identifierpart]: https://tc39.es/ecma262/#prod-IdentifierPart
+[jsx specification]: https://facebook.github.io/jsx/
 [lineterminatorsequence]: https://tc39.es/ecma262/#prod-LineTerminatorSequence
 [multilinecomment]: https://tc39.es/ecma262/#prod-MultiLineComment
 [nosubstitutiontemplate]: https://tc39.es/ecma262/#prod-NoSubstitutionTemplate
