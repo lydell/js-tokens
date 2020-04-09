@@ -315,6 +315,7 @@ undefined
 NaN
 $variab1e_name
 π
+℮
 ಠ_ಠ
 \u006C\u006F\u006C\u0077\u0061\u0074
 ```
