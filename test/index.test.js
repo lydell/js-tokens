@@ -1395,8 +1395,11 @@ describe("Token", () => {
 });
 
 describe("JSXToken", () => {
+  token("JSXInvalid", ["<", "a"], (match) => {
+    match("<", false);
+  });
+
   token("JSXInvalid", ["<"], (match) => {
-    match(" <", false);
     match(">", false);
     match("{", false);
     match("}", false);
@@ -1416,7 +1419,7 @@ describe("JSXToken", () => {
   });
 
   token("JSXInvalid", ["<", ">"], (match) => {
-    match(" <", false);
+    match("<", false);
     match(">");
     match("{", false);
     match("}");
@@ -1483,5 +1486,40 @@ describe("JSXToken", () => {
     match("2>1", "2");
     match("a{1}", "a");
     match("a}", "a");
+  });
+
+  token("JSXPunctuator", ["<", "a"], (match) => {
+    match("<");
+    match("=");
+  });
+
+  token("JSXPunctuator", ["<"], (match) => {
+    match(">");
+    match("/");
+    match(".");
+    match(":");
+    match("{");
+    match("}");
+
+    match("+", false);
+    match("-", false);
+    match("*", false);
+    match("^", false);
+    match("~", false);
+    match("(", false);
+    match(")", false);
+    match("[", false);
+    match("]", false);
+    match("!", false);
+    match("?", false);
+    match(",", false);
+    match(";", false);
+  });
+
+  token("JSXPunctuator", ["<", ">"], (match) => {
+    match("<");
+    match(">", false);
+    match("{");
+    match("}", false);
   });
 });
