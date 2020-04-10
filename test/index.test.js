@@ -1476,4 +1476,12 @@ describe("JSXToken", () => {
     match("'\r\n", { closed: false });
     match('"\r\n', { closed: false });
   });
+
+  token("JSXText", ["<", ">"], (match) => {
+    match("  /**///\n\t/+?.& some text Iñtërnâtiônàlizætiøn");
+    match("1<5", "1");
+    match("2>1", "2");
+    match("a{1}", "a");
+    match("a}", "a");
+  });
 });
