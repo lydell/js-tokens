@@ -14,7 +14,11 @@ function matchHelper(type, preceding, string, expected, extra = {}) {
     expected = undefined;
   }
 
-  test(printInvisibles(string), () => {
+  const title = [printInvisibles(string), JSON.stringify(expected)]
+    .filter(Boolean)
+    .join(" → ");
+
+  test(title, () => {
     const tokens = Array.from(
       jsTokens(preceding.join("") + string, { jsx: type.startsWith("JSX") })
     );
