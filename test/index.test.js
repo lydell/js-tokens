@@ -2,33 +2,38 @@
 
 const jsTokens = require("../build/index");
 
-function token(name, fn) {
+function token(name, preceding, fn) {
   describe(name, () => {
-    fn(matchHelper.bind(undefined, name));
+    fn(matchHelper.bind(undefined, name, preceding));
   });
 }
 
-function matchHelper(type, string, expected, extra = {}) {
+function matchHelper(type, preceding, string, expected, extra = {}) {
   if (typeof expected === "object" && !Array.isArray(expected)) {
     extra = expected;
     expected = undefined;
   }
 
   test(printInvisibles(string), () => {
-    const tokens = Array.from(jsTokens(string));
-    expect(tokens.length).toBeGreaterThanOrEqual(1);
-    const [t] = tokens;
+    const tokens = Array.from(
+      jsTokens(preceding.join("") + string, { jsx: type.startsWith("JSX") })
+    );
+    expect(tokens.length).toBeGreaterThanOrEqual(preceding.length + 1);
+    expect(
+      tokens.slice(0, preceding.length).map((token) => token.value)
+    ).toEqual(preceding);
+    const t = tokens[preceding.length];
     if (expected === false) {
       expect(t.type).not.toBe(type);
     } else {
       if (Array.isArray(expected)) {
-        expect(tokens.map((t) => t.value)).toEqual(expected);
+        expect(tokens.map((token) => token.value)).toEqual(expected);
       } else {
         expect(t.type).toBe(type);
         if (typeof expected === "string") {
           expect(t.value).toBe(expected);
         } else {
-          expect(tokens).toHaveLength(1);
+          expect(tokens).toHaveLength(preceding.length + 1);
           expect(t.value).toBe(string);
         }
         if ("closed" in t) {
@@ -81,9 +86,7 @@ describe("jsTokens", () => {
   test("is a function", () => {
     expect(typeof jsTokens).toBe("function");
   });
-});
 
-describe("tokens", () => {
   test("empty string", () => {
     expect(Array.from(jsTokens(""))).toEqual([]);
   });
@@ -93,8 +96,10 @@ describe("tokens", () => {
       expect(() => jsTokens(String.fromCharCode(c))).not.toThrow();
     }
   });
+});
 
-  token("Invalid", (match) => {
+describe("Token", () => {
+  token("Invalid", [], (match) => {
     match("@");
     match("#");
     match("\\");
@@ -106,7 +111,7 @@ describe("tokens", () => {
     match("\ud83d"); // First half of 💩
   });
 
-  token("WhiteSpace", (match) => {
+  token("WhiteSpace", [], (match) => {
     match(" ");
     match("    ");
     match(" a", " ");
@@ -134,7 +139,7 @@ describe("tokens", () => {
     match("\u3000");
   });
 
-  token("LineTerminatorSequence", (match) => {
+  token("LineTerminatorSequence", [], (match) => {
     match("\n");
     match("\n\n\n", ["\n", "\n", "\n"]);
     match("\na", "\n");
@@ -150,7 +155,7 @@ describe("tokens", () => {
     match(" \t\n\r \r\n-1", [" \t", "\n", "\r", " ", "\r\n", "-", "1"]);
   });
 
-  token("SingleLineComment", (match) => {
+  token("SingleLineComment", [], (match) => {
     match("//");
     match("//comment");
     match("// comment");
@@ -166,7 +171,7 @@ describe("tokens", () => {
     match("//comment\t\n", "//comment\t");
   });
 
-  token("MultiLineComment", (match) => {
+  token("MultiLineComment", [], (match) => {
     match("/**/");
     match("/*comment*/");
     match("/* comment */");
@@ -182,7 +187,7 @@ describe("tokens", () => {
     });
   });
 
-  token("StringLiteral", (match) => {
+  token("StringLiteral", [], (match) => {
     match("''");
     match('""');
     match("'string'");
@@ -253,7 +258,7 @@ describe("tokens", () => {
     match('"${"a"}"', '"${"');
   });
 
-  token("NoSubstitutionTemplate", (match) => {
+  token("NoSubstitutionTemplate", [], (match) => {
     match("``");
     match("`string`");
     match("`\\``");
@@ -319,7 +324,7 @@ describe("tokens", () => {
     match("`\\${{{}}}a`");
   });
 
-  token("NumericLiteral", (match) => {
+  token("NumericLiteral", [], (match) => {
     match("0");
     match("0n");
     match("000");
@@ -520,7 +525,7 @@ describe("tokens", () => {
     match(".0b1", ".0");
   });
 
-  token("IdentifierName", (match) => {
+  token("IdentifierName", [], (match) => {
     match("$");
     match("_");
     match("a");
@@ -594,7 +599,7 @@ describe("tokens", () => {
     match("\\x09", false);
   });
 
-  token("RegularExpressionLiteral", (match) => {
+  token("RegularExpressionLiteral", [], (match) => {
     match("//", false);
     match("/a/");
     match("/\\//");
@@ -1091,7 +1096,7 @@ describe("tokens", () => {
     ]);
   });
 
-  token("Punctuator", (match) => {
+  token("Punctuator", [], (match) => {
     match("+");
     match("++");
     match("+=");
@@ -1386,5 +1391,47 @@ describe("tokens", () => {
     ]);
     match("+{}++/a/g", ["+", "{", "}", "++", "/", "a", "/", "g"]);
     match("+{}--/a/g", ["+", "{", "}", "--", "/", "a", "/", "g"]);
+  });
+});
+
+describe("JSXToken", () => {
+  token("JSXInvalid", ["<"], (match) => {
+    match(" <", false);
+    match(">", false);
+    match("{", false);
+    match("}", false);
+    match("1");
+    match("`");
+    match("+");
+    match(",");
+    match("@");
+    match("#");
+    match("\\");
+    match("\\xa9", "\\");
+    match("\u0000");
+    match("\u007F");
+    match("☃");
+    match("💩");
+    match("\ud83d"); // First half of 💩
+  });
+
+  token("JSXInvalid", ["<", ">"], (match) => {
+    match(" <", false);
+    match(">");
+    match("{", false);
+    match("}");
+    match("1", false);
+    match("`", false);
+    match("+", false);
+    match(",", false);
+    match("@", false);
+    match("#", false);
+    match("\\", false);
+    match("\\xa9", false);
+    match("\u0000", false);
+    match("\u007F", false);
+    match("☃", false);
+    match("💩", false);
+    match("\ud83d", false); // First half of 💩
   });
 });
