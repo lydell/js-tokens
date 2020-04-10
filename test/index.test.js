@@ -1434,4 +1434,46 @@ describe("JSXToken", () => {
     match("💩", false);
     match("\ud83d", false); // First half of 💩
   });
+
+  token("JSXString", ["<"], (match) => {
+    match("''");
+    match('""');
+    match("'string'");
+    match('"string"');
+    match("'\\''", "'\\'");
+    match('"\\""', '"\\"');
+    match("'\\\\''", "'\\\\'");
+    match('"\\\\""', '"\\\\"');
+    match("'\n'");
+    match('"\n"');
+    match("'\r'");
+    match('"\r"');
+    match("'\u2028'");
+    match('"\u2028"');
+    match("'\u2029'");
+    match('"\u2029"');
+    match("'\r\n'");
+    match('"\r\n"');
+    match("'string'code'another string'", "'string'");
+    match('"string"code"another string"', '"string"');
+    match("'\"'");
+    match("'`'");
+    match('"\'"');
+    match('"`"');
+
+    match("'", { closed: false });
+    match('"', { closed: false });
+    match("'unclosed", { closed: false });
+    match('"unclosed', { closed: false });
+    match("'\n", { closed: false });
+    match('"\n', { closed: false });
+    match("'\r", { closed: false });
+    match('"\r', { closed: false });
+    match("'\u2028", { closed: false });
+    match('"\u2028', { closed: false });
+    match("'\u2029", { closed: false });
+    match('"\u2029', { closed: false });
+    match("'\r\n", { closed: false });
+    match('"\r\n', { closed: false });
+  });
 });
