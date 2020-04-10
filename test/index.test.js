@@ -31,7 +31,9 @@ function matchHelper(type, preceding, string, expected, extra = {}) {
       expect(t.type).not.toBe(type);
     } else {
       if (Array.isArray(expected)) {
-        expect(tokens.map((token) => token.value)).toEqual(expected);
+        expect(tokens.map((token) => token.value)).toEqual(
+          preceding.concat(expected)
+        );
       } else {
         expect(t.type).toBe(type);
         if (typeof expected === "string") {
@@ -1525,5 +1527,53 @@ describe("JSXToken", () => {
     match(">", false);
     match("{");
     match("}", false);
+  });
+
+  token("JSXIdentifier", ["<"], (match) => {
+    match("div");
+    match("class");
+    match("xml");
+    match("x-element");
+    match("x------");
+    match("$htm1_element");
+    match("ಠ_ಠ");
+    match("-", false);
+    match("-f--", ["-", "f--"]);
+
+    match("$");
+    match("_");
+    match("a");
+    match("z");
+    match("A");
+    match("Z");
+    match("å");
+    match("π");
+    match("0", false);
+    match("0a", false);
+    match("$0");
+    match("_0");
+    match("a0");
+    match("z0");
+    match("A0");
+    match("Z0");
+    match("å0");
+    match("π0");
+    match("a_56åπ");
+    match("℮");
+    match("℘");
+    match("゛");
+    match("゜");
+    match("℮℘");
+    match("·", false);
+    match("℮·");
+    match("·", false);
+    match("℮·");
+    match("᧚", false);
+    match("℮᧚");
+    match("Iñtërnâtiônàlizætiøn");
+  });
+
+  token("JSXIdentifier", ["<", ">"], (match) => {
+    match("div", false);
   });
 });
