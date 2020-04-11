@@ -30,26 +30,6 @@ RegularExpressionLiteral = ///
   )?
 ///yu
 
-ValidPrecedingRegex = ///
-  ^(?:
-    [/+-]
-    |
-    \.{3}
-    |
-    \?(?:noLineTerminatorHere|nonExpressionParenEnd|unaryIncDec|templateInterpolation)
-  )?$
-  |
-  [ { } ( [ , ; < > = * % & | ^ ! ~ ? : ]$
-///
-
-KeywordsWithExpressionAfter = ///
-  ^(?:await|case|default|delete|do|else|extends|instanceof|new|return|throw|typeof|void|yield)$
-///
-
-KeywordsWithNoLineTerminatorAfter = ///
-  ^(?:return|throw|yield)$
-///
-
 Punctuator = ///
   -- | \+\+
   |
@@ -78,14 +58,6 @@ Punctuator = ///
   [ ? ~ , : ; [ \] ( ) { } ]
 ///y
 
-PunctuatorsNotPrecedingObjectLiteral = ///
-  ^(?:
-    =>
-    |
-    [ ; \] ) { } ]
-  )$
-///
-
 IdentifierName = ///
   (?=[ $ _ \p{ID_Start} \\ ])
   (?:
@@ -106,10 +78,6 @@ LineTerminatorSequence = ///
   |
   [ \r \u2028 \u2029 ]
 ///y
-
-Newline = ///
-  [ \n \r \u2028 \u2029 ]
-///
 
 StringLiteral = ///
   ([ ' " ])
@@ -198,6 +166,36 @@ JSXText = ///
   [^ < > { } ]+
 ///y
 
+TokensPrecedingExpression = ///
+  ^(?:
+    [/+-]
+    |
+    \.{3}
+    |
+    \?(?:noLineTerminatorHere|nonExpressionParenEnd|unaryIncDec|templateInterpolation)
+  )?$
+  |
+  [ { } ( [ , ; < > = * % & | ^ ! ~ ? : ]$
+///
+
+KeywordsWithExpressionAfter = ///
+  ^(?:await|case|default|delete|do|else|extends|instanceof|new|return|throw|typeof|void|yield)$
+///
+
+KeywordsWithNoLineTerminatorAfter = ///
+  ^(?:return|throw|yield)$
+///
+
+PunctuatorsNotPrecedingObjectLiteral = ///
+  ^(?:
+    =>
+    |
+    [ ; \] ) { } ]
+  )$
+///
+
+Newline = RegExp(LineTerminatorSequence.source)
+
 module.exports = jsTokens = (input, {jsx = false} = {}) ->
   {length} = input
   lastIndex = 0
@@ -260,7 +258,7 @@ module.exports = jsTokens = (input, {jsx = false} = {}) ->
     switch mode
       when "JS"
         if input[lastIndex] == "/" && (
-          ValidPrecedingRegex.test(lastSignificantToken) ||
+          TokensPrecedingExpression.test(lastSignificantToken) ||
           KeywordsWithExpressionAfter.test(lastSignificantToken)
         )
           RegularExpressionLiteral.lastIndex = lastIndex
@@ -358,7 +356,7 @@ module.exports = jsTokens = (input, {jsx = false} = {}) ->
 
             when "<"
               if jsx && (
-                ValidPrecedingRegex.test(lastSignificantToken) ||
+                TokensPrecedingExpression.test(lastSignificantToken) ||
                 KeywordsWithExpressionAfter.test(lastSignificantToken)
               )
                 modes.push("JSXTag")
