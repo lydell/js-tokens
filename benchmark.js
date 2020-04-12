@@ -84,7 +84,11 @@ function run(argv) {
       console.error(error);
     }
   } else {
-    const tokens = Array.from(jsTokens(code));
+    // `Array.from` causes an out-of-memory crash in Node.js 10.
+    const tokens = [];
+    for (const token of jsTokens(code)) {
+      tokens.push(token);
+    }
     console.log("Number of tokens:", tokens.length);
   }
   console.timeEnd(name);
