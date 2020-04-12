@@ -15,8 +15,8 @@
     "eslint": "6.8.0",
     "eslint-plugin-jest": "23.8.2",
     "everything.js": "1.0.3",
-    "jest": "25.2.7",
-    "prettier": "2.0.2",
+    "jest": "25.3.0",
+    "prettier": "2.0.4",
     "test262-parser-tests": "0.0.5",
     "tsd": "0.11.0"
   }
