@@ -329,6 +329,7 @@ describe("Token", () => {
       "}`",
     ]);
     match("`\\${{{}}}a`");
+    match("`${}", ["`${", "}"]);
   });
 
   testToken("NumericLiteral", [], (match) => {

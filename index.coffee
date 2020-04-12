@@ -264,16 +264,16 @@ module.exports = jsTokens = (input, {jsx = false} = {}) ->
           KeywordsWithExpressionAfter.test(lastSignificantToken)
         )
           RegularExpressionLiteral.lastIndex = lastIndex
-          if match = RegularExpressionLiteral.exec(input)
-            lastIndex = RegularExpressionLiteral.lastIndex
-            lastSignificantToken = match[0]
-            postfixIncDec = true
-            yield {
-              type: "RegularExpressionLiteral",
-              value: match[0],
-              closed: match[1] != undefined && match[1] != "\\",
-            }
-            continue
+          match = RegularExpressionLiteral.exec(input)
+          lastIndex = RegularExpressionLiteral.lastIndex
+          lastSignificantToken = match[0]
+          postfixIncDec = true
+          yield {
+            type: "RegularExpressionLiteral",
+            value: match[0],
+            closed: match[1] != undefined && match[1] != "\\",
+          }
+          continue
 
         Punctuator.lastIndex = lastIndex
         if match = Punctuator.exec(input)
