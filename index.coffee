@@ -69,16 +69,6 @@ IdentifierName = ///
   )+
 ///yu
 
-WhiteSpace = ///
-  [ \t \v \f \ufeff \p{Zs} ]+
-///yu
-
-LineTerminatorSequence = ///
-  \r?\n
-  |
-  [ \r \u2028 \u2029 ]
-///y
-
 StringLiteral = ///
   ([ ' " ])
   (?:
@@ -131,6 +121,16 @@ Template = ///
   ( ` | \$\{ )?
 ///y
 
+WhiteSpace = ///
+  [ \t \v \f \ufeff \p{Zs} ]+
+///yu
+
+LineTerminatorSequence = ///
+  \r?\n
+  |
+  [ \r \u2028 \u2029 ]
+///y
+
 MultiLineComment = ///
   /\*
   (?:
@@ -146,7 +146,9 @@ SingleLineComment = ///
 ///y
 
 JSXPunctuator = ///
-  [ < > / . : = { } ]
+  [ < > . : = { } ]
+  |
+  /(?![ / * ])
 ///y
 
 JSXIdentifier = ///
@@ -209,52 +211,6 @@ module.exports = jsTokens = (input, {jsx = false} = {}) ->
   while lastIndex < length
     mode = stack[stack.length - 1]
 
-    if mode.tag != "JSXChildren"
-      WhiteSpace.lastIndex = lastIndex
-      if match = WhiteSpace.exec(input)
-        lastIndex = WhiteSpace.lastIndex
-        yield {
-          type: "WhiteSpace",
-          value: match[0],
-        }
-        continue
-
-      LineTerminatorSequence.lastIndex = lastIndex
-      if match = LineTerminatorSequence.exec(input)
-        lastIndex = LineTerminatorSequence.lastIndex
-        postfixIncDec = false
-        if KeywordsWithNoLineTerminatorAfter.test(lastSignificantToken)
-          lastSignificantToken = "?noLineTerminatorHere"
-        yield {
-          type: "LineTerminatorSequence",
-          value: match[0],
-        }
-        continue
-
-      MultiLineComment.lastIndex = lastIndex
-      if match = MultiLineComment.exec(input)
-        lastIndex = MultiLineComment.lastIndex
-        if Newline.test(match[0])
-          postfixIncDec = false
-          if KeywordsWithNoLineTerminatorAfter.test(lastSignificantToken)
-            lastSignificantToken = "?noLineTerminatorHere"
-        yield {
-          type: "MultiLineComment",
-          value: match[0],
-          closed: match[1] != undefined,
-        }
-        continue
-
-      SingleLineComment.lastIndex = lastIndex
-      if match = SingleLineComment.exec(input)
-        lastIndex = SingleLineComment.lastIndex
-        postfixIncDec = false
-        yield {
-          type: "SingleLineComment",
-          value: match[0],
-        }
-        continue
-
     switch mode.tag
       when "JS", "TemplateInterpolation", "JSXInterpolation"
         if input[lastIndex] == "/" && (
@@ -262,16 +218,16 @@ module.exports = jsTokens = (input, {jsx = false} = {}) ->
           KeywordsWithExpressionAfter.test(lastSignificantToken)
         )
           RegularExpressionLiteral.lastIndex = lastIndex
-          match = RegularExpressionLiteral.exec(input)
-          lastIndex = RegularExpressionLiteral.lastIndex
-          lastSignificantToken = match[0]
-          postfixIncDec = true
-          yield {
-            type: "RegularExpressionLiteral",
-            value: match[0],
-            closed: match[1] != undefined && match[1] != "\\",
-          }
-          continue
+          if match = RegularExpressionLiteral.exec(input)
+            lastIndex = RegularExpressionLiteral.lastIndex
+            lastSignificantToken = match[0]
+            postfixIncDec = true
+            yield {
+              type: "RegularExpressionLiteral",
+              value: match[0],
+              closed: match[1] != undefined && match[1] != "\\",
+            }
+            continue
 
         Punctuator.lastIndex = lastIndex
         if match = Punctuator.exec(input)
@@ -523,6 +479,51 @@ module.exports = jsTokens = (input, {jsx = false} = {}) ->
               value: "{",
             }
             continue
+
+    WhiteSpace.lastIndex = lastIndex
+    if match = WhiteSpace.exec(input)
+      lastIndex = WhiteSpace.lastIndex
+      yield {
+        type: "WhiteSpace",
+        value: match[0],
+      }
+      continue
+
+    LineTerminatorSequence.lastIndex = lastIndex
+    if match = LineTerminatorSequence.exec(input)
+      lastIndex = LineTerminatorSequence.lastIndex
+      postfixIncDec = false
+      if KeywordsWithNoLineTerminatorAfter.test(lastSignificantToken)
+        lastSignificantToken = "?noLineTerminatorHere"
+      yield {
+        type: "LineTerminatorSequence",
+        value: match[0],
+      }
+      continue
+
+    MultiLineComment.lastIndex = lastIndex
+    if match = MultiLineComment.exec(input)
+      lastIndex = MultiLineComment.lastIndex
+      if Newline.test(match[0])
+        postfixIncDec = false
+        if KeywordsWithNoLineTerminatorAfter.test(lastSignificantToken)
+          lastSignificantToken = "?noLineTerminatorHere"
+      yield {
+        type: "MultiLineComment",
+        value: match[0],
+        closed: match[1] != undefined,
+      }
+      continue
+
+    SingleLineComment.lastIndex = lastIndex
+    if match = SingleLineComment.exec(input)
+      lastIndex = SingleLineComment.lastIndex
+      postfixIncDec = false
+      yield {
+        type: "SingleLineComment",
+        value: match[0],
+      }
+      continue
 
     firstCodePoint = String.fromCodePoint(input.codePointAt(lastIndex))
     lastIndex += firstCodePoint.length
