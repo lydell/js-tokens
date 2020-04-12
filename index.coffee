@@ -179,7 +179,7 @@ TokensPrecedingExpression = ///
 ///
 
 KeywordsWithExpressionAfter = ///
-  ^(?:await|case|default|delete|do|else|extends|instanceof|new|return|throw|typeof|void|yield)$
+  ^(?:await|case|default|delete|do|else|instanceof|new|return|throw|typeof|void|yield)$
 ///
 
 KeywordsWithNoLineTerminatorAfter = ///

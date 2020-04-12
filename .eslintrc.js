@@ -11,6 +11,7 @@ module.exports = {
     "arrow-body-style": "error",
     curly: "error",
     "dot-notation": "error",
+    "no-shadow": "error",
     "no-var": "error",
     "prefer-const": "error",
     "object-shorthand": "error",
