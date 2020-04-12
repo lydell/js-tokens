@@ -25,7 +25,8 @@ const FILES_TO_COPY = [
         .compile(content, { bare: true })
         .replace(/ {2}/g, "\t")
         .replace(/\/\/ https.*\n/g, "")
-        .replace(/\n\n/g, "\n"),
+        .replace(/\n\n/g, "\n")
+        .replace(/\{\s*(tag: "[^"]+")\s*\}/g, "{$1}"),
   },
 ];
 
