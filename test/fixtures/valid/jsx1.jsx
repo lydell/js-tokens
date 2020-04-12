@@ -16,11 +16,14 @@
 
   <div>
     <p>
+      {/* comment */}
       <a href={`https://${domain}.com/${<path>{`${{}<x>y</x/g}`}</path>.toString()}`}
         alt/**/=/**/<Alt text=<Text/>/>
       >
         Some{' '}link
       </a>
+      {// comment
+      }
     </p>
   </div>
 </Nav>;
