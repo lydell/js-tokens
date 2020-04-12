@@ -8,13 +8,16 @@ function testToken(name, preceding, fn) {
   });
 }
 
-function matchHelper(type, preceding, string, expected, extra = {}) {
+function matchHelper(type, preceding, string, expected = string, extra = {}) {
   if (typeof expected === "object" && !Array.isArray(expected)) {
     extra = expected;
-    expected = undefined;
+    expected = string;
   }
 
-  const title = [printInvisibles(string), JSON.stringify(expected)]
+  const title = [
+    printInvisibles(string),
+    expected === string ? undefined : JSON.stringify(expected),
+  ]
     .filter(Boolean)
     .join(" → ");
 
@@ -36,11 +39,9 @@ function matchHelper(type, preceding, string, expected, extra = {}) {
         );
       } else {
         expect(token.type).toBe(type);
-        if (typeof expected === "string") {
-          expect(token.value).toBe(expected);
-        } else {
+        expect(token.value).toBe(expected);
+        if (expected === string) {
           expect(tokens).toHaveLength(preceding.length + 1);
-          expect(token.value).toBe(string);
         }
         if ("closed" in token) {
           const { closed = true } = extra;
