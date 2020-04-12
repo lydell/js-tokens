@@ -394,24 +394,27 @@ function check(passedPreceding, code, fn) {
   const preceding = code.startsWith(last)
     ? [...passedPreceding, " "]
     : passedPreceding;
+
   const fullCode = preceding.join("") + code;
   const title = fullCode.replace(/\r/g, "␍").replace(/\n/g, "␊");
+
   test(title, () => {
     const tokens = Array.from(jsTokens(fullCode, { jsx: true }));
+
     expect(tokens.length).toBeGreaterThanOrEqual(preceding.length + 1);
+
     expect(
       tokens.slice(0, preceding.length).map((token) => token.value)
     ).toEqual(preceding);
+
     fn(tokens[preceding.length]);
   });
 }
 
 function addIncDec(preceding, incDec) {
   const last = preceding[preceding.length - 1];
-  return last === "+" && incDec === "++"
-    ? [...preceding, " ", "++"]
-    : last === "-" && incDec === "--"
-    ? [...preceding, " ", "--"]
+  return incDec.startsWith(last)
+    ? [...preceding, " ", incDec]
     : [...preceding, incDec];
 }
 
