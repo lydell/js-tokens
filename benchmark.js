@@ -45,7 +45,7 @@ function parseArguments(argv) {
 function read() {
   return fastGlob
     .sync("node_modules/**/*.js", {
-      ignore: "node_modules/test262-parser-tests",
+      ignore: ["node_modules/test262-parser-tests"],
     })
     .map((file) => fs.readFileSync(file, "utf8"))
     .join("\n;\n")
