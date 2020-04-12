@@ -200,18 +200,16 @@ module.exports = jsTokens = (input, {jsx = false} = {}) ->
   {length} = input
   lastIndex = 0
   lastSignificantToken = ""
-  modes = ["JS"]
+  stack = [{tag: "JS"}]
   braces = []
-  templates = []
   parenNesting = 0
-  jsxInterpolations = []
   nonExpressionParenStart = undefined
   postfixIncDec = false
 
   while lastIndex < length
-    mode = modes[modes.length - 1]
+    mode = stack[stack.length - 1]
 
-    if mode != "JSXChildren"
+    if mode.tag != "JSXChildren"
       WhiteSpace.lastIndex = lastIndex
       if match = WhiteSpace.exec(input)
         lastIndex = WhiteSpace.lastIndex
@@ -257,8 +255,8 @@ module.exports = jsTokens = (input, {jsx = false} = {}) ->
         }
         continue
 
-    switch mode
-      when "JS"
+    switch mode.tag
+      when "JS", "TemplateInterpolation", "JSXInterpolation"
         if input[lastIndex] == "/" && (
           TokensPrecedingExpression.test(lastSignificantToken) ||
           KeywordsWithExpressionAfter.test(lastSignificantToken)
@@ -311,41 +309,39 @@ module.exports = jsTokens = (input, {jsx = false} = {}) ->
               postfixIncDec = false
 
             when "}"
-              if templates.length > 0
-                nesting = templates[templates.length - 1]
-                if braces.length == nesting
-                  Template.lastIndex = lastIndex
-                  match = Template.exec(input)
-                  lastIndex = Template.lastIndex
-                  lastSignificantToken = match[0]
-                  if match[1] == "${"
-                    lastSignificantToken = "?templateInterpolation"
-                    postfixIncDec = false
+              switch mode.tag
+                when "TemplateInterpolation"
+                  if braces.length == mode.nesting
+                    Template.lastIndex = lastIndex
+                    match = Template.exec(input)
+                    lastIndex = Template.lastIndex
+                    lastSignificantToken = match[0]
+                    if match[1] == "${"
+                      lastSignificantToken = "?templateInterpolation"
+                      postfixIncDec = false
+                      yield {
+                        type: "TemplateMiddle",
+                        value: match[0],
+                      }
+                    else
+                      stack.pop()
+                      postfixIncDec = true
+                      yield {
+                        type: "TemplateTail",
+                        value: match[0],
+                        closed: match[1] == "`",
+                      }
+                    continue
+                when "JSXInterpolation"
+                  if braces.length == mode.nesting
+                    stack.pop()
+                    lastIndex += 1
+                    lastSignificantToken = "}"
                     yield {
-                      type: "TemplateMiddle",
-                      value: match[0],
+                      type: "JSXPunctuator",
+                      value: "}"
                     }
-                  else
-                    templates.pop()
-                    postfixIncDec = true
-                    yield {
-                      type: "TemplateTail",
-                      value: match[0],
-                      closed: match[1] == "`",
-                    }
-                  continue
-              if jsxInterpolations.length > 0
-                nesting = jsxInterpolations[jsxInterpolations.length - 1]
-                if braces.length == nesting
-                  jsxInterpolations.pop()
-                  modes.pop()
-                  lastIndex += 1
-                  lastSignificantToken = "}"
-                  yield {
-                    type: "JSXPunctuator",
-                    value: "}"
-                  }
-                  continue
+                    continue
               postfixIncDec = braces.pop()
               nextLastSignificantToken =
                 if postfixIncDec then "?expressionBraceEnd" else "}"
@@ -362,7 +358,7 @@ module.exports = jsTokens = (input, {jsx = false} = {}) ->
                 TokensPrecedingExpression.test(lastSignificantToken) ||
                 KeywordsWithExpressionAfter.test(lastSignificantToken)
               )
-                modes.push("JSXTag")
+                stack.push({tag: "JSXTag"})
                 lastIndex += 1
                 lastSignificantToken = "<"
                 yield {
@@ -428,7 +424,7 @@ module.exports = jsTokens = (input, {jsx = false} = {}) ->
           lastSignificantToken = match[0]
           if match[1] == "${"
             lastSignificantToken = "?templateInterpolation"
-            templates.push(braces.length)
+            stack.push({tag: "TemplateInterpolation", nesting: braces.length})
             postfixIncDec = false
             yield {
               type: "TemplateHead",
@@ -450,28 +446,27 @@ module.exports = jsTokens = (input, {jsx = false} = {}) ->
           nextLastSignificantToken = match[0]
           switch match[0]
             when "<"
-              modes.push("JSXTag")
+              stack.push({tag: "JSXTag"})
             when ">"
-              modes.pop()
-              if mode == "JSXTagEnd"
-                modes.pop()
-                if modes[modes.length - 1] == "JSXChildren"
-                  modes.pop()
+              stack.pop()
+              if mode.tag == "JSXTagEnd"
+                stack.pop()
+                if stack[stack.length - 1].tag == "JSXChildren"
+                  stack.pop()
                 nextLastSignificantToken = "?jsx"
                 postfixIncDec = true
               else if lastSignificantToken == "/"
                 nextLastSignificantToken = "?jsx"
                 postfixIncDec = true
               else
-                modes.push("JSXChildren")
+                stack.push({tag: "JSXChildren"})
             when "{"
-              modes.push("JS")
-              jsxInterpolations.push(braces.length)
+              stack.push({tag: "JSXInterpolation", nesting: braces.length})
               nextLastSignificantToken = "?jsxInterpolation"
               postfixIncDec = false
             when "/"
               if lastSignificantToken == "<"
-                modes.push("JSXTagEnd")
+                stack.push({tag: "JSXTagEnd"})
           lastSignificantToken = nextLastSignificantToken
           yield {
             type: "JSXPunctuator",
@@ -513,7 +508,7 @@ module.exports = jsTokens = (input, {jsx = false} = {}) ->
 
         switch input[lastIndex]
           when "<"
-            modes.push("JSXTag")
+            stack.push({tag: "JSXTag"})
             lastIndex++
             lastSignificantToken = "<"
             yield {
@@ -522,8 +517,7 @@ module.exports = jsTokens = (input, {jsx = false} = {}) ->
             }
             continue
           when "{"
-            modes.push("JS")
-            jsxInterpolations.push(braces.length)
+            stack.push({tag: "JSXInterpolation", nesting: braces.length})
             lastIndex++
             lastSignificantToken = "?jsxInterpolation"
             postfixIncDec = false
@@ -538,7 +532,7 @@ module.exports = jsTokens = (input, {jsx = false} = {}) ->
     lastSignificantToken = firstCodePoint
     postfixIncDec = false
     yield {
-      type: if mode == "JS" then "Invalid" else "JSXInvalid",
+      type: if mode.tag.startsWith("JSX") then "JSXInvalid" else "Invalid",
       value: firstCodePoint,
     }
 
