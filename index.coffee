@@ -449,13 +449,7 @@ module.exports = jsTokens = (input, {jsx = false} = {}) ->
               stack.push({tag: "JSXTag"})
             when ">"
               stack.pop()
-              if mode.tag == "JSXTagEnd"
-                stack.pop()
-                if stack[stack.length - 1].tag == "JSXChildren"
-                  stack.pop()
-                nextLastSignificantToken = "?jsx"
-                postfixIncDec = true
-              else if lastSignificantToken == "/"
+              if lastSignificantToken == "/" || mode.tag == "JSXTagEnd"
                 nextLastSignificantToken = "?jsx"
                 postfixIncDec = true
               else
@@ -466,6 +460,9 @@ module.exports = jsTokens = (input, {jsx = false} = {}) ->
               postfixIncDec = false
             when "/"
               if lastSignificantToken == "<"
+                stack.pop()
+                if stack[stack.length - 1].tag == "JSXChildren"
+                  stack.pop()
                 stack.push({tag: "JSXTagEnd"})
           lastSignificantToken = nextLastSignificantToken
           yield {
