@@ -1,4 +1,4 @@
-<Nav {...props}
+<Global.Nav.Component {...props}
     closeButton=<CloseButton / >
     // Temporary logo
     logo={<img src="https://example.com/tmp.png" />}
@@ -26,4 +26,4 @@
       }
     </p>
   </div>
-</Nav>;
+</Global.Nav.Component>;
