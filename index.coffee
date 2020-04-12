@@ -172,7 +172,7 @@ TokensPrecedingExpression = ///
     |
     \.{3}
     |
-    \?(?:noLineTerminatorHere|nonExpressionParenEnd|unaryIncDec|templateInterpolation)
+    \?(?:jsxInterpolation|noLineTerminatorHere|nonExpressionParenEnd|unaryIncDec|templateInterpolation)
   )?$
   |
   [ { } ( [ , ; < > = * % & | ^ ! ~ ? : ]$
@@ -297,6 +297,7 @@ module.exports = jsTokens = (input, {jsx = false} = {}) ->
             when "{"
               Punctuator.lastIndex = 0
               isExpression =
+                lastSignificantToken == "?jsxInterpolation" ||
                 lastSignificantToken == "?templateInterpolation" ||
                 lastSignificantToken == "?unaryIncDec" ||
                 (KeywordsWithExpressionAfter.test(lastSignificantToken) &&
@@ -444,6 +445,7 @@ module.exports = jsTokens = (input, {jsx = false} = {}) ->
         JSXPunctuator.lastIndex = lastIndex
         if match = JSXPunctuator.exec(input)
           lastIndex = JSXPunctuator.lastIndex
+          nextLastSignificantToken = match[0]
           switch match[0]
             when "<"
               modes.push("JSXTag")
@@ -453,22 +455,22 @@ module.exports = jsTokens = (input, {jsx = false} = {}) ->
                 modes.pop()
                 if modes[modes.length - 1] == "JSXChildren"
                   modes.pop()
-                lastSignificantToken = "?jsx"
+                nextLastSignificantToken = "?jsx"
                 postfixIncDec = true
               else if lastSignificantToken == "/"
-                lastSignificantToken = "?jsx"
+                nextLastSignificantToken = "?jsx"
                 postfixIncDec = true
               else
                 modes.push("JSXChildren")
             when "{"
               modes.push("JS")
               jsxInterpolations.push(braces.length)
-              lastSignificantToken = ""
+              nextLastSignificantToken = "?jsxInterpolation"
               postfixIncDec = false
             when "/"
               if lastSignificantToken == "<"
                 modes.push("JSXTagEnd")
-          lastSignificantToken = match[0]
+          lastSignificantToken = nextLastSignificantToken
           yield {
             type: "JSXPunctuator",
             value: match[0],
@@ -521,7 +523,7 @@ module.exports = jsTokens = (input, {jsx = false} = {}) ->
             modes.push("JS")
             jsxInterpolations.push(braces.length)
             lastIndex++
-            lastSignificantToken = ""
+            lastSignificantToken = "?jsxInterpolation"
             postfixIncDec = false
             yield {
               type: "JSXPunctuator",

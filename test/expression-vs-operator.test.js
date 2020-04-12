@@ -14,21 +14,24 @@ const keywords1 = [
   "void",
 ].map((keyword) => ({
   tokens: [keyword],
-  expressionAfter: "always",
+  expressionAfter: true,
+  braceAfterIsExpression: true,
   canHaveLineTerminatorAfter: true,
   canHavePostfixIncDec: false,
 }));
 
 const keywords2 = ["return", "throw", "yield"].map((keyword) => ({
   tokens: [keyword],
-  expressionAfter: "always",
+  expressionAfter: true,
+  braceAfterIsExpression: true,
   canHaveLineTerminatorAfter: false,
   canHavePostfixIncDec: false,
 }));
 
 const keywords3 = ["else"].map((keyword) => ({
   tokens: [keyword],
-  expressionAfter: "always-except-{",
+  expressionAfter: true,
+  braceAfterIsExpression: false,
   canHaveLineTerminatorAfter: true,
   canHavePostfixIncDec: false,
 }));
@@ -36,7 +39,8 @@ const keywords3 = ["else"].map((keyword) => ({
 const nonKeywords = [...keywords1, ...keywords2, ...keywords3].map(
   ({ tokens: [keyword] }) => ({
     tokens: [`x${keyword}`],
-    expressionAfter: "never",
+    expressionAfter: false,
+    braceAfterIsExpression: false,
     canHaveLineTerminatorAfter: true,
     canHavePostfixIncDec: true,
   })
@@ -53,7 +57,8 @@ const literals = [
   ["<", "div", ">", "<", "/", "div", ">"],
 ].map((tokens) => ({
   tokens,
-  expressionAfter: "never",
+  expressionAfter: false,
+  braceAfterIsExpression: false,
   canHaveLineTerminatorAfter: true,
   canHavePostfixIncDec: true,
 }));
@@ -65,7 +70,8 @@ const interpolations = [
   ["<", ">", "{"],
 ].map((tokens) => ({
   tokens,
-  expressionAfter: "always",
+  expressionAfter: true,
+  braceAfterIsExpression: true,
   canHaveLineTerminatorAfter: true,
   canHavePostfixIncDec: false,
 }));
@@ -81,7 +87,8 @@ const unaryOperators = [
   ["<", ">", "{", "..."],
 ].map((tokens) => ({
   tokens,
-  expressionAfter: "always",
+  expressionAfter: true,
+  braceAfterIsExpression: true,
   canHaveLineTerminatorAfter: true,
   canHavePostfixIncDec: false,
 }));
@@ -113,7 +120,8 @@ const binaryOperators = [
   ",",
 ].map((operator) => ({
   tokens: ["x", operator],
-  expressionAfter: "always",
+  expressionAfter: true,
+  braceAfterIsExpression: true,
   canHaveLineTerminatorAfter: true,
   canHavePostfixIncDec: false,
 }));
@@ -123,7 +131,8 @@ const ternaryOperators = [
   ["x", "?", "y", ":"],
 ].map((tokens) => ({
   tokens,
-  expressionAfter: "always",
+  expressionAfter: true,
+  braceAfterIsExpression: true,
   canHaveLineTerminatorAfter: true,
   canHavePostfixIncDec: false,
 }));
@@ -144,7 +153,8 @@ const assignmentOperators = [
   ">>>=",
 ].map((operator) => ({
   tokens: ["x", operator],
-  expressionAfter: "always",
+  expressionAfter: true,
+  braceAfterIsExpression: true,
   canHaveLineTerminatorAfter: true,
   canHavePostfixIncDec: false,
 }));
@@ -183,7 +193,8 @@ const nonExpressionParenEnds = []
   )
   .map((tokens) => ({
     tokens,
-    expressionAfter: "always-except-{",
+    expressionAfter: true,
+    braceAfterIsExpression: false,
     canHaveLineTerminatorAfter: true,
     canHavePostfixIncDec: false,
   }));
@@ -234,28 +245,43 @@ const expressionParenEnds = [
   ],
 ].map((tokens) => ({
   tokens,
-  expressionAfter: "never",
+  expressionAfter: false,
+  braceAfterIsExpression: false,
   canHaveLineTerminatorAfter: true,
   canHavePostfixIncDec: true,
 }));
 
-const miscPunctuators = [
-  ["("],
-  ["["],
+const miscPunctuators1 = [["("], ["["]].map((tokens) => ({
+  tokens,
+  expressionAfter: true,
+  braceAfterIsExpression: true,
+  canHaveLineTerminatorAfter: true,
+  canHavePostfixIncDec: false,
+}));
+
+const miscPunctuators2 = [
   ["[", "]"],
   ["x", "[", "x", "]"],
-  ["{"],
-  [";"],
 ].map((tokens) => ({
   tokens,
-  expressionAfter: "always",
+  expressionAfter: false,
+  braceAfterIsExpression: false,
+  canHaveLineTerminatorAfter: true,
+  canHavePostfixIncDec: true,
+}));
+
+const miscPunctuators3 = [["{"], [";"]].map((tokens) => ({
+  tokens,
+  expressionAfter: true,
+  braceAfterIsExpression: false,
   canHaveLineTerminatorAfter: true,
   canHavePostfixIncDec: false,
 }));
 
 const arrowPunctuator = {
   tokens: ["x", "=>"],
-  expressionAfter: "always-except-{",
+  expressionAfter: true,
+  braceAfterIsExpression: false,
   canHaveLineTerminatorAfter: true,
   canHavePostfixIncDec: false,
 };
@@ -273,7 +299,9 @@ const all = [
   ...assignmentOperators,
   ...nonExpressionParenEnds,
   ...expressionParenEnds,
-  ...miscPunctuators,
+  ...miscPunctuators1,
+  ...miscPunctuators2,
+  ...miscPunctuators3,
   arrowPunctuator,
 ];
 
@@ -283,31 +311,27 @@ function run(code, expressionType) {
     for (const variation of all) {
       check(variation.tokens, code, (token) => {
         expect(token.type).toBe(
-          variation.expressionAfter === "always" ||
-            variation.expressionAfter === "always-except-{"
-            ? expressionType
-            : "Punctuator"
+          variation.expressionAfter ? expressionType : "Punctuator"
         );
       });
 
       check([...variation.tokens, "\n"], code, (token) => {
         expect(token.type).toBe(
           variation.canHaveLineTerminatorAfter
-            ? variation.expressionAfter === "always" ||
-              variation.expressionAfter === "always-except-{"
+            ? variation.expressionAfter
               ? expressionType
               : "Punctuator"
             : expressionType
         );
       });
 
-      check([...variation.tokens, "++"], code, (token) => {
+      check(addIncDec(variation.tokens, "++"), code, (token) => {
         expect(token.type).toBe(
           variation.canHavePostfixIncDec ? "Punctuator" : expressionType
         );
       });
 
-      check([...variation.tokens, "++", "++"], code, (token) => {
+      check([...addIncDec(variation.tokens, "++"), "++"], code, (token) => {
         expect(token.type).toBe(
           variation.canHavePostfixIncDec ? "Punctuator" : expressionType
         );
@@ -321,28 +345,38 @@ function run(code, expressionType) {
         expect(token.type).toBe(expressionType);
       });
 
-      if (variation.expressionAfter !== "never") {
-        check([...variation.tokens, "{", "}"], code, (token) => {
-          expect(token.type).toBe(
-            variation.expressionAfter === "always-except-{"
-              ? expressionType
-              : "Punctuator"
-          );
-        });
+      if (variation.expressionAfter) {
+        if (variation.braceAfterIsExpression) {
+          check([...variation.tokens, "{", "}"], code, (token) => {
+            expect(token.type).toBe("Punctuator");
+          });
 
-        check([...variation.tokens, "{", "{", "}", "}"], code, (token) => {
-          expect(token.type).toBe(
-            variation.expressionAfter === "always-except-{"
-              ? expressionType
-              : "Punctuator"
+          check(
+            [...variation.tokens, "{", "key", ":", "{", "}", "}"],
+            code,
+            (token) => {
+              expect(token.type).toBe("Punctuator");
+            }
           );
-        });
+        } else {
+          check([...variation.tokens, "{", "}", "\n"], code, (token) => {
+            expect(token.type).toBe(expressionType);
+          });
+
+          check(
+            [...variation.tokens, "{", "label", ":", "{", "}", "}", "\n"],
+            code,
+            (token) => {
+              expect(token.type).toBe(expressionType);
+            }
+          );
+        }
       }
 
       check([...variation.tokens, "\n", "{", "}"], code, (token) => {
         expect(token.type).toBe(
           variation.canHaveLineTerminatorAfter
-            ? variation.expressionAfter === "always"
+            ? variation.expressionAfter && variation.braceAfterIsExpression
               ? "Punctuator"
               : expressionType
             : expressionType
@@ -353,7 +387,11 @@ function run(code, expressionType) {
 }
 /* eslint-enable jest/no-standalone-expect */
 
-function check(preceding, code, fn) {
+function check(passedPreceding, code, fn) {
+  const last = passedPreceding[passedPreceding.length - 1];
+  const preceding = code.startsWith(last)
+    ? [...passedPreceding, " "]
+    : passedPreceding;
   const fullCode = preceding.join("") + code;
   const title = fullCode.replace(/\r/g, "␍").replace(/\n/g, "␊");
   test(title, () => {
@@ -364,6 +402,15 @@ function check(preceding, code, fn) {
     ).toEqual(preceding);
     fn(tokens[preceding.length]);
   });
+}
+
+function addIncDec(preceding, incDec) {
+  const last = preceding[preceding.length - 1];
+  return last === "+" && incDec === "++"
+    ? [...preceding, " ", "++"]
+    : last === "-" && incDec === "--"
+    ? [...preceding, " ", "--"]
+    : [...preceding, incDec];
 }
 
 run("/", "RegularExpressionLiteral");
