@@ -251,7 +251,7 @@ const expressionParenEnds = [
   canHavePostfixIncDec: true,
 }));
 
-const miscPunctuators1 = [["("], ["["]].map((tokens) => ({
+const miscPunctuators1 = [["("], ["["], ["{", "key", ":"]].map((tokens) => ({
   tokens,
   expressionAfter: true,
   braceAfterIsExpression: true,
