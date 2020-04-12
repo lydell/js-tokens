@@ -325,25 +325,27 @@ function run(code, expressionType) {
         );
       });
 
-      check(addIncDec(variation.tokens, "++"), code, (token) => {
-        expect(token.type).toBe(
-          variation.canHavePostfixIncDec ? "Punctuator" : expressionType
-        );
-      });
+      for (const incDec of ["++", "--"]) {
+        for (const incDec2 of [undefined, "++", "--"]) {
+          check(
+            [...addIncDec(variation.tokens, incDec), incDec2].filter(Boolean),
+            code,
+            (token) => {
+              expect(token.type).toBe(
+                variation.canHavePostfixIncDec ? "Punctuator" : expressionType
+              );
+            }
+          );
 
-      check([...addIncDec(variation.tokens, "++"), "++"], code, (token) => {
-        expect(token.type).toBe(
-          variation.canHavePostfixIncDec ? "Punctuator" : expressionType
-        );
-      });
-
-      check([...variation.tokens, "\n", "++"], code, (token) => {
-        expect(token.type).toBe(expressionType);
-      });
-
-      check([...variation.tokens, "\n", "++", "++"], code, (token) => {
-        expect(token.type).toBe(expressionType);
-      });
+          check(
+            [...variation.tokens, "\n", incDec, incDec2].filter(Boolean),
+            code,
+            (token) => {
+              expect(token.type).toBe(expressionType);
+            }
+          );
+        }
+      }
 
       if (variation.expressionAfter) {
         if (variation.braceAfterIsExpression) {
