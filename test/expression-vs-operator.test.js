@@ -305,98 +305,155 @@ const all = [
   arrowPunctuator,
 ];
 
+const separators = [
+  [[], ["\n"]],
+  [[" "], ["\u2028"]],
+  [["/**/"], ["/*\r*/"]],
+  [
+    ["/**/", "\t", "/*/**/"],
+    ["/*\u2029*/", "\u00a0", "//", "\r\n"],
+  ],
+];
+
 /* eslint-disable jest/no-standalone-expect */
 function run(code, expressionType) {
   describe(expressionType, () => {
     for (const variation of all) {
-      check(variation.tokens, code, (token) => {
-        expect(token.type).toBe(
-          variation.expressionAfter ? expressionType : "Punctuator"
-        );
-      });
-
-      check([...variation.tokens, "\n"], code, (token) => {
-        expect(token.type).toBe(
-          variation.canHaveLineTerminatorAfter
-            ? variation.expressionAfter
-              ? expressionType
-              : "Punctuator"
-            : expressionType
-        );
-      });
-
-      for (const incDec of ["++", "--"]) {
-        for (const incDec2 of [undefined, "++", "--"]) {
-          check(
-            [...addIncDec(variation.tokens, incDec), incDec2].filter(Boolean),
-            code,
-            (token) => {
-              expect(token.type).toBe(
-                variation.canHavePostfixIncDec ? "Punctuator" : expressionType
-              );
-            }
+      for (const [separator, newlineSeparator] of separators) {
+        check([...variation.tokens, ...separator], code, (token) => {
+          expect(token.type).toBe(
+            variation.expressionAfter ? expressionType : "Punctuator"
           );
+        });
 
-          check(
-            [...variation.tokens, "\n", incDec, incDec2].filter(Boolean),
-            code,
-            (token) => {
-              expect(token.type).toBe(expressionType);
-            }
-          );
-        }
-      }
-
-      if (variation.expressionAfter) {
-        if (variation.braceAfterIsExpression) {
-          check([...variation.tokens, "{", "}"], code, (token) => {
-            expect(token.type).toBe("Punctuator");
-          });
-
-          check(
-            [...variation.tokens, "{", "key", ":", "{", "}", "}"],
-            code,
-            (token) => {
-              expect(token.type).toBe("Punctuator");
-            }
-          );
-        } else {
-          check([...variation.tokens, "{", "}", "\n"], code, (token) => {
-            expect(token.type).toBe(expressionType);
-          });
-
-          check(
-            [...variation.tokens, "{", "label", ":", "{", "}", "}", "\n"],
-            code,
-            (token) => {
-              expect(token.type).toBe(expressionType);
-            }
-          );
-        }
-      }
-
-      check([...variation.tokens, "\n", "{", "}"], code, (token) => {
-        expect(token.type).toBe(
-          variation.canHaveLineTerminatorAfter
-            ? variation.expressionAfter && variation.braceAfterIsExpression
-              ? "Punctuator"
+        check([...variation.tokens, ...newlineSeparator], code, (token) => {
+          expect(token.type).toBe(
+            variation.canHaveLineTerminatorAfter
+              ? variation.expressionAfter
+                ? expressionType
+                : "Punctuator"
               : expressionType
-            : expressionType
+          );
+        });
+
+        for (const incDec of ["++", "--"]) {
+          for (const incDec2 of [undefined, "++", "--"]) {
+            check(
+              [...variation.tokens, incDec, ...separator, incDec2],
+              code,
+              (token) => {
+                expect(token.type).toBe(
+                  variation.canHavePostfixIncDec ? "Punctuator" : expressionType
+                );
+              }
+            );
+
+            check(
+              [...variation.tokens, ...newlineSeparator, incDec, incDec2],
+              code,
+              (token) => {
+                expect(token.type).toBe(expressionType);
+              }
+            );
+          }
+        }
+
+        if (variation.expressionAfter) {
+          if (variation.braceAfterIsExpression) {
+            check(
+              [...variation.tokens, ...separator, "{", ...separator, "}"],
+              code,
+              (token) => {
+                expect(token.type).toBe("Punctuator");
+              }
+            );
+
+            check(
+              [
+                ...variation.tokens,
+                ...separator,
+                "{",
+                "key",
+                ":",
+                "{",
+                "}",
+                "}",
+                ...separator,
+              ],
+              code,
+              (token) => {
+                expect(token.type).toBe("Punctuator");
+              }
+            );
+          } else {
+            check(
+              [...variation.tokens, "{", "}", ...newlineSeparator],
+              code,
+              (token) => {
+                expect(token.type).toBe(expressionType);
+              }
+            );
+
+            check(
+              [
+                ...variation.tokens,
+                "{",
+                "label",
+                ":",
+                "{",
+                "}",
+                "}",
+                ...newlineSeparator,
+              ],
+              code,
+              (token) => {
+                expect(token.type).toBe(expressionType);
+              }
+            );
+          }
+        }
+
+        check(
+          [...variation.tokens, ...newlineSeparator, "{", "}"],
+          code,
+          (token) => {
+            expect(token.type).toBe(
+              variation.canHaveLineTerminatorAfter
+                ? variation.expressionAfter && variation.braceAfterIsExpression
+                  ? "Punctuator"
+                  : expressionType
+                : expressionType
+            );
+          }
         );
-      });
+      }
     }
   });
 }
 /* eslint-enable jest/no-standalone-expect */
 
 function check(passedPreceding, code, fn) {
-  const last = passedPreceding[passedPreceding.length - 1];
-  const preceding = code.startsWith(last)
-    ? [...passedPreceding, " "]
-    : passedPreceding;
+  const filtered = [].concat(
+    ...passedPreceding.filter(Boolean).map((value, index, array) => {
+      if (index === 0) {
+        return [value];
+      } else {
+        const previous = array[index - 1];
+        return previous.length === 1 && value.startsWith(previous)
+          ? [" ", value]
+          : [value];
+      }
+    })
+  );
+  const last = filtered[filtered.length - 1];
+  const preceding = code.startsWith(last) ? [...filtered, " "] : filtered;
 
   const fullCode = preceding.join("") + code;
-  const title = fullCode.replace(/\r/g, "␍").replace(/\n/g, "␊");
+  const title = fullCode
+    .replace(/\r/g, "␍")
+    .replace(/\n/g, "␊")
+    .replace(/\u2028/g, "㉘")
+    .replace(/\u2029/g, "㉙");
 
   test(title, () => {
     const tokens = Array.from(jsTokens(fullCode, { jsx: true }));
@@ -409,13 +466,6 @@ function check(passedPreceding, code, fn) {
 
     fn(tokens[preceding.length]);
   });
-}
-
-function addIncDec(preceding, incDec) {
-  const last = preceding[preceding.length - 1];
-  return incDec.startsWith(last)
-    ? [...preceding, " ", incDec]
-    : [...preceding, incDec];
 }
 
 run("/", "RegularExpressionLiteral");

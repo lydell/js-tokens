@@ -238,6 +238,8 @@ module.exports = jsTokens = (input, {jsx = false} = {}) ->
         lastIndex = MultiLineComment.lastIndex
         if Newline.test(match[0])
           postfixIncDec = false
+          if KeywordsWithNoLineTerminatorAfter.test(lastSignificantToken)
+            lastSignificantToken = "?noLineTerminatorHere"
         yield {
           type: "MultiLineComment",
           value: match[0],
