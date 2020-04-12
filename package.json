@@ -6,7 +6,7 @@
     "eslint": "eslint . --fix",
     "prettier": "prettier --write .",
     "build": "node build.js",
-    "test": "eslint . && prettier --check . && npm run build && tsd && jest --coverage"
+    "test": "eslint . && prettier --check . && npm run build && tsd && jest --coverage && node benchmark.js"
   },
   "devDependencies": {
     "@babel/parser": "7.9.4",
