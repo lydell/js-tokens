@@ -20,7 +20,6 @@ Array.from(jsTokens(jsString, (token) => token.value)).join("|");
   - [StringLiteral](#stringliteral)
   - [NoSubstitutionTemplate + TemplateHead + TemplateMiddle + TemplateTail](#nosubstitutiontemplate--templatehead--templatemiddle--templatetail)
   - [RegularExpressionLiteral](#regularexpressionliteral)
-    - [Edge cases](#edge-cases)
   - [MultiLineComment](#multilinecomment)
   - [SingleLineComment](#singlelinecomment)
   - [IdentifierName](#identifiername)
@@ -41,6 +40,7 @@ Array.from(jsTokens(jsString, (token) => token.value)).join("|");
   - [TypeScript](#typescript)
   - [JSX](#jsx)
   - [JavaScript runtimes](#javascript-runtimes)
+  - [Known errors](#known-errors)
 - [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -165,101 +165,6 @@ Examples:
 /+/
 /[/]\//
 ```
-
-#### Edge cases
-
-<details>
-
-<summary>Here are some problematic cases:</summary>
-
-<!-- prettier-ignore -->
-```js
-switch (x) {
-  case 1: {}/a/g;
-}
-
-label: {}/a/g;
-
-(function f() {}/a/g);
-```
-
-This is what they mean:
-
-```js
-switch (x) {
-  case 1:
-    {
-    }
-    /a/g;
-}
-
-label: {
-}
-/a/g;
-
-(function f() {} / a / g);
-```
-
-But js-tokens thinks they mean:
-
-```js
-switch (x) {
-  case 1:
-    ({} / a / g);
-}
-
-label: ({} / a / g);
-
-function f() {}
-/a/g;
-```
-
-In other words, js-tokens mis-identifies regex as division in these cases.
-
-This happens because js-tokens looks at the previous token when deciding whether to parse as regex or division. In these cases, the previous token is `}`, which either means “end of block” (→ regex) or “end of object literal” (→ division). How does js-tokens determine if the `}` belongs to a block or an object literal? By looking at the token before the matching `{`.
-
-In the first two cases, that’s a `:`. A `:` _usually_ means that we have an object literal:
-
-```js
-let some = weird ? { value: {}/a/g } : {}/a/g;
-```
-
-It’s not easy to look for `case` before the `:` as an exception to the rule:
-
-<!-- prettier-ignore -->
-```js
-switch (x) {
-  case weird ? true : {}/a/g: {}/a/g
-}
-```
-
-The first `{}/a/g` is a division, while the second `{}/a/g` is an empty block followed by a regex. Both are preceded by a colon with a `case` on the same line, and it does not seem like you can distinguish between the two without implementing a parser.
-
-The case with the labeled statement is simlarly difficult, since it is so similar to an object literal:
-
-<!-- prettier-ignore -->
-```js
-label: {}/a/g
-
-({ label: {}/a/g })
-```
-
-The `(function () {}/a/g);` case is difficult, because a `)` before a `{` means that the `{` is part of a _block,_ and blocks are _usually_ statements:
-
-```js
-if (x) {
-}
-/a/g;
-
-function f() {}
-/a/g;
-```
-
-But it’s difficult to tell an function _expression_ from a function _statement._
-
-Luckily, none of these edge cases are likely to occur in real code.
-
-</details>
 
 ### MultiLineComment
 
@@ -534,6 +439,127 @@ JSX is supported, via `{ jsx: true }`.
 ### JavaScript runtimes
 
 js-tokens should work in any JavaScript runtime that supports [Unicode property escapes].
+
+### Known errors
+
+Here are a couple of tricky cases:
+
+<!-- prettier-ignore -->
+```js
+// Case 1:
+switch (x) {
+  case x: {}/a/g;
+  case x: {}<div>x</div>/g;
+}
+
+// Case 2:
+label: {}/a/g;
+label: {}<div>x</div>/g;
+
+// Case 3:
+(function f() {}/a/g);
+(function f() {}<div>x</div>/g);
+```
+
+This is what they mean:
+
+```js
+// Case 1:
+switch (x) {
+  case x:
+    {
+    }
+    /a/g;
+  case x:
+    {
+    }
+    <div>x</div> / g;
+}
+
+// Case 2:
+label: {
+}
+/a/g;
+label: {
+}
+<div>x</div> / g;
+
+// Case 3:
+(function f() {} / a / g);
+(function f() {} < div > x < /div>/g);
+```
+
+But js-tokens thinks they mean:
+
+```js
+// Case 1:
+switch (x) {
+  case x:
+    ({} / a / g);
+  case x:
+    ({} < div > x < /div>/g);
+}
+
+// Case 2:
+label: ({} / a / g);
+label: ({} < div > x < /div>/g);
+
+// Case 3:
+function f() {}
+/a/g;
+function f() {}
+<div>x</div> / g;
+```
+
+In other words, js-tokens:
+
+- Mis-identifies regex as division and JSX as comparison in case 1 and 2.
+- Mis-identifies divison as regex and comparison as JSX in case 3.
+
+This happens because js-tokens looks at the previous token when deciding between regex and division or JSX and comparison. In these cases, the previous token is `}`, which either means “end of block” (→ regex/JSX) or “end of object literal” (→ division/comparison). How does js-tokens determine if the `}` belongs to a block or an object literal? By looking at the token before the matching `{`.
+
+In case 1 and 2, that’s a `:`. A `:` _usually_ means that we have an object literal or ternary:
+
+```js
+let some = weird ? { value: {}/a/g } : {}/a/g;
+```
+
+But `:` is also used for `case` and labeled statements.
+
+It’s not easy to look for `case` before the `:` as an exception to the rule:
+
+<!-- prettier-ignore -->
+```js
+switch (x) {
+  case weird ? true : {}/a/g: {}/a/g
+}
+```
+
+The first `{}/a/g` is a division, while the second `{}/a/g` is an empty block followed by a regex. Both are preceded by a colon with a `case` on the same line, and it does not seem like you can distinguish between the two without implementing a parser.
+
+Labeled statements are simlarly difficult, since they are so similar to object literals:
+
+<!-- prettier-ignore -->
+```js
+label: {}/a/g
+
+({ label: {}/a/g })
+```
+
+Finally, case 3 (`(function () {}/a/g);`) is difficult, because a `)` before a `{` means that the `{` is part of a _block,_ and blocks are _usually_ statements:
+
+```js
+if (x) {
+}
+/a/g;
+
+function f() {}
+/a/g;
+```
+
+But in case of _function expressions_ they’re not. It’s difficult to tell an function _expression_ from a function _statement_ without parsing.
+
+Luckily, none of these edge cases are likely to occur in real code.
 
 ## License
 
