@@ -528,7 +528,7 @@ function f() {}
 In other words, js-tokens:
 
 - Mis-identifies regex as division and JSX as comparison in case 1 and 2.
-- Mis-identifies divison as regex and comparison as JSX in case 3.
+- Mis-identifies division as regex and comparison as JSX in case 3.
 
 This happens because js-tokens looks at the previous token when deciding between regex and division or JSX and comparison. In these cases, the previous token is `}`, which either means “end of block” (→ regex/JSX) or “end of object literal” (→ division/comparison). How does js-tokens determine if the `}` belongs to a block or an object literal? By looking at the token before the matching `{`.
 
@@ -551,7 +551,7 @@ switch (x) {
 
 The first `{}/a/g` is a division, while the second `{}/a/g` is an empty block followed by a regex. Both are preceded by a colon with a `case` on the same line, and it does not seem like you can distinguish between the two without implementing a parser.
 
-Labeled statements are simlarly difficult, since they are so similar to object literals:
+Labeled statements are similarly difficult, since they are so similar to object literals:
 
 <!-- prettier-ignore -->
 ```js
