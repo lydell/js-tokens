@@ -180,20 +180,24 @@ TokensPrecedingExpression = ///
   [ { } ( [ , ; < > = * % & | ^ ! ~ ? : ]$
 ///
 
+TokensNotPrecedingObjectLiteral = ///
+  ^(?:
+    =>
+    |
+    [ ; \] ) { } ]
+    |
+    else
+    |
+    \?(?:NoLineTerminatorHere|NonExpressionParenEnd)
+  )?$
+///
+
 KeywordsWithExpressionAfter = ///
   ^(?:await|case|default|delete|do|else|instanceof|new|return|throw|typeof|void|yield)$
 ///
 
 KeywordsWithNoLineTerminatorAfter = ///
   ^(?:return|throw|yield)$
-///
-
-PunctuatorsNotPrecedingObjectLiteral = ///
-  ^(?:
-    =>
-    |
-    [ ; \] ) { } ]
-  )$
 ///
 
 Newline = RegExp(LineTerminatorSequence.source)
@@ -253,14 +257,10 @@ module.exports = jsTokens = (input, {jsx = false} = {}) ->
             when "{"
               Punctuator.lastIndex = 0
               isExpression =
-                lastSignificantToken == "?InterpolationInJSX" ||
-                lastSignificantToken == "?InterpolationInTemplate" ||
-                lastSignificantToken == "?UnaryIncDec" ||
-                (KeywordsWithExpressionAfter.test(lastSignificantToken) &&
-                lastSignificantToken != "else") ||
-                (Punctuator.test(lastSignificantToken) &&
-                Punctuator.lastIndex == lastSignificantToken.length &&
-                !PunctuatorsNotPrecedingObjectLiteral.test(lastSignificantToken))
+                !TokensNotPrecedingObjectLiteral.test(lastSignificantToken) && (
+                  TokensPrecedingExpression.test(lastSignificantToken) ||
+                  KeywordsWithExpressionAfter.test(lastSignificantToken)
+                )
               braces.push(isExpression)
               postfixIncDec = false
 
