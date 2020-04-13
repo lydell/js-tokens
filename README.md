@@ -41,6 +41,7 @@ Array.from(jsTokens(jsString), (token) => token.value).join("|");
   - [JSX](#jsx)
   - [JavaScript runtimes](#javascript-runtimes)
   - [Known errors](#known-errors)
+- [Performance](#performance)
 - [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -579,12 +580,30 @@ But _function expressions_ are of course not statements. It’s difficult to tel
 
 Luckily, none of these edge cases are likely to occur in real code.
 
+## Performance
+
+With [@babel/parser] for comparison.
+
+| Lines of code |    Size | js-tokens@6.0.0 | @babel/parser@7.9.4 |
+| ------------: | ------: | --------------: | ------------------: |
+|          ~100 | ~4.8 KB |           ~2 ms |              ~17 ms |
+|        ~1 000 |  ~46 KB |          ~11 ms |              ~84 ms |
+|       ~10 000 | ~409 KB |          ~80 ms |             ~550 ms |
+|      ~100 000 | ~3.3 MB |         ~430 ms |             ~7.45 s |
+|    ~1 500 000 |  ~77 MB |            ~7 s |     ~4 minutes (\*) |
+
+(\*) Required increasing Node.js’ memory limit.
+
+See [benchmark.js] if you want to run benchmarks yourself.
+
 ## License
 
 [MIT](LICENSE).
 
+[@babel/parser]: https://babeljs.io/docs/en/babel-parser
 [additional syntax]: https://tc39.es/ecma262/#sec-additional-syntax
 [annexb]: https://tc39.es/ecma262/#sec-additional-ecmascript-features-for-web-browsers
+[benchmark.js]: https://github.com/lydell/js-tokens/blob/master/benchmark.js
 [divpunctuator]: https://tc39.es/ecma262/#prod-DivPunctuator
 [ecmascript language: lexical grammar]: https://tc39.es/ecma262/#sec-ecmascript-language-lexical-grammar
 [example.test.js]: https://github.com/lydell/js-tokens/blob/master/test/example.test.js
