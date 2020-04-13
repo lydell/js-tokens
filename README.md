@@ -147,7 +147,7 @@ A template _with_ interpolations is matched as many tokens. For example, `` `hea
 - `` `head${ ``: TemplateHead
 - `}middle${`: TemplateMiddle
 - `` }tail` ``: TemplateTail
-- `}tail`: TemplateTail with `closed: false` (if it had been unclosed)
+  - `}tail`: TemplateTail with `closed: false` (if it had been unclosed – notice the missing `` ` `` at the end)
 
 Templates can contain unescaped newlines, so unclosed templates go on to the end of input.
 
@@ -555,7 +555,9 @@ Labeled statements are simlarly difficult, since they are so similar to object l
   label: {}/a/g
 }
 
-({ label: {}/a/g })
+({
+  key: {}/a/g
+})
 ```
 
 Finally, case 3 (`(function () {}/a/g);`) is also difficult, because a `)` before a `{` means that the `{` is part of a _block,_ and blocks are _usually_ statements:
