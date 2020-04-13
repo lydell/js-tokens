@@ -209,14 +209,13 @@ module.exports = jsTokens = (input, {jsx = false} = {}) ->
   stack = [{tag: "JS"}]
   braces = []
   parenNesting = 0
-  nonExpressionParenStart = undefined
   postfixIncDec = false
 
   while lastIndex < length
     mode = stack[stack.length - 1]
 
     switch mode.tag
-      when "JS", "InterpolationInTemplate", "InterpolationInJSX"
+      when "JS", "JSNonExpressionParen", "InterpolationInTemplate", "InterpolationInJSX"
         if input[lastIndex] == "/" && (
           TokensPrecedingExpression.test(lastSignificantToken) ||
           KeywordsWithExpressionAfter.test(lastSignificantToken)
@@ -242,15 +241,15 @@ module.exports = jsTokens = (input, {jsx = false} = {}) ->
           switch punctuator
             when "("
               if lastSignificantToken == "?NonExpressionParenKeyword"
-                nonExpressionParenStart = parenNesting
+                stack.push({tag: "JSNonExpressionParen", nesting: parenNesting})
               parenNesting++
               postfixIncDec = false
 
             when ")"
               parenNesting--
               postfixIncDec = true
-              if parenNesting == nonExpressionParenStart
-                nonExpressionParenStart = undefined
+              if mode.tag == "JSNonExpressionParen" && parenNesting == mode.nesting
+                stack.pop()
                 nextLastSignificantToken = "?NonExpressionParenEnd"
                 postfixIncDec = false
 
