@@ -625,7 +625,7 @@ See [benchmark.js] if you want to run benchmarks yourself.
 [templatemiddle]: https://tc39.es/ecma262/#prod-TemplateMiddle
 [templatetail]: https://tc39.es/ecma262/#prod-TemplateTail
 [test262-parser-tests]: https://github.com/tc39/test262-parser-tests
-[tsx fixture]: https://github.com/lydell/js-tokens/blob/master/test/fixtures/valid/jsx.tsx
+[tsx fixture]: https://github.com/lydell/js-tokens/blob/master/test/fixtures/valid/jsx2.tsx
 [typescript fixture]: https://github.com/lydell/js-tokens/blob/master/test/fixtures/valid/typescript.module.ts
 [unicode property escapes]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions/Unicode_Property_Escapes
 [whitespace]: https://tc39.es/ecma262/#prod-WhiteSpace
