@@ -1,4 +1,4 @@
-### Version 6.0.0 (2020-04-TODO)
+### Version 6.0.0 (2020-04-13)
 
 - Changed: The main export of this module is no longer a regex (accompanied by a small helper function). Instead, the only export is a function that tokenizes JavaScript (which was the main use case of the regex). The tokenization is still powered by basically the same regex as before, but is now wrapped up in 300–400 lines of code. This is required to tokenize regex and templates correctly, and to support JSX (see below).
 - Changed: Node.js 10 or later is now required (because [Unicode property escapes] are used.)
@@ -128,6 +128,6 @@ These are the breaking changes:
 
 - Initial release.
 
-[edge-cases]: https://github.com/lydell/js-tokens/blob/TODO/README.md#known-errors
+[edge-cases]: https://github.com/lydell/js-tokens/blob/0db8dbbfad9aa2ed1c94370c9632ce682c224bf8/README.md#known-errors
 [test262-parser-tests]: https://github.com/tc39/test262-parser-tests
 [unicode property escapes]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions/Unicode_Property_Escapes
