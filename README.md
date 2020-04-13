@@ -7,8 +7,8 @@ const jsTokens = require("js-tokens");
 
 const jsString = 'JSON.stringify({k:3.14**2}, null /*replacer*/, "\\t")';
 
-Array.from(jsTokens(jsString, (token) => token.value)).join("|");
-// JSON|.|stringify|(|{|k|:| |3.14|**|2|}|,| |null| |/*replacer*/|,| |"\t"|)
+Array.from(jsTokens(jsString), (token) => token.value).join("|");
+// JSON|.|stringify|(|{|k|:|3.14|**|2|}|,| |null| |/*replacer*/|,| |"\t"|)
 ```
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
@@ -52,7 +52,7 @@ Array.from(jsTokens(jsString, (token) => token.value)).join("|");
 ```js
 import jsTokens from "js-tokens";
 // or:
-var jsTokens = require("js-tokens");
+const jsTokens = require("js-tokens");
 ```
 
 ## Usage
@@ -61,15 +61,25 @@ var jsTokens = require("js-tokens");
 jsTokens(string, options?)
 ```
 
-| Option | Default | Description         |
-| ------ | ------- | ------------------- |
-| jsx    | `false` | Enable JSX support. |
+| Option | Type      | Default | Description         |
+| :----- | :-------- | :------ | :------------------ |
+| jsx    | `boolean` | `false` | Enable JSX support. |
 
 This package exports a generator function, `jsTokens`, that turns a string of JavaScript code into token objects.
 
 For the empty string, the function yields nothing (which can be turned into an empty list). For any other input, the function always yields _something,_ even for invalid JavaScript, and never throws. Concatenating the token values reproduces the input.
 
 The package is very close to being fully spec compliant (it passes all [but 3](#known-errors) of [test262-parser-tests]), but has taken a couple of shortcuts. See the following sections for limitations of some tokens.
+
+```js
+// Loop over tokens:
+for (const token of jsTokens("hello, !world")) {
+  console.log(token);
+}
+
+// Get all tokens as an array:
+const tokens = Array.from(jsTokens("hello, !world"));
+```
 
 ## Tokens
 
@@ -101,7 +111,7 @@ _Spec: [StringLiteral]_
 
 If the ending `"` or `'` is missing, the token has `closed: false`. JavaScript strings cannot contain (unescaped) newlines, so unclosed strings simply end at the end of the line.
 
-Escape sequences are supported, but may be invalid. For example, `"\u"` is matched as a `StringLiteral` even though it contains an invalid escape.
+Escape sequences are supported, but may be invalid. For example, `"\u"` is matched as a StringLiteral even though it contains an invalid escape.
 
 Examples:
 
@@ -127,17 +137,17 @@ line'
 
 _Spec: [NoSubstitutionTemplate] / [TemplateHead] / [TemplateMiddle] / [TemplateTail]_
 
-A template without interpolations is matched as is. Example:
+A template without interpolations is matched as is. For, example:
 
 - `` `abc` ``: NoSubstitutionTemplate
-- `` `abc ``: NoSubstitutionTemplate `closed: false`
+- `` `abc ``: NoSubstitutionTemplate with `closed: false`
 
 A template _with_ interpolations is matched as many tokens. For example, `` `head${1}middle${2}tail` `` is matched as follows (apart from the two NumericLiterals):
 
 - `` `head${ ``: TemplateHead
 - `}middle${`: TemplateMiddle
 - `` }tail` ``: TemplateTail
-- `}tail`: TemplateTail `closed: false` (if unclosed)
+- `}tail`: TemplateTail with `closed: false` (if it had been unclosed)
 
 Templates can contain unescaped newlines, so unclosed templates go on to the end of input.
 
@@ -233,16 +243,16 @@ Examples:
 
 <!-- prettier-ignore -->
 ```js
-0;
-1.5;
-1;
-12e9;
-0.123e-32;
-0xDeadbeef;
-0b110;
-12n;
-07;
-09.5;
+0
+1.5
+1
+12e9
+0.123e-32
+0xDeadbeef
+0b110
+12n
+07
+09.5
 ```
 
 ### Punctuator
@@ -310,7 +320,7 @@ export declare type JSXToken =
 ```
 
 - The tokenizer switches between outputting runs of `Token` and runs of `JSXToken`.
-- Runs of `JSXToken` can also contain `WhiteSpace`, `LineTerminatorSequence`, `MultiLineComment` and `SingleLineComment`.
+- Runs of `JSXToken` can also contain WhiteSpace, LineTerminatorSequence, MultiLineComment and SingleLineComment.
 
 ### JSXString
 
@@ -418,7 +428,7 @@ Currently, ECMAScript 2020 is supported.
 - Numeric literals: js-tokens supports legacy octal and octal like numeric literals. It was easy enough, so why not.
 - String literals: js-tokens supports legacy octal escapes, since it allows any invalid escapes.
 - HTML-like comments: **Not supported.** js-tokens prefers treating `5<!--x` as `5 < !(--x)` rather than as `5 //x`.
-- Regular expression patterns: js-tokens doesn’t care what’s between the starting and ending `/`, so this is supported.
+- Regular expression patterns: js-tokens doesn’t care what’s between the starting `/` and ending `/`, so this is supported.
 
 ### TypeScript
 
@@ -430,15 +440,15 @@ type A = Array<Array<string>>
 type B = Array<Array<Array<string>>>
 ```
 
-Both lines above should end with a couple of `>` tokens, but js-tokens matches as the `>>` and `>>>` operators.
+Both lines above should end with a couple of `>` tokens, but js-tokens instead matches the `>>` and `>>>` operators.
 
 ### JSX
 
-JSX is supported, via `{ jsx: true }`.
+JSX is supported: `jsTokens("<p>Hello, world!</p>", { jsx: true })`.
 
 ### JavaScript runtimes
 
-js-tokens should work in any JavaScript runtime that supports [Unicode property escapes].
+js-tokens should work in any JavaScript runtime that supports [Unicode property escapes]. For Node.js, this means Node.js 10 or later.
 
 ### Known errors
 
@@ -526,7 +536,7 @@ let some = weird ? { value: {}/a/g } : {}/a/g;
 
 But `:` is also used for `case` and labeled statements.
 
-It’s not easy to look for `case` before the `:` as an exception to the rule:
+One idea is to look for `case` before the `:` as an exception to the rule, but it’s not so easy:
 
 <!-- prettier-ignore -->
 ```js
@@ -541,12 +551,14 @@ Labeled statements are simlarly difficult, since they are so similar to object l
 
 <!-- prettier-ignore -->
 ```js
-label: {}/a/g
+{
+  label: {}/a/g
+}
 
 ({ label: {}/a/g })
 ```
 
-Finally, case 3 (`(function () {}/a/g);`) is difficult, because a `)` before a `{` means that the `{` is part of a _block,_ and blocks are _usually_ statements:
+Finally, case 3 (`(function () {}/a/g);`) is also difficult, because a `)` before a `{` means that the `{` is part of a _block,_ and blocks are _usually_ statements:
 
 ```js
 if (x) {
@@ -557,7 +569,7 @@ function f() {}
 /a/g;
 ```
 
-But in case of _function expressions_ they’re not. It’s difficult to tell an function _expression_ from a function _statement_ without parsing.
+But _function expressions_ are of course not statements. It’s difficult to tell an function _expression_ from a function _statement_ without parsing.
 
 Luckily, none of these edge cases are likely to occur in real code.
 

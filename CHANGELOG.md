@@ -1,17 +1,17 @@
 ### Version 6.0.0 (2020-04-TODO)
 
-- Changed: The main export of this module is no longer a regex (accompanied by a small helper function). Instead, the only export is a function that tokenizes JavaScript (which was the main use case of the regex). The tokenization is still powered by basically the same regex as before, but is now wrapped up in less than 400 lines of code. This is required to tokenize regex and templates correctly (see below).
+- Changed: The main export of this module is no longer a regex (accompanied by a small helper function). Instead, the only export is a function that tokenizes JavaScript (which was the main use case of the regex). The tokenization is still powered by basically the same regex as before, but is now wrapped up in 300–400 lines of code. This is required to tokenize regex and templates correctly, and to support JSX (see below).
 - Changed: Node.js 10 or later is now required (because [Unicode property escapes] are used.)
 - Changed: The tokens are now named like in the ECMAScript spec.
 - Changed: Whitespace and line terminator sequences are now matched as separate tokens to match the spec.
 - Added: TypeScript definition.
-- Added: Support for JSX, via `{ jsx: true }`.
+- Added: Support for JSX: `jsTokens("<p>Hello, world!</p>", { jsx: true })`.
 - Added: Support for BigInt syntax: `5n`.
 - Added: Support for `?.` and `??`.
 - Added: Support for legacy octal and octal like numeric literals.
 - Improved: Template literals now support infinite nesting, and separate tokens are made for interpolations.
 - Improved: Regex vs division detection. js-tokens now passes all [but 3][edge-cases] of [test262-parser-tests].
-- Improved: Unclosed regexes are now matched as such, instead of as division.
+- Improved: Unclosed regular expressions are now matched as such, instead of as division.
 - Improved: Invalid non-ASCII characters are no longer matched as identifier names.
 
 ### Version 5.0.0 (2019-06-15)
