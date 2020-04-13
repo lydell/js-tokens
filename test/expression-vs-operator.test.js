@@ -189,6 +189,21 @@ const nonExpressionParenEnds = []
         ")",
         ")",
       ],
+      ...nonExpressionParenKeywords.map((keyword2) => [
+        keyword,
+        "(",
+        "function",
+        "(",
+        ")",
+        "{",
+        keyword2,
+        "(",
+        "x",
+        ")",
+        ";",
+        "}",
+        ")",
+      ]),
     ])
   )
   .map((tokens) => ({
