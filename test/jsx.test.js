@@ -169,4 +169,43 @@ describe("JSX", () => {
       ]
     `);
   });
+
+  test("Invalid inside interpolation", () => {
+    expect(jsxTokens("<>{💩}</>")).toMatchInlineSnapshot(`
+      Array [
+        Object {
+          "type": "JSXPunctuator",
+          "value": "<",
+        },
+        Object {
+          "type": "JSXPunctuator",
+          "value": ">",
+        },
+        Object {
+          "type": "JSXPunctuator",
+          "value": "{",
+        },
+        Object {
+          "type": "Invalid",
+          "value": "💩",
+        },
+        Object {
+          "type": "JSXPunctuator",
+          "value": "}",
+        },
+        Object {
+          "type": "JSXPunctuator",
+          "value": "<",
+        },
+        Object {
+          "type": "JSXPunctuator",
+          "value": "/",
+        },
+        Object {
+          "type": "JSXPunctuator",
+          "value": ">",
+        },
+      ]
+    `);
+  });
 });

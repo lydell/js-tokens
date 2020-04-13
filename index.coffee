@@ -174,7 +174,7 @@ TokensPrecedingExpression = ///
     |
     \.{3}
     |
-    \?(?:jsxInterpolation|noLineTerminatorHere|nonExpressionParenEnd|unaryIncDec|templateInterpolation)
+    \?(?:InterpolationIn(?:JSX|Template)|NoLineTerminatorHere|NonExpressionParenEnd|UnaryIncDec)
   )?$
   |
   [ { } ( [ , ; < > = * % & | ^ ! ~ ? : ]$
@@ -212,7 +212,7 @@ module.exports = jsTokens = (input, {jsx = false} = {}) ->
     mode = stack[stack.length - 1]
 
     switch mode.tag
-      when "JS", "TemplateInterpolation", "JSXInterpolation"
+      when "JS", "InterpolationInTemplate", "InterpolationInJSX"
         if input[lastIndex] == "/" && (
           TokensPrecedingExpression.test(lastSignificantToken) ||
           KeywordsWithExpressionAfter.test(lastSignificantToken)
@@ -237,7 +237,7 @@ module.exports = jsTokens = (input, {jsx = false} = {}) ->
 
           switch punctuator
             when "("
-              if lastSignificantToken == "?nonExpressionParenKeyword"
+              if lastSignificantToken == "?NonExpressionParenKeyword"
                 nonExpressionParenStart = parenNesting
               parenNesting++
               postfixIncDec = false
@@ -247,15 +247,15 @@ module.exports = jsTokens = (input, {jsx = false} = {}) ->
               postfixIncDec = true
               if parenNesting == nonExpressionParenStart
                 nonExpressionParenStart = undefined
-                nextLastSignificantToken = "?nonExpressionParenEnd"
+                nextLastSignificantToken = "?NonExpressionParenEnd"
                 postfixIncDec = false
 
             when "{"
               Punctuator.lastIndex = 0
               isExpression =
-                lastSignificantToken == "?jsxInterpolation" ||
-                lastSignificantToken == "?templateInterpolation" ||
-                lastSignificantToken == "?unaryIncDec" ||
+                lastSignificantToken == "?InterpolationInJSX" ||
+                lastSignificantToken == "?InterpolationInTemplate" ||
+                lastSignificantToken == "?UnaryIncDec" ||
                 (KeywordsWithExpressionAfter.test(lastSignificantToken) &&
                 lastSignificantToken != "else") ||
                 (Punctuator.test(lastSignificantToken) &&
@@ -266,14 +266,14 @@ module.exports = jsTokens = (input, {jsx = false} = {}) ->
 
             when "}"
               switch mode.tag
-                when "TemplateInterpolation"
+                when "InterpolationInTemplate"
                   if braces.length == mode.nesting
                     Template.lastIndex = lastIndex
                     match = Template.exec(input)
                     lastIndex = Template.lastIndex
                     lastSignificantToken = match[0]
                     if match[1] == "${"
-                      lastSignificantToken = "?templateInterpolation"
+                      lastSignificantToken = "?InterpolationInTemplate"
                       postfixIncDec = false
                       yield {
                         type: "TemplateMiddle",
@@ -288,7 +288,7 @@ module.exports = jsTokens = (input, {jsx = false} = {}) ->
                         closed: match[1] == "`",
                       }
                     continue
-                when "JSXInterpolation"
+                when "InterpolationInJSX"
                   if braces.length == mode.nesting
                     stack.pop()
                     lastIndex += 1
@@ -300,14 +300,14 @@ module.exports = jsTokens = (input, {jsx = false} = {}) ->
                     continue
               postfixIncDec = braces.pop()
               nextLastSignificantToken =
-                if postfixIncDec then "?expressionBraceEnd" else "}"
+                if postfixIncDec then "?ExpressionBraceEnd" else "}"
 
             when "]"
               postfixIncDec = true
 
             when "++", "--"
               nextLastSignificantToken =
-                if postfixIncDec then "?postfixIncDec" else "?unaryIncDec"
+                if postfixIncDec then "?PostfixIncDec" else "?UnaryIncDec"
 
             when "<"
               if jsx && (
@@ -342,7 +342,7 @@ module.exports = jsTokens = (input, {jsx = false} = {}) ->
           switch match[0]
             when "for", "if", "while", "with"
               if lastSignificantToken != "." && lastSignificantToken != "?."
-                nextLastSignificantToken = "?nonExpressionParenKeyword"
+                nextLastSignificantToken = "?NonExpressionParenKeyword"
           lastSignificantToken = nextLastSignificantToken
           postfixIncDec = !KeywordsWithExpressionAfter.test(match[0])
           yield {
@@ -379,8 +379,8 @@ module.exports = jsTokens = (input, {jsx = false} = {}) ->
           lastIndex = Template.lastIndex
           lastSignificantToken = match[0]
           if match[1] == "${"
-            lastSignificantToken = "?templateInterpolation"
-            stack.push({tag: "TemplateInterpolation", nesting: braces.length})
+            lastSignificantToken = "?InterpolationInTemplate"
+            stack.push({tag: "InterpolationInTemplate", nesting: braces.length})
             postfixIncDec = false
             yield {
               type: "TemplateHead",
@@ -406,13 +406,13 @@ module.exports = jsTokens = (input, {jsx = false} = {}) ->
             when ">"
               stack.pop()
               if lastSignificantToken == "/" || mode.tag == "JSXTagEnd"
-                nextLastSignificantToken = "?jsx"
+                nextLastSignificantToken = "?JSX"
                 postfixIncDec = true
               else
                 stack.push({tag: "JSXChildren"})
             when "{"
-              stack.push({tag: "JSXInterpolation", nesting: braces.length})
-              nextLastSignificantToken = "?jsxInterpolation"
+              stack.push({tag: "InterpolationInJSX", nesting: braces.length})
+              nextLastSignificantToken = "?InterpolationInJSX"
               postfixIncDec = false
             when "/"
               if lastSignificantToken == "<"
@@ -470,9 +470,9 @@ module.exports = jsTokens = (input, {jsx = false} = {}) ->
             }
             continue
           when "{"
-            stack.push({tag: "JSXInterpolation", nesting: braces.length})
+            stack.push({tag: "InterpolationInJSX", nesting: braces.length})
             lastIndex++
-            lastSignificantToken = "?jsxInterpolation"
+            lastSignificantToken = "?InterpolationInJSX"
             postfixIncDec = false
             yield {
               type: "JSXPunctuator",
@@ -494,7 +494,7 @@ module.exports = jsTokens = (input, {jsx = false} = {}) ->
       lastIndex = LineTerminatorSequence.lastIndex
       postfixIncDec = false
       if KeywordsWithNoLineTerminatorAfter.test(lastSignificantToken)
-        lastSignificantToken = "?noLineTerminatorHere"
+        lastSignificantToken = "?NoLineTerminatorHere"
       yield {
         type: "LineTerminatorSequence",
         value: match[0],
@@ -507,7 +507,7 @@ module.exports = jsTokens = (input, {jsx = false} = {}) ->
       if Newline.test(match[0])
         postfixIncDec = false
         if KeywordsWithNoLineTerminatorAfter.test(lastSignificantToken)
-          lastSignificantToken = "?noLineTerminatorHere"
+          lastSignificantToken = "?NoLineTerminatorHere"
       yield {
         type: "MultiLineComment",
         value: match[0],

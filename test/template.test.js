@@ -275,4 +275,24 @@ describe("Template", () => {
       ]
     `);
   });
+
+  test("Invalid inside interpolation", () => {
+    expect(Array.from(jsTokens("`${💩}`"))).toMatchInlineSnapshot(`
+      Array [
+        Object {
+          "type": "TemplateHead",
+          "value": "\`\${",
+        },
+        Object {
+          "type": "Invalid",
+          "value": "💩",
+        },
+        Object {
+          "closed": true,
+          "type": "TemplateTail",
+          "value": "}\`",
+        },
+      ]
+    `);
+  });
 });
