@@ -18,7 +18,7 @@ Array.from(jsTokens(jsString, (token) => token.value)).join("|");
 - [Usage](#usage)
 - [Tokens](#tokens)
   - [StringLiteral](#stringliteral)
-  - [NoSubstitutionTemplate + TemplateHead + TemplateMiddle + TemplateTail](#nosubstitutiontemplate--templatehead--templatemiddle--templatetail)
+  - [NoSubstitutionTemplate / TemplateHead / TemplateMiddle / TemplateTail](#nosubstitutiontemplate--templatehead--templatemiddle--templatetail)
   - [RegularExpressionLiteral](#regularexpressionliteral)
   - [MultiLineComment](#multilinecomment)
   - [SingleLineComment](#singlelinecomment)
@@ -123,9 +123,9 @@ line'
 ' unclosed
 ```
 
-### NoSubstitutionTemplate + TemplateHead + TemplateMiddle + TemplateTail
+### NoSubstitutionTemplate / TemplateHead / TemplateMiddle / TemplateTail
 
-_Spec: [NoSubstitutionTemplate] + [TemplateHead] + [TemplateMiddle] + [TemplateTail]_
+_Spec: [NoSubstitutionTemplate] / [TemplateHead] / [TemplateMiddle] / [TemplateTail]_
 
 A template without interpolations is matched as is. Example:
 
