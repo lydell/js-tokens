@@ -1,4 +1,6 @@
 build
 coverage
 fixtures
+benchmark.input.js
+test.*
 .vscode

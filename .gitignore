@@ -1,5 +1,5 @@
 node_modules
 build
 coverage
-test.coffee
-test.mjs
+benchmark.input.js
+test.*
