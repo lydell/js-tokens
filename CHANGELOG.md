@@ -1,6 +1,7 @@
 ### Version 6.0.0 (2020-04-13)
 
 - Changed: The main export of this module is no longer a regex (accompanied by a small helper function). Instead, the only export is a function that tokenizes JavaScript (which was the main use case of the regex). The tokenization is still powered by basically the same regex as before, but is now wrapped up in 300–400 lines of code. This is required to tokenize regex and templates correctly, and to support JSX (see below).
+- Changed: You no longer need `.default` when using CommonJS: `const jsTokens = require("js-tokens")`. (`import jsTokens from "js-tokens"` also works in module environments.)
 - Changed: Node.js 10 or later is now required (because [Unicode property escapes] are used.)
 - Changed: The tokens are now named like in the ECMAScript spec.
 - Changed: Whitespace and line terminator sequences are now matched as separate tokens to match the spec.
