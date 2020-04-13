@@ -1,30 +1,23 @@
 {
-  "name": "js-tokens",
-  "version": "5.0.0",
-  "author": "Simon Lydell",
-  "license": "MIT",
-  "description": "A regex that tokenizes JavaScript.",
-  "keywords": [
-    "JavaScript",
-    "js",
-    "token",
-    "tokenize",
-    "regex"
-  ],
-  "files": [
-    "index.js"
-  ],
-  "repository": "lydell/js-tokens",
+  "private": true,
+  "type": "commonjs",
   "scripts": {
-    "test": "mocha --ui tdd",
-    "esprima-compare": "node esprima-compare ./index.js everything.js/es5.js",
-    "build": "node generate-index.js",
-    "dev": "npm run build && npm test"
+    "doctoc": "doctoc README.md",
+    "eslint": "eslint . --fix",
+    "prettier": "prettier --write .",
+    "build": "node build.js",
+    "test": "eslint . && prettier --check . && npm run build && tsd && node benchmark.js && jest --coverage"
   },
   "devDependencies": {
-    "coffeescript": "2.4.1",
-    "esprima": "4.0.1",
+    "@babel/parser": "7.9.4",
+    "coffeescript": "2.5.1",
+    "doctoc": "1.4.0",
+    "eslint": "6.8.0",
+    "eslint-plugin-jest": "23.8.2",
     "everything.js": "1.0.3",
-    "mocha": "6.1.4"
+    "jest": "25.3.0",
+    "prettier": "2.0.4",
+    "test262-parser-tests": "0.0.5",
+    "tsd": "0.11.0"
   }
 }

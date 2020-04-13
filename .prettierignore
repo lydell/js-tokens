@@ -1,5 +1,6 @@
-node_modules
 build
 coverage
+fixtures
 benchmark.input.js
 test.*
+.vscode
