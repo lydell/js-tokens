@@ -603,10 +603,10 @@ See [benchmark.js] if you want to run benchmarks yourself.
 [@babel/parser]: https://babeljs.io/docs/en/babel-parser
 [additional syntax]: https://tc39.es/ecma262/#sec-additional-syntax
 [annexb]: https://tc39.es/ecma262/#sec-additional-ecmascript-features-for-web-browsers
-[benchmark.js]: https://github.com/lydell/js-tokens/blob/master/benchmark.js
+[benchmark.js]: benchmark.js
 [divpunctuator]: https://tc39.es/ecma262/#prod-DivPunctuator
 [ecmascript language: lexical grammar]: https://tc39.es/ecma262/#sec-ecmascript-language-lexical-grammar
-[example.test.js]: https://github.com/lydell/js-tokens/blob/master/test/example.test.js
+[example.test.js]: test/example.test.js
 [identifiername]: https://tc39.es/ecma262/#prod-IdentifierName
 [identifierpart]: https://tc39.es/ecma262/#prod-IdentifierPart
 [jsx specification]: https://facebook.github.io/jsx/
@@ -625,7 +625,7 @@ See [benchmark.js] if you want to run benchmarks yourself.
 [templatemiddle]: https://tc39.es/ecma262/#prod-TemplateMiddle
 [templatetail]: https://tc39.es/ecma262/#prod-TemplateTail
 [test262-parser-tests]: https://github.com/tc39/test262-parser-tests
-[tsx fixture]: https://github.com/lydell/js-tokens/blob/master/test/fixtures/valid/jsx2.tsx
-[typescript fixture]: https://github.com/lydell/js-tokens/blob/master/test/fixtures/valid/typescript.module.ts
+[tsx fixture]: test/fixtures/valid/jsx2.tsx
+[typescript fixture]: test/fixtures/valid/typescript.module.ts
 [unicode property escapes]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions/Unicode_Property_Escapes
 [whitespace]: https://tc39.es/ecma262/#prod-WhiteSpace
