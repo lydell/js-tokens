@@ -531,6 +531,106 @@ describe("Token", () => {
     match("0b1.1", "0b1");
     match("0.0b1", "0.0");
     match(".0b1", ".0");
+
+    match("_0", false);
+    match("_0n", false);
+    match("_.0", false);
+    match("_0.0", false);
+    match("_0e0", false);
+    match("_0x0", false);
+    match("_0x0n", false);
+    match("_0o0", false);
+    match("_0o0n", false);
+    match("_0b0", false);
+    match("_0b0n", false);
+
+    match("0_", "0");
+    match("0n_", "0n");
+    match(".0_", ".0");
+    match("0.0_", "0.0");
+    match("0e0_", "0e0");
+    match("0x0_", "0x0");
+    match("0o0_", "0o0");
+    match("0b0_", "0b0");
+
+    match("0_n", "0");
+    match("1_n", "1");
+    match("0_.0", "0");
+    match("1_.0", "1");
+    match("0_e0", "0");
+    match("1_e0", "1");
+    match("0_x0", "0");
+    match("0_x0n", "0");
+    match("0_o0", "0");
+    match("0_o0n", "0");
+    match("0_b0", "0");
+    match("0_b0n", "0");
+
+    match("0._0", "0.");
+    match("0e_0", "0");
+    match("0x_0", "0");
+    match("0x_0n", "0");
+    match("0o_0", "0");
+    match("0o_0n", "0");
+    match("0b_0", "0");
+    match("0b_0n", "0");
+
+    match("0_0", "0");
+    match("0_0n", "0");
+    match("1_0");
+    match("1_0n");
+    match(".0_0");
+    match("0.0_0");
+    match("0e0_0");
+    match("0x0_0");
+    match("0x0_0n");
+    match("0o0_0");
+    match("0o0_0n");
+    match("0b0_0");
+    match("0b0_0n");
+
+    match("1__0", "1");
+    match("1__0n", "1");
+    match("1__0.0", "1");
+    match(".0__0", ".0");
+    match("0.0__0", "0.0");
+    match("1__0e0", "1");
+    match("0e0__0", "0e0");
+    match("0x0__0", "0x0");
+    match("0x0__0n", "0x0");
+    match("0o0__0", "0o0");
+    match("0o0__0n", "0o0");
+    match("0b0__0", "0b0");
+    match("0b0__0n", "0b0");
+
+    match("0x0_fg", "0x0_f");
+    match("0o0_78", "0o0_7");
+    match("0b0_12", "0b0_1");
+
+    match("1_2_3_4_5_6_7_8_9_0");
+    match("1_2_3_4_5_6_7_8_9_0n");
+    match(".0_1_2_3_4_5_6_7_8_9");
+    match("1_2_3_4_5_6_7_8_9_0.0_1_2_3_4_5_6_7_8_9");
+    match("1_2_3_4_5_6_7_8_9_0.0_1_2_3_4_5_6_7_8_9e+0_1_2_3_4_5_6_7_8_9");
+    match("0x0_1_2_3_4_5_6_7_8_9_a_b_c_d_e_f");
+    match("0X0_1_2_3_4_5_6_7_8_9_a_b_c_d_e_f");
+    match("0x0_1_2_3_4_5_6_7_8_9_a_b_c_d_e_fn");
+    match("0X0_1_2_3_4_5_6_7_8_9_a_b_c_d_e_fn");
+    match("0o0_1_2_3_4_5_6_7");
+    match("0O0_1_2_3_4_5_6_7");
+    match("0o0_1_2_3_4_5_6_7n");
+    match("0O0_1_2_3_4_5_6_7n");
+    match("0b0_1_1_0");
+    match("0B0_1_1_0");
+    match("0b0_1_1_0n");
+    match("0B0_1_1_0n");
+
+    match("1_335_000");
+    match("0b111_111_000");
+    match("0b1111_10101011_11110000_00001101");
+    match("0xFAB_F00D");
+    match("9.109_383_56e-31");
+    match("1e1_2");
   });
 
   testToken("IdentifierName", [], (match) => {
