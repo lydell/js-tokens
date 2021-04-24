@@ -2,4 +2,4 @@ node_modules
 build
 coverage
 benchmark.input.js
-test.*
+/test.*
