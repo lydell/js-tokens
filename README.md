@@ -535,6 +535,7 @@ This happens because js-tokens looks at the previous token when deciding between
 
 In case 1 and 2, that’s a `:`. A `:` _usually_ means that we have an object literal or ternary:
 
+<!-- prettier-ignore -->
 ```js
 let some = weird ? { value: {}/a/g } : {}/a/g;
 ```

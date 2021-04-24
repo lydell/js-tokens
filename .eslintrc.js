@@ -1,6 +1,12 @@
+"use strict";
+
 module.exports = {
   root: true,
-  extends: ["eslint:recommended", "plugin:jest/recommended"],
+  extends: [
+    "eslint:recommended",
+    "plugin:jest/recommended",
+    "plugin:jest/style",
+  ],
   plugins: ["jest"],
   env: {
     es6: true,
@@ -23,5 +29,7 @@ module.exports = {
     "prefer-template": "error",
     eqeqeq: ["error", "always", { null: "ignore" }],
     strict: "error",
+    "jest/no-conditional-expect": "off",
+    "jest/valid-title": "off",
   },
 };
