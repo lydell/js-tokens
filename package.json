@@ -2,16 +2,12 @@
   "private": true,
   "type": "commonjs",
   "scripts": {
-    "doctoc": "doctoc README.md",
-    "eslint": "eslint . --fix",
-    "prettier": "prettier --write .",
     "build": "node build.js",
     "test": "eslint . --report-unused-disable-directives && prettier --check . && npm run build && tsd && node benchmark.js && jest --coverage"
   },
   "devDependencies": {
     "@babel/parser": "7.13.16",
     "coffeescript": "2.5.1",
-    "doctoc": "1.4.0",
     "eslint": "7.25.0",
     "eslint-plugin-jest": "24.3.5",
     "everything.js": "1.0.3",

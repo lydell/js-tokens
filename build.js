@@ -15,7 +15,7 @@ const FILES_TO_COPY = [
   { src: "package-real.json", dest: "package.json" },
   {
     src: "README.md",
-    transform: (content) => content.replace(/<!--[^]*$/, READ_MORE),
+    transform: (content) => content.replace(/^##[^]*/m, READ_MORE),
   },
   {
     src: "index.coffee",

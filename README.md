@@ -11,41 +11,6 @@ Array.from(jsTokens(jsString), (token) => token.value).join("|");
 // JSON|.|stringify|(|{|k|:|3.14|**|2|}|,| |null| |/*replacer*/|,| |"\t"|)
 ```
 
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-
-- [Installation](#installation)
-- [Usage](#usage)
-- [Tokens](#tokens)
-  - [StringLiteral](#stringliteral)
-  - [NoSubstitutionTemplate / TemplateHead / TemplateMiddle / TemplateTail](#nosubstitutiontemplate--templatehead--templatemiddle--templatetail)
-  - [RegularExpressionLiteral](#regularexpressionliteral)
-  - [MultiLineComment](#multilinecomment)
-  - [SingleLineComment](#singlelinecomment)
-  - [IdentifierName](#identifiername)
-  - [NumericLiteral](#numericliteral)
-  - [Punctuator](#punctuator)
-  - [WhiteSpace](#whitespace)
-  - [LineTerminatorSequence](#lineterminatorsequence)
-  - [Invalid](#invalid)
-- [JSX Tokens](#jsx-tokens)
-  - [JSXString](#jsxstring)
-  - [JSXText](#jsxtext)
-  - [JSXIdentifier](#jsxidentifier)
-  - [JSXPunctuator](#jsxpunctuator)
-  - [JSXInvalid](#jsxinvalid)
-- [Compatibility](#compatibility)
-  - [ECMAScript](#ecmascript)
-    - [Annex B](#annex-b)
-  - [TypeScript](#typescript)
-  - [JSX](#jsx)
-  - [JavaScript runtimes](#javascript-runtimes)
-  - [Known errors](#known-errors)
-- [Performance](#performance)
-- [License](#license)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
 ## Installation
 
 `npm install js-tokens`
@@ -453,7 +418,7 @@ JSX is supported: `jsTokens("<p>Hello, world!</p>", { jsx: true })`.
 
 ### JavaScript runtimes
 
-js-tokens should work in any JavaScript runtime that supports [Unicode property escapes]. For Node.js, this means Node.js 10 or later.
+js-tokens should work in any JavaScript runtime that supports [Unicode property escapes].
 
 ### Known errors
 
