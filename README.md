@@ -562,10 +562,6 @@ With [@babel/parser] for comparison.
 
 See [benchmark.js] if you want to run benchmarks yourself.
 
-## License
-
-[MIT](LICENSE).
-
 [@babel/parser]: https://babeljs.io/docs/en/babel-parser
 [additional syntax]: https://tc39.es/ecma262/#sec-additional-syntax
 [annexb]: https://tc39.es/ecma262/#sec-additional-ecmascript-features-for-web-browsers
