@@ -33,11 +33,11 @@ jobs:
         if: steps.cache-node_modules.outputs.cache-hit != 'true'
         run: npm ci
 
-      - name: Jest
-        run: npx --no-install jest --coverage
-
       - name: Build
         run: npm run build
+
+      - name: Jest
+        run: npx --no-install jest --coverage
 
       - name: Benchmark
         run: npm run benchmark
