@@ -40,4 +40,4 @@ jobs:
         run: npx --no-install jest --coverage
 
       - name: Benchmark
-        run: npm run benchmark
+        run: node benchmark.js
