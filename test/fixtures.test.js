@@ -102,7 +102,7 @@ function readJsonIfExists(file) {
 }
 
 function runFile(file, { compareWithBabel = true } = {}) {
-  const code = fs.readFileSync(file, "utf8");
+  const code = fs.readFileSync(file, "utf8").replace(/\r\n/g, "\n");
   const json = readJsonIfExists(file.replace(/\.\w+$/, ".json"));
 
   const sourceType = /[.-]module\.\w+$/.test(file) ? "module" : "script";
