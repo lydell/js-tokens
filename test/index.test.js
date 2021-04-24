@@ -717,11 +717,13 @@ describe("Token", () => {
     match("&");
     match("&&");
     match("&=");
-    match("&&=", "&&");
+    match("&&=");
     match("|");
     match("||");
     match("|=");
-    match("||=", "||");
+    match("||=");
+    match("??");
+    match("??=");
     match("^");
     match("^^", "^");
     match("^=");
@@ -757,9 +759,6 @@ describe("Token", () => {
     match("?.");
     match("x?.a", ["x", "?.", "a"]);
     match("x?.0:1", ["x", "?", ".0", ":", "1"]);
-
-    match("??");
-    match("???", ["??", "?"]);
 
     match("?");
     match("~");
