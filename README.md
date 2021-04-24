@@ -548,15 +548,15 @@ Luckily, none of these edge cases are likely to occur in real code.
 
 ## Performance
 
-With [@babel/parser] for comparison.
+With [@babel/parser] for comparison. Node.js 16 on Ubuntu 20.04.
 
-| Lines of code |    Size | js-tokens@6.0.0 | @babel/parser@7.9.4 |
-| ------------: | ------: | --------------: | ------------------: |
-|          ~100 | ~4.8 KB |           ~2 ms |              ~17 ms |
-|        ~1 000 |  ~46 KB |          ~11 ms |              ~84 ms |
-|       ~10 000 | ~409 KB |          ~80 ms |             ~550 ms |
-|      ~100 000 | ~3.3 MB |         ~430 ms |             ~7.45 s |
-|    ~1 500 000 |  ~77 MB |            ~7 s |     ~4 minutes (\*) |
+| Lines of code |    Size | js-tokens@7.0.0 | @babel/parser@7.13.16 |
+| ------------: | ------: | --------------: | --------------------: |
+|          ~100 | ~4.6 KB |           ~2 ms |                ~14 ms |
+|        ~1 000 |  ~45 KB |          ~11 ms |                ~72 ms |
+|       ~10 000 | ~365 KB |          ~72 ms |               ~350 ms |
+|      ~100 000 | ~3.9 MB |         ~500 ms |                  ~4 s |
+|    ~1 500 000 |  ~84 MB |            ~6 s |     ~2.5 minutes (\*) |
 
 (\*) Required increasing Node.js’ memory limit.
 

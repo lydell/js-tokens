@@ -103,6 +103,18 @@ function nonEmptyLines(string) {
   return string.split("\n").filter((line) => line.length > 0);
 }
 
+const KiB = 2 ** 10;
+const MiB = 2 ** 20;
+
+function fileSize(string) {
+  const byteLength = Buffer.byteLength(string, "utf8");
+  return byteLength < KiB
+    ? `${byteLength} B`
+    : byteLength < MiB
+    ? `${(byteLength / KiB).toFixed(1)} KiB`
+    : `${(byteLength / MiB).toFixed(1)} MiB`;
+}
+
 function run(argv) {
   const [tokenizer, numFiles] = parseArguments(argv);
   const allFiles = read();
@@ -113,11 +125,11 @@ function run(argv) {
   const lineLengths = nonEmptyLines(code).map((line) => line.length);
 
   console.log("Total files:", allFiles.length);
-  console.log("Total chars:", allCode.length);
+  console.log("Total chars:", allCode.length, fileSize(allCode));
   console.log("Total lines:", nonEmptyLines(allCode).length);
   if (code !== allCode) {
     console.log("Used files: ", files.length);
-    console.log("Used chars: ", code.length);
+    console.log("Used chars: ", code.length, fileSize(code));
     console.log("Used lines: ", nonEmptyLines(code).length);
   }
 
