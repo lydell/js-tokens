@@ -165,12 +165,14 @@ const invalid = [
   "./node_modules/test262-parser-tests/early",
 ];
 
-const ignored = new Set([
-  // Known cases where js-tokens mis-identifies regex as division.
-  "node_modules/test262-parser-tests/pass/9d3d960e32528788.js",
-  "node_modules/test262-parser-tests/pass/d53aef16fe683218.js",
-  "node_modules/test262-parser-tests/pass-explicit/d53aef16fe683218.js",
-]);
+const ignored = new Set(
+  [
+    // Known cases where js-tokens mis-identifies regex as division.
+    "node_modules/test262-parser-tests/pass/9d3d960e32528788.js",
+    "node_modules/test262-parser-tests/pass/d53aef16fe683218.js",
+    "node_modules/test262-parser-tests/pass-explicit/d53aef16fe683218.js",
+  ].map(path.normalize)
+);
 
 describe("valid", () => {
   for (const dir of valid) {
