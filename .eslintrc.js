@@ -8,6 +8,9 @@ module.exports = {
     "plugin:jest/style",
   ],
   plugins: ["jest"],
+  parserOptions: {
+    ecmaVersion: 2016,
+  },
   env: {
     es6: true,
     node: true,

@@ -216,9 +216,10 @@ Examples:
 0
 1.5
 1
+1_000
 12e9
 0.123e-32
-0xDeadbeef
+0xDead_beef
 0b110
 12n
 07
@@ -389,7 +390,7 @@ All possible values in JSX children:
 
 The intention is to always support the latest ECMAScript version whose feature set has been finalized.
 
-Currently, ECMAScript 2020 is supported.
+Currently, ECMAScript 2021 is supported.
 
 #### Annex B
 
@@ -548,15 +549,15 @@ Luckily, none of these edge cases are likely to occur in real code.
 
 ## Performance
 
-With [@babel/parser] for comparison.
+With [@babel/parser] for comparison. Node.js 16 on Ubuntu 20.04.
 
-| Lines of code |    Size | js-tokens@6.0.0 | @babel/parser@7.9.4 |
-| ------------: | ------: | --------------: | ------------------: |
-|          ~100 | ~4.8 KB |           ~2 ms |              ~17 ms |
-|        ~1 000 |  ~46 KB |          ~11 ms |              ~84 ms |
-|       ~10 000 | ~409 KB |          ~80 ms |             ~550 ms |
-|      ~100 000 | ~3.3 MB |         ~430 ms |             ~7.45 s |
-|    ~1 500 000 |  ~77 MB |            ~7 s |     ~4 minutes (\*) |
+| Lines of code |     Size | js-tokens@7.0.0 | @babel/parser@7.13.16 |
+| ------------: | -------: | --------------: | --------------------: |
+|          ~100 | ~4.6 KiB |           ~2 ms |                ~14 ms |
+|        ~1 000 |  ~45 KiB |          ~11 ms |                ~72 ms |
+|       ~10 000 | ~365 KiB |          ~72 ms |               ~350 ms |
+|      ~100 000 | ~3.9 MiB |         ~500 ms |                  ~4 s |
+|    ~1 500 000 |  ~84 MiB |            ~6 s |     ~2.5 minutes (\*) |
 
 (\*) Required increasing Node.js’ memory limit.
 
