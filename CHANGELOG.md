@@ -1,3 +1,7 @@
+### Version 7.0.0 (2021-04-25)
+
+- Added: Support for ES2021: The `||=`, `&&=` and `??=` operators, as well as undescores in numeric literals (`1_000`).
+
 ### Version 6.0.0 (2020-04-13)
 
 - Changed: The main export of this module is no longer a regex (accompanied by a small helper function). Instead, the only export is a function that tokenizes JavaScript (which was the main use case of the regex). The tokenization is still powered by basically the same regex as before, but is now wrapped up in 300–400 lines of code. This is required to tokenize regex and templates correctly, and to support JSX (see below).
