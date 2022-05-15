@@ -1,6 +1,19 @@
+### Version 8.0.0 (2022-05-15)
+
+Support for ES2022!
+
+- Added: Support for the `d` regex flag.
+
+- Added: A new token type – `PrivateIdentifier` – for things like `#name`.
+
+  `this.#name` now tokenizes differently:
+
+  - Before: `IdentifierName: this`, `Punctuator: .`, `Invalid: #`, `IdentifierName: name`
+  - After: `IdentifierName: this`, `Punctuator: .`, `PrivateIdentifier: #name`
+
 ### Version 7.0.0 (2021-04-25)
 
-- Added: Support for ES2021: The `||=`, `&&=` and `??=` operators, as well as undescores in numeric literals (`1_000`).
+- Added: Support for ES2021: The `||=`, `&&=` and `??=` operators, as well as underscores in numeric literals (`1_000`).
 
 ### Version 6.0.0 (2020-04-13)
 
