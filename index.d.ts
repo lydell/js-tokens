@@ -8,6 +8,7 @@ export declare type Token =
   | { type: "MultiLineComment"; value: string; closed: boolean }
   | { type: "SingleLineComment"; value: string }
   | { type: "IdentifierName"; value: string }
+  | { type: "PrivateIdentifier"; value: string }
   | { type: "NumericLiteral"; value: string }
   | { type: "Punctuator"; value: string }
   | { type: "WhiteSpace"; value: string }

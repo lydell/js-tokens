@@ -64,6 +64,7 @@ type Token =
   | { type: "MultiLineComment"; value: string; closed: boolean }
   | { type: "SingleLineComment"; value: string }
   | { type: "IdentifierName"; value: string }
+  | { type: "PrivateIdentifier"; value: string }
   | { type: "NumericLiteral"; value: string }
   | { type: "Punctuator"; value: string }
   | { type: "WhiteSpace"; value: string }
@@ -205,6 +206,34 @@ $variab1e_name
 \u006C\u006F\u006C\u0077\u0061\u0074
 ```
 
+### PrivateIdentifier
+
+_Spec: [PrivateIdentifier]_
+
+Any `IdentifierName` preceded by a `#`.
+
+Examples:
+
+<!-- prettier-ignore -->
+```js
+#if
+#for
+#var
+#instanceof
+#package
+#null
+#true
+#false
+#Infinity
+#undefined
+#NaN
+#$variab1e_name
+#π
+#℮
+#ಠ_ಠ
+#\u006C\u006F\u006C\u0077\u0061\u0074
+```
+
 ### NumericLiteral
 
 _Spec: [NumericLiteral]_
@@ -261,7 +290,7 @@ CR, LF and CRLF, plus `\u2028` and `\u2029`.
 
 _Spec: n/a_
 
-Single code points not matched in another tokens.
+Single code points not matched in another token.
 
 Examples:
 
@@ -390,7 +419,7 @@ All possible values in JSX children:
 
 The intention is to always support the latest ECMAScript version whose feature set has been finalized.
 
-Currently, ECMAScript 2021 is supported.
+Currently, ECMAScript 2022 is supported.
 
 #### Annex B
 
@@ -577,6 +606,7 @@ See [benchmark.js] if you want to run benchmarks yourself.
 [multilinecomment]: https://tc39.es/ecma262/#prod-MultiLineComment
 [nosubstitutiontemplate]: https://tc39.es/ecma262/#prod-NoSubstitutionTemplate
 [numericliteral]: https://tc39.es/ecma262/#prod-annexB-NumericLiteral
+[privateidentifier]: https://tc39.es/ecma262/#prod-PrivateIdentifier
 [punctuator]: https://tc39.es/ecma262/#prod-Punctuator
 [regularexpressionliteral]: https://tc39.es/ecma262/#prod-RegularExpressionLiteral
 [rightbracepunctuator]: https://tc39.es/ecma262/#prod-RightBracePunctuator

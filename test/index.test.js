@@ -707,6 +707,81 @@ describe("Token", () => {
     match("\\x09", false);
   });
 
+  testToken("PrivateIdentifier", [], (match) => {
+    match("#", false);
+    match("#$");
+    match("#_");
+    match("#a");
+    match("#z");
+    match("#A");
+    match("#Z");
+    match("#å");
+    match("#π");
+    match("#0", false);
+    match("#0a", false);
+    match("#$0");
+    match("#_0");
+    match("#a0");
+    match("#z0");
+    match("#A0");
+    match("#Z0");
+    match("#å0");
+    match("#π0");
+    match("#a_56åπ");
+    match("#℮");
+    match("#℘");
+    match("#゛");
+    match("#゜");
+    match("#℮℘");
+    match("#·", false);
+    match("#℮·");
+    match("#·", false);
+    match("#℮·");
+    match("#᧚", false);
+    match("#℮᧚");
+    match("#Iñtërnâtiônàlizætiøn");
+
+    match("#a\u00a0", "#a");
+    match("#a\u1680", "#a");
+    match("#a\u2000", "#a");
+    match("#a\u2001", "#a");
+    match("#a\u2002", "#a");
+    match("#a\u2003", "#a");
+    match("#a\u2004", "#a");
+    match("#a\u2005", "#a");
+    match("#a\u2006", "#a");
+    match("#a\u2007", "#a");
+    match("#a\u2008", "#a");
+    match("#a\u2009", "#a");
+    match("#a\u200a", "#a");
+    match("#a\u2028", "#a");
+    match("#a\u2029", "#a");
+    match("#a\u202f", "#a");
+    match("#a\u205f", "#a");
+    match("#a\u3000", "#a");
+
+    match("#\\u0000");
+    match("#\\u15cF");
+    match("#\\u15cG", false);
+    match("#\\u000", false);
+    match("#\\u00000");
+    match("#a\\u0000b");
+
+    match("#\\u{0}");
+    match("#\\u{01}");
+    match("#\\u{012}");
+    match("#\\u{0123}");
+    match("#\\u{01234}");
+    match("#\\u{012345}");
+    match("#\\u{0123456}");
+    match("#\\u{00000000000000a0}");
+    match("#\\u{15cF}");
+    match("#\\u{15cG}", false);
+    match("#a\\u{0000}b");
+
+    match("#\\x09", false);
+  });
+
   testToken("RegularExpressionLiteral", [], (match) => {
     match("//", false);
     match("/a/");
@@ -1013,6 +1088,7 @@ describe("JSXToken", () => {
   });
 
   testToken("JSXIdentifier", ["<"], (match) => {
+    match("#div", false);
     match("div");
     match("class");
     match("xml");
@@ -1023,6 +1099,7 @@ describe("JSXToken", () => {
     match("-", false);
     match("-f--", ["-", "f--"]);
 
+    match("#", false);
     match("$");
     match("_");
     match("a");

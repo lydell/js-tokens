@@ -3,7 +3,8 @@
 const jsTokens = require("../build/index");
 
 test("all tokens", () => {
-  const code = 'console.log("", ``, `a${1}b${2}`, /**/ /./, 0x1Fn) //\r\n#\'';
+  const code =
+    'console.log("", ``, `a${1}b${this.#private}`, /**/ /./, 0x1Fn) //\r\n#\'';
 
   const tokens = Array.from(jsTokens(code));
 
@@ -64,8 +65,16 @@ test("all tokens", () => {
         "value": "}b\${",
       },
       Object {
-        "type": "NumericLiteral",
-        "value": "2",
+        "type": "IdentifierName",
+        "value": "this",
+      },
+      Object {
+        "type": "Punctuator",
+        "value": ".",
+      },
+      Object {
+        "type": "PrivateIdentifier",
+        "value": "#private",
       },
       Object {
         "closed": true,
