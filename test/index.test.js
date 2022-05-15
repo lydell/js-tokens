@@ -723,13 +723,14 @@ describe("Token", () => {
     match("/?foo/");
     match("/*foo/", false);
 
+    match("/a/d");
     match("/a/g");
     match("/a/m");
     match("/a/i");
     match("/a/y");
     match("/a/u");
     match("/a/s");
-    match("/a/gmiyus");
+    match("/a/dgmiyus");
     match("/a/myg");
     match("/a/e");
     match("/a/E");
