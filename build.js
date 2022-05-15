@@ -24,7 +24,7 @@ const FILES_TO_COPY = [
       coffee
         .compile(content, { bare: true })
         .replace(/ {2}/g, "\t")
-        .replace(/\/\/ https.*\n/g, "")
+        .replace(/\/\/ (?:Note:|https).*\n/g, "")
         .replace(/\n\n/g, "\n")
         .replace(/\{\s*(tag: "[^"]+")\s*\}/g, "{$1}"),
   },

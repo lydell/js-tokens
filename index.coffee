@@ -56,7 +56,9 @@ Punctuator = ///
   [ ? ~ , : ; [ \] ( ) { } ]
 ///y
 
-IdentifierName = ///
+# Note: `\x23` is `#`. The escape is used since VSCode’s syntax highlighting breaks otherwise.
+Identifier = ///
+  (\x23?)
   (?=[ $ _ \p{ID_Start} \\ ])
   (?:
     [ $ _ \u200C \u200D \p{ID_Continue} ]
@@ -332,9 +334,9 @@ module.exports = jsTokens = (input, {jsx = false} = {}) ->
           }
           continue
 
-        IdentifierName.lastIndex = lastIndex
-        if match = IdentifierName.exec(input)
-          lastIndex = IdentifierName.lastIndex
+        Identifier.lastIndex = lastIndex
+        if match = Identifier.exec(input)
+          lastIndex = Identifier.lastIndex
           nextLastSignificantToken = match[0]
           switch match[0]
             when "for", "if", "while", "with"
@@ -343,7 +345,7 @@ module.exports = jsTokens = (input, {jsx = false} = {}) ->
           lastSignificantToken = nextLastSignificantToken
           postfixIncDec = !KeywordsWithExpressionAfter.test(match[0])
           yield {
-            type: "IdentifierName",
+            type: if match[1] == "#" then "PrivateIdentifier" else "IdentifierName",
             value: match[0],
           }
           continue

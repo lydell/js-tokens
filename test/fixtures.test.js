@@ -58,6 +58,18 @@ function babel(code, sourceType, fileType) {
       }
     }
 
+    if (token.type.label === "#") {
+      const next = tokens[index + 1];
+      if (next && next.type.label === "name") {
+        result.push({
+          type: "PrivateIdentifier",
+          value: `#${next.value}`,
+        });
+        index += 1;
+        continue;
+      }
+    }
+
     if (token.type.label === "eof") {
       continue;
     }

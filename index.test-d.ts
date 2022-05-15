@@ -61,6 +61,10 @@ const tokens: Array<string> = Array.from(jsTokens(""), (token) => {
       expectError(token.closed);
       return token.value;
 
+    case "PrivateIdentifier":
+      expectError(token.closed);
+      return token.value;
+
     case "NumericLiteral":
       expectError(token.closed);
       return token.value;
@@ -122,6 +126,10 @@ const jsxTokens: Array<string> = Array.from(
         return token.value;
 
       case "IdentifierName":
+        expectError(token.closed);
+        return token.value;
+
+      case "PrivateIdentifier":
         expectError(token.closed);
         return token.value;
 
