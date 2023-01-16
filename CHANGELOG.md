@@ -1,3 +1,7 @@
+### Version 8.0.1 (2023-01-16)
+
+- Fixed: `/]/` is now parsed as a `RegularExpressionLiteral`. That’s invalid regex syntax, unless [Annex B: Additional ECMAScript Features for Web Browsers][annexb] is honored, which js-tokens does. Thanks to Jared Hughes (@jared-hughes) for reporting and fixing!
+
 ### Version 8.0.0 (2022-05-15)
 
 Support for ES2022!
@@ -146,6 +150,7 @@ These are the breaking changes:
 
 - Initial release.
 
+[annexb]: https://tc39.es/ecma262/#sec-additional-ecmascript-features-for-web-browsers
 [edge-cases]: https://github.com/lydell/js-tokens/blob/0db8dbbfad9aa2ed1c94370c9632ce682c224bf8/README.md#known-errors
 [test262-parser-tests]: https://github.com/tc39/test262-parser-tests
 [unicode property escapes]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions/Unicode_Property_Escapes
