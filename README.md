@@ -495,8 +495,8 @@ label: {
 <div>x</div> / g;
 
 // Case 3:
-(function f() {} / a / g);
-(function f() {} < div > x < /div>/g);
+(function f() {}) / a / g;
+(function f() {}) < div > x < /div>/g;
 ```
 
 But js-tokens thinks they mean:
@@ -505,14 +505,14 @@ But js-tokens thinks they mean:
 // Case 1:
 switch (x) {
   case x:
-    ({} / a / g);
+    ({}) / a / g;
   case x:
-    ({} < div > x < /div>/g);
+    ({}) < div > x < /div>/g;
 }
 
 // Case 2:
-label: ({} / a / g);
-label: ({} < div > x < /div>/g);
+label: ({}) / a / g;
+label: ({}) < div > x < /div>/g;
 
 // Case 3:
 function f() {}
