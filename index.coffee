@@ -21,6 +21,8 @@ RegularExpressionLiteral = ///
     (?![ / \] \\ ]).
     |
     \\.
+    |
+    \]
   )*
   (
     /
