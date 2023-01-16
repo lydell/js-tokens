@@ -578,17 +578,17 @@ Luckily, none of these edge cases are likely to occur in real code.
 
 ## Performance
 
-With [@babel/parser] for comparison. Node.js 18.1.0 on Ubuntu 20.04.
+With [@babel/parser] for comparison. Node.js 18.13.0 on a MacBook Pro M1 (Ventura).
 
-| Lines of code |     Size | js-tokens@8.0.0 | @babel/parser@7.14.4 |
+| Lines of code |     Size | js-tokens@8.0.0 | @babel/parser@7.20.7 |
 | ------------: | -------: | --------------: | -------------------: |
-|          ~100 | ~4.3 KiB |           ~2 ms |               ~17 ms |
-|        ~1 000 |  ~39 KiB |           ~5 ms |               ~60 ms |
-|       ~10 000 | ~353 KiB |          ~50 ms |              ~273 ms |
-|      ~100 000 | ~4.7 MiB |         ~385 ms |               ~4.7 s |
-|    ~2 300 000 | ~132 MiB |           ~10 s |          failed (\*) |
+|          ~100 | ~4.1 KiB |           ~2 ms |               ~10 ms |
+|        ~1 000 |  ~39 KiB |           ~5 ms |               ~29 ms |
+|       ~10 000 | ~353 KiB |          ~37 ms |              ~119 ms |
+|      ~100 000 | ~5.1 MiB |         ~317 ms |               ~2.2 s |
+|    ~2 400 000 | ~138 MiB |            ~8 s |       ~8 m 32 s (\*) |
 
-(\*) Out of memory crash after ~9 minutes (even though I had increased the memory limit to 8 GiB).
+(\*) Required increasing the Node.js the memory limit (I set it to 8 GiB).
 
 See [benchmark.js] if you want to run benchmarks yourself.
 
