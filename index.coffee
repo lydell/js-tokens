@@ -1,4 +1,4 @@
-# Copyright 2014, 2015, 2016, 2017, 2018, 2019, 2020 Simon Lydell
+# Copyright 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023 Simon Lydell
 # License: MIT.
 
 # https://tc39.es/ecma262/#sec-lexical-grammar
