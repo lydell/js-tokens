@@ -793,6 +793,7 @@ describe("Token", () => {
     match("/[\\]/]/");
     match("/[\\\\]/]/", "/[\\\\]/");
     match("/[\\\\\\]/]/");
+    match("/abc]xyz/", "/abc]xyz/");
     match("/\\u05aF/");
     match("/invalid escape sequence is OK: \\u/");
     match("/?foo/");
