@@ -1,3 +1,7 @@
+### Version 8.0.2 (2023-09-09)
+
+- Fixed: The TypeScript type definitions shipped in the npm package are now more correct. Previously they used `export default`, but apparently `export =` is the correct syntax to use for packages that export a single function, which can be used both in CJS and MJS. (Read more about [Incorrect default export]). It should now be possible to do `const jsTokens = require("js-tokens")` in a `@ts-checked`ed JS file without TypeScript complaining. Note: This requires `"esModuleInterop": true` in your tsconfig.json, but as far as I can tell that’s not a breaking change, since importing js-tokens with `"esModuleInterop": false` didn’t work at runtime anyway.
+
 ### Version 8.0.1 (2023-01-16)
 
 - Fixed: `/]/` is now parsed as a `RegularExpressionLiteral`. That’s invalid regex syntax, unless [Annex B: Additional ECMAScript Features for Web Browsers][annexb] is honored, which js-tokens does. Thanks to Jared Hughes (@jared-hughes) for reporting and fixing!
@@ -152,5 +156,6 @@ These are the breaking changes:
 
 [annexb]: https://tc39.es/ecma262/#sec-additional-ecmascript-features-for-web-browsers
 [edge-cases]: https://github.com/lydell/js-tokens/blob/0db8dbbfad9aa2ed1c94370c9632ce682c224bf8/README.md#known-errors
+[incorrect default export]: https://github.com/arethetypeswrong/arethetypeswrong.github.io/blob/4706e9a84892be17888bb01a4d85c0bfed3230c2/docs/problems/FalseExportDefault.md
 [test262-parser-tests]: https://github.com/tc39/test262-parser-tests
 [unicode property escapes]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions/Unicode_Property_Escapes
