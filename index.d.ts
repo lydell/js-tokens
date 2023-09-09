@@ -22,14 +22,15 @@ export declare type JSXToken =
   | { type: "JSXPunctuator"; value: string }
   | { type: "JSXInvalid"; value: string };
 
-export default function jsTokens(
+declare function jsTokens(
   input: string,
   options: { jsx: true }
 ): Iterable<Token | JSXToken>;
 
-export default function jsTokens(
+declare function jsTokens(
   input: string,
   options?: { jsx?: boolean }
 ): Iterable<Token>;
 
-export default function jsTokens(input: string): Iterable<Token>;
+// @ts-expect-error TypeScript complains about _both_ exporting types _and_ using `export =` but it seems to work fine in practice.
+export = jsTokens;
