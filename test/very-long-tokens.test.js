@@ -49,6 +49,23 @@ describe("Very long tokens", () => {
     test("double quote", () => {
       expect(run(`"${"a".repeat(LARGE)}"`)).toBe("StringLiteral");
     });
+
+    test("string with both large repetitions and escapes", () => {
+      const content = `\\"${"a".repeat(LARGE)}\\\\'\\"\\n`.repeat(10);
+      expect(run(`"${content}"`)).toBe("StringLiteral");
+    });
+
+    test("a string with a very large number of lines with \\n escapes", () => {
+      // Using `LARGE` results in `RangeError: Invalid string length` here.
+      const content = `${"a".repeat(100)}\\n`.repeat(1e6);
+      expect(run(`"${content}"`)).toBe("StringLiteral");
+    });
+
+    test("a string with a very large number of lines with actual escaped newlines", () => {
+      // Using `LARGE` results in `RangeError: Invalid string length` here.
+      const content = `${"a".repeat(100)}\\\n`.repeat(1e6);
+      expect(run(`"${content}"`)).toBe("StringLiteral");
+    });
   });
 
   describe("Template", () => {
