@@ -133,3 +133,15 @@ describe("Very long tokens", () => {
     `);
   });
 });
+
+describe("README.md examples", () => {
+  test("success", () => {
+    expect(run(`"${"a".repeat(LARGE)}"`)).toBe("StringLiteral");
+  });
+
+  test("failure", () => {
+    expect(() =>
+      run(`"${"\\n".repeat(LARGE)}"`)
+    ).toThrowErrorMatchingInlineSnapshot(`"Maximum call stack size exceeded"`);
+  });
+});

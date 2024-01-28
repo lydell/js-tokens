@@ -576,6 +576,47 @@ But _function expressions_ are of course not statements. It’s difficult to tel
 
 Luckily, none of these edge cases are likely to occur in real code.
 
+### Known failures
+
+js-tokens advertises that it “never fails”. Tell you what, it _can_ fail on extreme inputs. The regex engine of the runtime can eventually give up. js-tokens has worked around it to some extent by changing its regexes to be easier on the regex engine. To solve completely, js-tokens would have to stop using regex, but then it wouldn’t be _tiny_ anymore which is the whole point. Luckily, only extreme inputs can fail, hopefully ones you’ll never encounter.
+
+For example, if you try to parse the string literal `"\n\n\n"` but with 10 million `\n` instead of just 3, the regex engine gives up with `RangeError: Maximum call stack size exceeded` (or similar). Try it out:
+
+```js
+Array.from(require("js-tokens")(`"${"\\n".repeat(1e7)}"`));
+```
+
+(Yes, that is the _regex engine_ of the runtime giving up. js-tokens has no recursive functions.)
+
+However, if you repeat `a` instead of `\n` 10 million times (`"aaaaaa…"`), it works:
+
+```js
+Array.from(require("js-tokens")(`"${"a".repeat(1e7)}"`));
+```
+
+That’s good, because it’s much more common to have lots of non-escapes in a row in a big string literal, than having mostly escapes. (Obfuscated code might have _only_ escapes though.)
+
+#### Safari warning
+
+I’ve seen Safari _give up_ instead of throwing an error.
+
+In Safari, Chrome, Firefox and Node.js the following code successfully results in a match:
+
+```js
+/(#)(?:a|b)+/.exec("#" + "a".repeat(1e5));
+```
+
+But for the following code (with `1e7` instead of `1e5`), the runtimes differ:
+
+```js
+/(#)(?:a|b)+/.exec("#" + "a".repeat(1e7));
+```
+
+- Chrome, Firefox and Node.js all throw `RangeError: Maximum call stack size exceeded` (or similar).
+- Safari returns `null` (at the time of writing), silently giving up on matching the regex. It’s kind of lying that the regex did not match, while in reality it would given enough computing resources.
+
+This means that in Safari, js-tokens might not fail but instead give you unexpected tokens.
+
 ## Performance
 
 With [@babel/parser] for comparison. Node.js 18.13.0 on a MacBook Pro M1 (Ventura).
