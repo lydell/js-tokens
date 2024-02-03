@@ -421,11 +421,11 @@ The intention is to always support the latest ECMAScript version whose feature s
 
 Currently, ECMAScript 2022 is supported.
 
-#### Annex B
+#### Annex B and C (strict mode)
 
-[Annex B: Additional ECMAScript Features for Web Browsers][annexb] of the spec is optional if the ECMAScript host is not a web browser, and specifies some additional syntax.
+Section [B: Additional ECMAScript Features for Web Browsers][annexb] of the spec is optional if the ECMAScript host is not a web browser, and specifies some additional syntax. Section [C: The Strict Mode of ECMAScript][annexc] disallows certain syntax in Strict Mode.
 
-- Numeric literals: js-tokens supports legacy octal and octal like numeric literals. It was easy enough, so why not.
+- Numeric literals: js-tokens supports legacy octal and octal like numeric literals, regardless of Strict Mode.
 - String literals: js-tokens supports legacy octal escapes, since it allows any invalid escapes.
 - HTML-like comments: **Not supported.** js-tokens prefers treating `5<!--x` as `5 < !(--x)` rather than as `5 //x`.
 - Regular expression patterns: js-tokens doesn’t care what’s between the starting `/` and ending `/`, so this is supported.
@@ -636,6 +636,7 @@ See [benchmark.js] if you want to run benchmarks yourself.
 [@babel/parser]: https://babeljs.io/docs/en/babel-parser
 [additional syntax]: https://tc39.es/ecma262/#sec-additional-syntax
 [annexb]: https://tc39.es/ecma262/#sec-additional-ecmascript-features-for-web-browsers
+[annexc]: https://tc39.es/ecma262/#sec-strict-mode-of-ecmascript
 [benchmark.js]: benchmark.js
 [divpunctuator]: https://tc39.es/ecma262/#prod-DivPunctuator
 [ecmascript language: lexical grammar]: https://tc39.es/ecma262/#sec-ecmascript-language-lexical-grammar
@@ -646,7 +647,7 @@ See [benchmark.js] if you want to run benchmarks yourself.
 [lineterminatorsequence]: https://tc39.es/ecma262/#prod-LineTerminatorSequence
 [multilinecomment]: https://tc39.es/ecma262/#prod-MultiLineComment
 [nosubstitutiontemplate]: https://tc39.es/ecma262/#prod-NoSubstitutionTemplate
-[numericliteral]: https://tc39.es/ecma262/#prod-annexB-NumericLiteral
+[numericliteral]: https://tc39.es/ecma262/#prod-NumericLiteral
 [privateidentifier]: https://tc39.es/ecma262/#prod-PrivateIdentifier
 [punctuator]: https://tc39.es/ecma262/#prod-Punctuator
 [regularexpressionliteral]: https://tc39.es/ecma262/#prod-RegularExpressionLiteral
