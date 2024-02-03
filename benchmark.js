@@ -3,7 +3,7 @@
 const babelParser = require("@babel/parser");
 const fastGlob = require("fast-glob");
 const fs = require("fs");
-const jsTokens = require("./build/index");
+const jsTokens = require("./build/index.js");
 
 const usage = `
 Usage: node benchmark.js [TOKENIZER] [NUM_FILES]

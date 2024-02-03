@@ -1,6 +1,5 @@
-"use strict";
-
-const jsTokens = require("../build/index");
+import { describe, test, expect } from "vitest";
+import jsTokens from "../build/index.js";
 
 function run(input) {
   const types = Array.from(jsTokens(input), (token) => token.type);
@@ -81,7 +80,9 @@ describe("Very long tokens", () => {
     expect(run(`2${"0".repeat(308)}`)).toBe("NumericLiteral");
     expect(() =>
       run(`${"1".repeat(LARGE)}`)
-    ).toThrowErrorMatchingInlineSnapshot(`"Maximum call stack size exceeded"`);
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[RangeError: Maximum call stack size exceeded]`
+    );
   });
 
   describe("Template", () => {
@@ -158,6 +159,8 @@ describe("README.md examples", () => {
   test("failure", () => {
     expect(() =>
       run(`"${"\\n".repeat(LARGE)}"`)
-    ).toThrowErrorMatchingInlineSnapshot(`"Maximum call stack size exceeded"`);
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[RangeError: Maximum call stack size exceeded]`
+    );
   });
 });

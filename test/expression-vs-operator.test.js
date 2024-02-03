@@ -1,6 +1,5 @@
-"use strict";
-
-const jsTokens = require("../build/index");
+import { describe, test, expect } from "vitest";
+import jsTokens from "../build/index.js";
 
 const keywords1 = [
   "await",
@@ -333,7 +332,6 @@ const separators = [
   ],
 ];
 
-/* eslint-disable jest/no-standalone-expect */
 function run(code, expressionType) {
   describe(expressionType, () => {
     for (const variation of all) {
@@ -448,7 +446,6 @@ function run(code, expressionType) {
     }
   });
 }
-/* eslint-enable jest/no-standalone-expect */
 
 function check(passedPreceding, code, fn) {
   const filtered = [].concat(

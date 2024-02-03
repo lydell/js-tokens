@@ -1,9 +1,8 @@
-"use strict";
-
-const fs = require("fs");
-const path = require("path");
-const babelParser = require("@babel/parser");
-const jsTokensLib = require("../build/index");
+import { describe, test, expect } from "vitest";
+import * as fs from "fs";
+import * as path from "path";
+import * as babelParser from "@babel/parser";
+import jsTokensLib from "../build/index.js";
 
 const babelTypeMap = {
   bigint: "NumericLiteral",
