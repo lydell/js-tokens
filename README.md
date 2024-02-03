@@ -619,15 +619,15 @@ This means that in Safari, js-tokens might not fail but instead give you unexpec
 
 ## Performance
 
-With [@babel/parser] for comparison. Node.js 18.13.0 on a MacBook Pro M1 (Ventura).
+With [@babel/parser] for comparison. Node.js 21.6.1 on a MacBook Pro M1 (Sonoma).
 
-| Lines of code |     Size | js-tokens@8.0.0 | @babel/parser@7.20.7 |
+| Lines of code |     Size | js-tokens@8.0.3 | @babel/parser@7.23.9 |
 | ------------: | -------: | --------------: | -------------------: |
-|          ~100 | ~4.1 KiB |           ~2 ms |               ~10 ms |
-|        ~1 000 |  ~39 KiB |           ~5 ms |               ~29 ms |
-|       ~10 000 | ~353 KiB |          ~37 ms |              ~119 ms |
-|      ~100 000 | ~5.1 MiB |         ~317 ms |               ~2.2 s |
-|    ~2 400 000 | ~138 MiB |            ~8 s |       ~8 m 32 s (\*) |
+|          ~100 | ~4.0 KiB |           ~2 ms |               ~10 ms |
+|        ~1 000 |  ~39 KiB |           ~5 ms |               ~27 ms |
+|       ~10 000 | ~353 KiB |          ~44 ms |              ~108 ms |
+|      ~100 000 | ~5.1 MiB |         ~333 ms |               ~2.0 s |
+|    ~2 400 000 | ~138 MiB |            ~7 s |        ~4 m 9 s (\*) |
 
 (\*) Required increasing the Node.js the memory limit (I set it to 8 GiB).
 
