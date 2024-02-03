@@ -12,13 +12,13 @@ RegularExpressionLiteral = ///
   (?:
     \[
     (?:
-      (?![ \] \\ ]).
+      [^ \] \\ \n \r \u2028 \u2029 ]+
       |
       \\.
     )*
     \]
     |
-    (?![ / \\ ]).
+    [^ / \\ \n \r \u2028 \u2029 ]+
     |
     \\.
   )*
@@ -61,7 +61,7 @@ Identifier = ///
   (\x23?)
   (?=[ $ _ \p{ID_Start} \\ ])
   (?:
-    [ $ _ \u200C \u200D \p{ID_Continue} ]
+    [ $ _ \u200C \u200D \p{ID_Continue} ]+
     |
     \\u[ \d a-f A-F ]{4}
     |
@@ -72,7 +72,9 @@ Identifier = ///
 StringLiteral = ///
   ([ ' " ])
   (?:
-    (?! \1 )[^ \\ \n \r ]
+    [^ ' " \\ \n \r ]+
+    |
+    (?! \1 )[ ' " ]
     |
     \\(?: \r\n | [^] )
   )*
@@ -112,7 +114,7 @@ NumericLiteral = ///
 Template = ///
   [ ` } ]
   (?:
-    [^ ` \\ $ ]
+    [^ ` \\ $ ]+
     |
     \\[^]
     |
@@ -134,7 +136,7 @@ LineTerminatorSequence = ///
 MultiLineComment = ///
   /\*
   (?:
-    [^*]
+    [^*]+
     |
     \*(?!/)
   )*
@@ -159,7 +161,9 @@ JSXIdentifier = ///
 JSXString = ///
   ([ ' " ])
   (?:
-    (?! \1 )[^]
+    [^ ' "]+
+    |
+    (?! \1 )[ ' " ]
   )*
   (\1)?
 ///y
