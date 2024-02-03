@@ -178,6 +178,24 @@ describe("Token", () => {
     match("//comment\t\n", "//comment\t");
   });
 
+  testToken("HashbangComment", [], (match) => {
+    match("#!");
+    match("#!comment");
+    match("#! comment");
+    match("#!comment ");
+    match("#!comment\n", "#!comment");
+    match("#!comment\r", "#!comment");
+    match("#!comment\u2028", "#!comment");
+    match("#!comment\u2029", "#!comment");
+    match("#!comment\r\n", "#!comment");
+    match("#!comment \n", "#!comment ");
+    match("#!comment\t\n", "#!comment\t");
+    match("#!comment\ncode", ["#!comment", "\n", "code"]);
+    match("#!comment\r\ncode", ["#!comment", "\r\n", "code"]);
+    match(" #!", false);
+    match("\n#!", false);
+  });
+
   testToken("MultiLineComment", [], (match) => {
     match("/**/");
     match("/*comment*/");

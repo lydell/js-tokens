@@ -4,12 +4,21 @@ const jsTokens = require("../build/index");
 
 test("all tokens", () => {
   const code =
-    'console.log("", ``, `a${1}b${this.#private}`, /**/ /./, 0x1Fn) //\r\n#\'';
+    '#!hashbang\nconsole.log("", ``, `a${1}b${this.#private}`, /**/ /./, 0x1Fn) //\r\n#!\'';
 
   const tokens = Array.from(jsTokens(code));
 
   expect(tokens).toMatchInlineSnapshot(`
     [
+      {
+        "type": "HashbangComment",
+        "value": "#!hashbang",
+      },
+      {
+        "type": "LineTerminatorSequence",
+        "value": "
+    ",
+      },
       {
         "type": "IdentifierName",
         "value": "console",
@@ -135,6 +144,10 @@ test("all tokens", () => {
       {
         "type": "Invalid",
         "value": "#",
+      },
+      {
+        "type": "Punctuator",
+        "value": "!",
       },
       {
         "closed": false,
