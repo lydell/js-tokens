@@ -63,6 +63,7 @@ type Token =
   | { type: "RegularExpressionLiteral"; value: string; closed: boolean }
   | { type: "MultiLineComment"; value: string; closed: boolean }
   | { type: "SingleLineComment"; value: string }
+  | { type: "HashbangComment"; value: string }
   | { type: "IdentifierName"; value: string }
   | { type: "PrivateIdentifier"; value: string }
   | { type: "NumericLiteral"; value: string }
@@ -176,6 +177,21 @@ Examples:
 // comment
 // console.log("commented", out + code);
 //
+```
+
+### HashbangComment
+
+_Spec: [HashbangComment]_
+
+Note that a HashbangComment can only occur at the very start of the string that is being tokenized. Anywhere else you will likely get an Invalid token `#` followed by a Punctuator token `!`.
+
+Examples:
+
+<!-- prettier-ignore -->
+```js
+#!/usr/bin/env node
+#! console.log("commented", out + code);
+#!
 ```
 
 ### IdentifierName
@@ -419,7 +435,7 @@ All possible values in JSX children:
 
 The intention is to always support the latest ECMAScript version whose feature set has been finalized.
 
-Currently, ECMAScript 2022 is supported.
+Currently, ECMAScript 2023 is supported.
 
 #### Annex B and C (strict mode)
 
@@ -641,6 +657,7 @@ See [benchmark.js] if you want to run benchmarks yourself.
 [divpunctuator]: https://tc39.es/ecma262/#prod-DivPunctuator
 [ecmascript language: lexical grammar]: https://tc39.es/ecma262/#sec-ecmascript-language-lexical-grammar
 [example.test.js]: test/example.test.js
+[hashbangcomment]: https://tc39.es/ecma262/#prod-HashbangComment
 [identifiername]: https://tc39.es/ecma262/#prod-IdentifierName
 [identifierpart]: https://tc39.es/ecma262/#prod-IdentifierPart
 [jsx specification]: https://facebook.github.io/jsx/

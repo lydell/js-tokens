@@ -147,6 +147,10 @@ SingleLineComment = ///
   //.*
 ///y
 
+HashbangComment = ///
+  ^#!.*
+///
+
 JSXPunctuator = ///
   [ < > . : = { } ]
   |
@@ -214,6 +218,13 @@ module.exports = jsTokens = (input, {jsx = false} = {}) ->
   braces = []
   parenNesting = 0
   postfixIncDec = false
+
+  if match = HashbangComment.exec(input)
+    yield {
+      type: "HashbangComment",
+      value: match[0],
+    }
+    lastIndex = match[0].length
 
   while lastIndex < length
     mode = stack[stack.length - 1]

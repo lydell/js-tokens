@@ -57,6 +57,10 @@ const tokens: Array<string> = Array.from(jsTokens(""), (token) => {
       expectError(token.closed);
       return token.value;
 
+    case "HashbangComment":
+      expectError(token.closed);
+      return token.value;
+
     case "IdentifierName":
       expectError(token.closed);
       return token.value;
@@ -122,6 +126,10 @@ const jsxTokens: Array<string> = Array.from(
         return token.value;
 
       case "SingleLineComment":
+        expectError(token.closed);
+        return token.value;
+
+      case "HashbangComment":
         expectError(token.closed);
         return token.value;
 
