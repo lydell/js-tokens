@@ -1,3 +1,7 @@
+### Version 9.0.0 (2024-02-08)
+
+- Added: Support for ES2023: `#!` hashbang comments at the start of files.
+
 ### Version 8.0.3 (2024-02-03)
 
 - Fixed: Extremely long string literals, template literals, regex literals, identifiers, comments, and runs of whitespace are now supported where possible. We’re talking about 10 million characters long. Previously, such long tokens could make the regex engine of the runtime give up and throw a `Maximum call stack size exceeded` or similar error. There are still a few [even more extreme such edge cases][known-failures], which I don’t think can be solved but are documented at least.
