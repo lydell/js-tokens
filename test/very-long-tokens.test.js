@@ -1,6 +1,5 @@
-"use strict";
-
-const jsTokens = require("../build/index");
+import { describe, test, expect } from "vitest";
+import jsTokens from "../build/index.js";
 
 function run(input) {
   const types = Array.from(jsTokens(input), (token) => token.type);
@@ -80,8 +79,10 @@ describe("Very long tokens", () => {
     expect(2e308).toBe(Infinity);
     expect(run(`2${"0".repeat(308)}`)).toBe("NumericLiteral");
     expect(() =>
-      run(`${"1".repeat(LARGE)}`)
-    ).toThrowErrorMatchingInlineSnapshot(`"Maximum call stack size exceeded"`);
+      run(`${"1".repeat(LARGE)}`),
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[RangeError: Maximum call stack size exceeded]`,
+    );
   });
 
   describe("Template", () => {
@@ -94,12 +95,12 @@ describe("Very long tokens", () => {
         Array.from(
           jsTokens(
             `\`${"a".repeat(LARGE)}\${0}${"a".repeat(LARGE)}\${0}${"a".repeat(
-              LARGE
-            )}\``
+              LARGE,
+            )}\``,
           ),
 
-          (token) => token.type
-        )
+          (token) => token.type,
+        ),
       ).toMatchInlineSnapshot(`
         [
           "TemplateHead",
@@ -129,12 +130,12 @@ describe("Very long tokens", () => {
       Array.from(
         jsTokens(
           `<${"a".repeat(LARGE)} ${"a".repeat(LARGE)}="${"a".repeat(
-            LARGE
+            LARGE,
           )}">${"a".repeat(LARGE)}`,
-          { jsx: true }
+          { jsx: true },
         ),
-        (token) => token.type
-      )
+        (token) => token.type,
+      ),
     ).toMatchInlineSnapshot(`
       [
         "JSXPunctuator",
@@ -157,7 +158,9 @@ describe("README.md examples", () => {
 
   test("failure", () => {
     expect(() =>
-      run(`"${"\\n".repeat(LARGE)}"`)
-    ).toThrowErrorMatchingInlineSnapshot(`"Maximum call stack size exceeded"`);
+      run(`"${"\\n".repeat(LARGE)}"`),
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[RangeError: Maximum call stack size exceeded]`,
+    );
   });
 });

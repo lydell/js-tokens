@@ -1,6 +1,5 @@
-"use strict";
-
-const jsTokens = require("../build/index");
+import { describe, test, expect } from "vitest";
+import jsTokens from "../build/index.js";
 
 const keywords1 = [
   "await",
@@ -43,7 +42,7 @@ const nonKeywords = [...keywords1, ...keywords2, ...keywords3].map(
     braceAfterIsExpression: false,
     canHaveLineTerminatorAfter: true,
     canHavePostfixIncDec: true,
-  })
+  }),
 );
 
 const literals = [
@@ -207,7 +206,7 @@ const nonExpressionParenEnds = []
         "}",
         ")",
       ]),
-    ])
+    ]),
   )
   .map((tokens) => ({
     tokens,
@@ -333,14 +332,13 @@ const separators = [
   ],
 ];
 
-/* eslint-disable jest/no-standalone-expect */
 function run(code, expressionType) {
   describe(expressionType, () => {
     for (const variation of all) {
       for (const [separator, newlineSeparator] of separators) {
         check([...variation.tokens, ...separator], code, (token) => {
           expect(token.type).toBe(
-            variation.expressionAfter ? expressionType : "Punctuator"
+            variation.expressionAfter ? expressionType : "Punctuator",
           );
         });
 
@@ -350,7 +348,7 @@ function run(code, expressionType) {
               ? variation.expressionAfter
                 ? expressionType
                 : "Punctuator"
-              : expressionType
+              : expressionType,
           );
         });
 
@@ -361,9 +359,11 @@ function run(code, expressionType) {
               code,
               (token) => {
                 expect(token.type).toBe(
-                  variation.canHavePostfixIncDec ? "Punctuator" : expressionType
+                  variation.canHavePostfixIncDec
+                    ? "Punctuator"
+                    : expressionType,
                 );
-              }
+              },
             );
 
             check(
@@ -371,7 +371,7 @@ function run(code, expressionType) {
               code,
               (token) => {
                 expect(token.type).toBe(expressionType);
-              }
+              },
             );
           }
         }
@@ -383,7 +383,7 @@ function run(code, expressionType) {
               code,
               (token) => {
                 expect(token.type).toBe("Punctuator");
-              }
+              },
             );
 
             check(
@@ -401,7 +401,7 @@ function run(code, expressionType) {
               code,
               (token) => {
                 expect(token.type).toBe("Punctuator");
-              }
+              },
             );
           } else {
             check(
@@ -409,7 +409,7 @@ function run(code, expressionType) {
               code,
               (token) => {
                 expect(token.type).toBe(expressionType);
-              }
+              },
             );
 
             check(
@@ -426,7 +426,7 @@ function run(code, expressionType) {
               code,
               (token) => {
                 expect(token.type).toBe(expressionType);
-              }
+              },
             );
           }
         }
@@ -440,15 +440,14 @@ function run(code, expressionType) {
                 ? variation.expressionAfter && variation.braceAfterIsExpression
                   ? "Punctuator"
                   : expressionType
-                : expressionType
+                : expressionType,
             );
-          }
+          },
         );
       }
     }
   });
 }
-/* eslint-enable jest/no-standalone-expect */
 
 function check(passedPreceding, code, fn) {
   const filtered = [].concat(
@@ -461,7 +460,7 @@ function check(passedPreceding, code, fn) {
           ? [" ", value]
           : [value];
       }
-    })
+    }),
   );
   const last = filtered[filtered.length - 1];
   const preceding = code.startsWith(last) ? [...filtered, " "] : filtered;
@@ -479,7 +478,7 @@ function check(passedPreceding, code, fn) {
     expect(tokens.length).toBeGreaterThanOrEqual(preceding.length + 1);
 
     expect(
-      tokens.slice(0, preceding.length).map((token) => token.value)
+      tokens.slice(0, preceding.length).map((token) => token.value),
     ).toEqual(preceding);
 
     fn(tokens[preceding.length]);

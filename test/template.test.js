@@ -1,15 +1,14 @@
-"use strict";
-
-const jsTokens = require("../build/index");
+import { describe, test, expect } from "vitest";
+import jsTokens from "../build/index.js";
 
 describe("Template", () => {
   test("Complex", () => {
     expect(
       Array.from(
         jsTokens(
-          "`a${}${a}${ `${b\r}` + `${`c${5}`}` } d $${\n(x=>{return x*2})(4)}$`"
-        )
-      )
+          "`a${}${a}${ `${b\r}` + `${`c${5}`}` } d $${\n(x=>{return x*2})(4)}$`",
+        ),
+      ),
     ).toMatchInlineSnapshot(`
       [
         {

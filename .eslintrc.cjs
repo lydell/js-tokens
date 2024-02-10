@@ -1,20 +1,14 @@
-"use strict";
-
 module.exports = {
   root: true,
-  extends: [
-    "eslint:recommended",
-    "plugin:jest/recommended",
-    "plugin:jest/style",
-  ],
-  plugins: ["jest"],
+  extends: ["eslint:recommended", "plugin:vitest/recommended"],
+  plugins: ["vitest"],
   parserOptions: {
-    ecmaVersion: 2016,
+    sourceType: "module",
+    ecmaVersion: 2020,
   },
   env: {
     es6: true,
     node: true,
-    "jest/globals": true,
   },
   rules: {
     "arrow-body-style": "error",
@@ -32,7 +26,8 @@ module.exports = {
     "prefer-template": "error",
     eqeqeq: ["error", "always", { null: "ignore" }],
     strict: "error",
-    "jest/no-conditional-expect": "off",
-    "jest/valid-title": "off",
+    "vitest/no-disabled-tests": "error",
+    "vitest/no-focused-tests": "error",
+    "vitest/valid-title": "off",
   },
 };

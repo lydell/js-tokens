@@ -1,6 +1,5 @@
-"use strict";
-
-const jsTokens = require("../build/index");
+import { describe, test, expect } from "vitest";
+import jsTokens from "../build/index.js";
 
 function testToken(name, preceding, fn) {
   describe(name, () => {
@@ -23,11 +22,11 @@ function matchHelper(type, preceding, string, expected = string, extra = {}) {
 
   test(title, () => {
     const tokens = Array.from(
-      jsTokens(preceding.join("") + string, { jsx: type.startsWith("JSX") })
+      jsTokens(preceding.join("") + string, { jsx: type.startsWith("JSX") }),
     );
     expect(tokens.length).toBeGreaterThanOrEqual(preceding.length + 1);
     expect(
-      tokens.slice(0, preceding.length).map((token) => token.value)
+      tokens.slice(0, preceding.length).map((token) => token.value),
     ).toEqual(preceding);
     const token = tokens[preceding.length];
     if (expected === false) {
@@ -35,7 +34,7 @@ function matchHelper(type, preceding, string, expected = string, extra = {}) {
     } else {
       if (Array.isArray(expected)) {
         expect(tokens.map((token2) => token2.value)).toEqual(
-          preceding.concat(expected)
+          preceding.concat(expected),
         );
       } else {
         expect(token.type).toBe(type);
@@ -75,7 +74,7 @@ function printInvisibles(string) {
         // eslint-disable-next-line no-control-regex
         /[\x00-\x1f]/g,
         (char) =>
-          `\\x${char.charCodeAt(0).toString(16).padStart(2, "0").toUpperCase()}`
+          `\\x${char.charCodeAt(0).toString(16).padStart(2, "0").toUpperCase()}`,
       );
   }
 
@@ -84,7 +83,7 @@ function printInvisibles(string) {
     .map(
       (char) =>
         escapeTable[char] ||
-        `\\u${char.charCodeAt(0).toString(16).padStart(4, "0").toUpperCase()}`
+        `\\u${char.charCodeAt(0).toString(16).padStart(4, "0").toUpperCase()}`,
     )
     .join("");
 }

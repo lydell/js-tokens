@@ -1,6 +1,5 @@
-"use strict";
-
-const jsTokens = require("../build/index");
+import { test, expect } from "vitest";
+import jsTokens from "../build/index.js";
 
 const ifInIf = `
 if (

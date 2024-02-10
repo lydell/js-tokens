@@ -1,6 +1,5 @@
-"use strict";
-
-const jsTokens = require("../build/index");
+import { describe, test, expect } from "vitest";
+import jsTokens from "../build/index.js";
 
 const jsxTokens = (input) => Array.from(jsTokens(input, { jsx: true }));
 

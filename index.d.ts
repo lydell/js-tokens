@@ -25,12 +25,12 @@ export declare type JSXToken =
 
 declare function jsTokens(
   input: string,
-  options: { jsx: true }
+  options: { jsx: true },
 ): Iterable<Token | JSXToken>;
 
 declare function jsTokens(
   input: string,
-  options?: { jsx?: boolean }
+  options?: { jsx?: boolean },
 ): Iterable<Token>;
 
 // @ts-expect-error TypeScript complains about _both_ exporting types _and_ using `export =` but it seems to work fine in practice.

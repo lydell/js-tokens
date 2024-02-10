@@ -1,9 +1,8 @@
-"use strict";
-
-const fs = require("fs");
-const path = require("path");
-const babelParser = require("@babel/parser");
-const jsTokensLib = require("../build/index");
+import { describe, test, expect } from "vitest";
+import * as fs from "fs";
+import * as path from "path";
+import * as babelParser from "@babel/parser";
+import jsTokensLib from "../build/index.js";
 
 const babelTypeMap = {
   bigint: "NumericLiteral",
@@ -100,10 +99,10 @@ function jsTokensHelper(code, fileType) {
         type === "JSXPunctuator" && value !== "<" && value !== ">"
           ? "Punctuator"
           : type === "JSXString"
-          ? "StringLiteral"
-          : type,
+            ? "StringLiteral"
+            : type,
       value,
-    })
+    }),
   );
 }
 
@@ -138,7 +137,7 @@ function runFile(file, { compareWithBabel = true } = {}) {
     const jsTokensValues = jsTokens.map((token) => token.value);
     const jsTokensWithoutBlanks = jsTokens.filter(
       (token) =>
-        token.type !== "WhiteSpace" && token.type !== "LineTerminatorSequence"
+        token.type !== "WhiteSpace" && token.type !== "LineTerminatorSequence",
     );
 
     if (babelTokens.some((token) => token.type === "HTMLLikeComment")) {
@@ -183,7 +182,7 @@ const ignored = new Set(
     "node_modules/test262-parser-tests/pass/9d3d960e32528788.js",
     "node_modules/test262-parser-tests/pass/d53aef16fe683218.js",
     "node_modules/test262-parser-tests/pass-explicit/d53aef16fe683218.js",
-  ].map(path.normalize)
+  ].map(path.normalize),
 );
 
 describe("valid", () => {
