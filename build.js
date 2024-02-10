@@ -1,10 +1,9 @@
-"use strict";
+import * as coffee from "coffeescript";
+import * as fs from "fs";
+import * as path from "path";
+import * as url from "url";
 
-const coffee = require("coffeescript");
-const fs = require("fs");
-const path = require("path");
-
-const DIR = __dirname;
+const DIR = path.dirname(url.fileURLToPath(import.meta.url));
 const BUILD = path.join(DIR, "build");
 
 const READ_MORE = "**[➡️ Full readme](https://github.com/lydell/js-tokens/)**";

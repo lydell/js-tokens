@@ -1,9 +1,7 @@
-"use strict";
-
-const babelParser = require("@babel/parser");
-const fastGlob = require("fast-glob");
-const fs = require("fs");
-const jsTokens = require("./build/index.js");
+import * as babelParser from "@babel/parser";
+import fastGlob from "fast-glob";
+import * as fs from "fs";
+import jsTokens from "./build/index.js";
 
 const usage = `
 Usage: node benchmark.js [TOKENIZER] [NUM_FILES]

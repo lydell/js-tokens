@@ -1,11 +1,10 @@
-"use strict";
-
 module.exports = {
   root: true,
   extends: ["eslint:recommended", "plugin:vitest/recommended"],
   plugins: ["vitest"],
   parserOptions: {
-    ecmaVersion: 2016,
+    sourceType: "module",
+    ecmaVersion: 2020,
   },
   env: {
     es6: true,
@@ -31,12 +30,4 @@ module.exports = {
     "vitest/no-focused-tests": "error",
     "vitest/valid-title": "off",
   },
-  overrides: [
-    {
-      files: ["test/*.js", "*.mjs"],
-      parserOptions: {
-        sourceType: "module",
-      },
-    },
-  ],
 };
