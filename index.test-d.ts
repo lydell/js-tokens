@@ -181,7 +181,7 @@ const jsxTokens: Array<string> = Array.from(
         expectError(token.closed);
         return token.value;
     }
-  }
+  },
 );
 
 expectType<Array<string>>(jsxTokens);

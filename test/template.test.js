@@ -6,9 +6,9 @@ describe("Template", () => {
     expect(
       Array.from(
         jsTokens(
-          "`a${}${a}${ `${b\r}` + `${`c${5}`}` } d $${\n(x=>{return x*2})(4)}$`"
-        )
-      )
+          "`a${}${a}${ `${b\r}` + `${`c${5}`}` } d $${\n(x=>{return x*2})(4)}$`",
+        ),
+      ),
     ).toMatchInlineSnapshot(`
       [
         {

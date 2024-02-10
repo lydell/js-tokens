@@ -324,7 +324,7 @@ _Spec: [JSX Specification]_
 ```ts
 export default function jsTokens(
   input: string,
-  options: { jsx: true }
+  options: { jsx: true },
 ): Iterable<Token | JSXToken>;
 
 export declare type JSXToken =

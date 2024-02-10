@@ -64,11 +64,11 @@ function read() {
     .filter(
       ([, content]) =>
         /\S/.test(content) &&
-        (content.trim().includes("\n") || content.length > 100)
+        (content.trim().includes("\n") || content.length > 100),
     )
     .sort(
       ([fileA, contentA], [fileB, contentB]) =>
-        contentA.length - contentB.length || fileA.localeCompare(fileB)
+        contentA.length - contentB.length || fileA.localeCompare(fileB),
     )
     .map(([file, content]) => `/*${file.replace(/\*\//g, "* /")}*/ ${content}`);
 }
@@ -83,8 +83,8 @@ function median(array) {
   return half === 0
     ? 0
     : Number.isInteger(half)
-    ? (sorted[half - 1] + sorted[half]) / 2
-    : sorted[Math.floor(half)];
+      ? (sorted[half - 1] + sorted[half]) / 2
+      : sorted[Math.floor(half)];
 }
 
 function common(array) {
@@ -109,8 +109,8 @@ function fileSize(string) {
   return byteLength < KiB
     ? `${byteLength} B`
     : byteLength < MiB
-    ? `${(byteLength / KiB).toFixed(1)} KiB`
-    : `${(byteLength / MiB).toFixed(1)} MiB`;
+      ? `${(byteLength / KiB).toFixed(1)} KiB`
+      : `${(byteLength / MiB).toFixed(1)} MiB`;
 }
 
 function run(argv) {
