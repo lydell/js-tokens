@@ -6,15 +6,17 @@
     "test": "eslint . --report-unused-disable-directives && prettier --check . && npm run build && tsd && node benchmark.js && vitest run"
   },
   "devDependencies": {
-    "@babel/parser": "7.23.9",
-    "@vitest/coverage-v8": "^1.2.2",
+    "@babel/parser": "7.25.3",
+    "@eslint/js": "9.9.0",
+    "@typescript-eslint/utils": "8.1.0",
+    "@vitest/coverage-v8": "2.0.5",
+    "@vitest/eslint-plugin": "1.0.3",
     "coffeescript": "2.7.0",
-    "eslint": "8.56.0",
-    "eslint-plugin-vitest": "0.3.22",
+    "eslint": "9.9.0",
     "everything.js": "1.0.3",
-    "prettier": "3.2.5",
+    "prettier": "3.3.3",
     "test262-parser-tests": "0.0.5",
-    "tsd": "0.30.4",
-    "vitest": "1.2.2"
+    "tsd": "0.31.1",
+    "vitest": "2.0.5"
   }
 }
