@@ -75,7 +75,6 @@ describe("Very long tokens", () => {
     // `eval(`2${"0".repeat(308)}`)` gives `Infinity`, and that’s not even close
     // to getting a `Maximum call stack size exceeded`. And you can’t have that
     // many decimals either.
-    // eslint-disable-next-line no-loss-of-precision
     expect(2e308).toBe(Infinity);
     expect(run(`2${"0".repeat(308)}`)).toBe("NumericLiteral");
     expect(() =>
