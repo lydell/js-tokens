@@ -815,6 +815,11 @@ describe("Token", () => {
     match("/?foo/");
     match("/*foo/", false);
 
+    match("/[p{Decimal_Number}--[0-9]]/v");
+    match("/[[[a-z]--[b-d]]&&[0-2[q{a|bc|def}]]]/v");
+    match("/[/]/v"); // Valid token, invalid at later regex parsing stage.
+    match("/[[a]/]/v", "/[[a]/"); // This is why slash isn't valid in character class when nesting came to play.
+
     match("/a/d");
     match("/a/g");
     match("/a/m");

@@ -129,7 +129,9 @@ Just like for StringLiteral, templates can also contain invalid escapes. `` `\u`
 
 _Spec: [RegularExpressionLiteral]_
 
-Regex literals may contain invalid regex syntax. They are still matched as regex literals.
+Regex literals may contain invalid regex syntax. They are still matched as regex literals. The specification even says:
+
+> The productions below [...] are used by the input element scanner to find the end of the regular expression literal. The source text [...] are subsequently parsed again using the more stringent ECMAScript Regular Expression grammar.
 
 If the ending `/` is missing, the token has `closed: false`. JavaScript regex literals cannot contain newlines (not even escaped ones), so unclosed regex literals simply end at the end of the line.
 
@@ -146,6 +148,7 @@ Examples:
 /a/Inva1id
 /+/
 /[/]\//
+/[\p{Decimal_Number}--[0-9]]/v
 ```
 
 ### MultiLineComment
@@ -434,7 +437,7 @@ All possible values in JSX children:
 
 The intention is to always support the latest ECMAScript version whose feature set has been finalized.
 
-Currently, ECMAScript 2023 is supported.
+Currently, ECMAScript 2024 is supported.
 
 #### Annex B and C (strict mode)
 
