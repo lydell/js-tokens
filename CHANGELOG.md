@@ -1,3 +1,7 @@
+### Version 9.0.1 (2024-11-22)
+
+- Fixed: `/a[/]/` is now parsed as a `RegularExpressionLiteral` again (regression from 8.0.3). Thanks to No Two (@noootwo) for reporting!
+
 ### Version 9.0.0 (2024-02-08)
 
 - Added: Support for ES2023: `#!` hashbang comments at the start of files.
