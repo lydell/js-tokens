@@ -71,6 +71,7 @@ function printInvisibles(string) {
       .replace(/\r/g, "␍")
       .replace(/\n/g, "␊")
       .replace(
+        // eslint-disable-next-line no-control-regex
         /[\x00-\x1f]/g,
         (char) =>
           `\\x${char.charCodeAt(0).toString(16).padStart(2, "0").toUpperCase()}`,

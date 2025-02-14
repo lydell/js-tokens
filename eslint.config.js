@@ -1,5 +1,6 @@
 import js from "@eslint/js";
 import vitest from "@vitest/eslint-plugin";
+import globals from "globals";
 
 export default [
   {
@@ -15,8 +16,13 @@ export default [
     plugins: {
       vitest,
     },
+    languageOptions: {
+      globals: {
+        ...globals.node,
+      },
+    },
     rules: {
-      ...js.recommended,
+      ...js.configs.recommended.rules,
       ...vitest.configs.recommended.rules,
       "arrow-body-style": "error",
       curly: "error",

@@ -14,6 +14,7 @@
     "coffeescript": "2.7.0",
     "eslint": "9.20.0",
     "everything.js": "1.0.3",
+    "globals": "15.15.0",
     "prettier": "3.4.2",
     "test262-parser-tests": "0.0.5",
     "tsd": "0.31.2",
