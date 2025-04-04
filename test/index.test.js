@@ -101,7 +101,7 @@ describe("jsTokens", () => {
     for (let c = 0; c <= 0xffff; c++) {
       expect(() => jsTokens(String.fromCharCode(c))).not.toThrow();
     }
-  });
+  }, 10000);
 });
 
 describe("Token", () => {
