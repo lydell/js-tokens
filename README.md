@@ -437,7 +437,7 @@ All possible values in JSX children:
 
 The intention is to always support the latest ECMAScript version whose feature set has been finalized.
 
-Currently, ECMAScript 2024 is supported.
+Currently, ECMAScript 2025 is supported.
 
 #### Annex B and C (strict mode)
 
