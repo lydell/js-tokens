@@ -1,3 +1,7 @@
+### Version 10.0.0 (2025-12-08)
+
+- Changed: js-tokens is now an ESM package! This means that it has `"type": "module"` (instead of `"type": "commonjs"`) in package.json, and `export default jsTokens` in the JavaScript code (instead of `module.exports = jsTokens`). If you were already using ESM, this probably won’t make any difference for you. For CommonJS users, `const jsTokens = require("js-tokens")` should still work if you use Node.js 20.19.0 or later (which support `require(esm)`). Thanks to fisker Cheung (@fisker)!
+
 ### Version 9.0.1 (2024-11-22)
 
 - Fixed: `/a[/]/` is now parsed as a `RegularExpressionLiteral` again (regression from 8.0.3). Thanks to No Two (@noootwo) for reporting!
