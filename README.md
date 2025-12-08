@@ -601,7 +601,7 @@ js-tokens advertises that it “never fails”. Tell you what, it _can_ fail on 
 For example, if you try to parse the string literal `"\n\n\n"` but with 10 million `\n` instead of just 3, the regex engine gives up with `RangeError: Maximum call stack size exceeded` (or similar). Try it out:
 
 ```js
-Array.from(require("js-tokens")(`"${"\\n".repeat(1e7)}"`));
+Array.from(jsTokens(`"${"\\n".repeat(1e7)}"`));
 ```
 
 (Yes, that is the _regex engine_ of the runtime giving up. js-tokens has no recursive functions.)
@@ -609,7 +609,7 @@ Array.from(require("js-tokens")(`"${"\\n".repeat(1e7)}"`));
 However, if you repeat `a` instead of `\n` 10 million times (`"aaaaaa…"`), it works:
 
 ```js
-Array.from(require("js-tokens")(`"${"a".repeat(1e7)}"`));
+Array.from(jsTokens(`"${"a".repeat(1e7)}"`));
 ```
 
 That’s good, because it’s much more common to have lots of non-escapes in a row in a big string literal, than having mostly escapes. (Obfuscated code might have _only_ escapes though.)
