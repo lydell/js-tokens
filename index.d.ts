@@ -33,5 +33,4 @@ declare function jsTokens(
   options?: { jsx?: boolean },
 ): Iterable<Token>;
 
-// @ts-expect-error TypeScript complains about _both_ exporting types _and_ using `export =` but it seems to work fine in practice.
-export = jsTokens;
+export default jsTokens;

@@ -210,7 +210,7 @@ KeywordsWithNoLineTerminatorAfter = ///
 
 Newline = RegExp(LineTerminatorSequence.source)
 
-module.exports = jsTokens = (input, {jsx = false} = {}) ->
+jsTokens = (input, {jsx = false} = {}) ->
   {length} = input
   lastIndex = 0
   lastSignificantToken = ""
@@ -549,3 +549,5 @@ module.exports = jsTokens = (input, {jsx = false} = {}) ->
     }
 
   undefined
+
+export default jsTokens

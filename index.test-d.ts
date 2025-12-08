@@ -1,6 +1,5 @@
 import { expectType, expectError } from "tsd";
-import jsTokens, { Token } from ".";
-import { JSXToken } from "./build";
+import jsTokens, { Token, JSXToken } from "./build/index.js";
 
 // Requires one string:
 expectError(jsTokens());
