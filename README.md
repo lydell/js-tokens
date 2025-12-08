@@ -18,7 +18,7 @@ Array.from(jsTokens(jsString), (token) => token.value).join("|");
 ```js
 import jsTokens from "js-tokens";
 // or:
-const jsTokens = require("js-tokens").default; // Requires Node.js 20.19.0 or later.
+const jsTokens = require("js-tokens"); // Requires Node.js 20.19.0 or later.
 ```
 
 ## Usage

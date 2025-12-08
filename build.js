@@ -25,7 +25,8 @@ const FILES_TO_COPY = [
         .replace(/ {2}/g, "\t")
         .replace(/\/\/ (?:Note:|https).*\n/g, "")
         .replace(/\n\n/g, "\n")
-        .replace(/\{\s*(tag: "[^"]+")\s*\}/g, "{$1}"),
+        .replace(/\{\s*(tag: "[^"]+")\s*\}/g, "{$1}")
+        .concat('export { jsTokens as "module.exports" };'),
   },
 ];
 
