@@ -3,7 +3,7 @@
 The tiny, regex powered, lenient, _almost_ spec-compliant JavaScript tokenizer that never fails.
 
 ```js
-const jsTokens = require("js-tokens");
+import jsTokens from "js-tokens";
 
 const jsString = 'JSON.stringify({k:3.14**2}, null /*replacer*/, "\\t")';
 
