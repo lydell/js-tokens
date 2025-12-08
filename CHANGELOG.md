@@ -27,7 +27,6 @@ Support for ES2022!
 - Added: A new token type – `PrivateIdentifier` – for things like `#name`.
 
   `this.#name` now tokenizes differently:
-
   - Before: `IdentifierName: this`, `Punctuator: .`, `Invalid: #`, `IdentifierName: name`
   - After: `IdentifierName: this`, `Punctuator: .`, `PrivateIdentifier: #name`
 
