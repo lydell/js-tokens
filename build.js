@@ -15,28 +15,10 @@ const FILES_TO_COPY = [
     src: "README.md",
     transform: (content) => content.replace(/^##[^]*/m, READ_MORE),
   },
-
-  // Commonjs version
   { src: "index.d.ts" },
   {
     src: "index.coffee",
     dest: "index.js",
-    transform: (content) =>
-      compileCoffeescript(content).replace(
-        "export default ",
-        "module.exports = ",
-      ),
-  },
-
-  // ESM version
-  {
-    src: "index.d.ts",
-    dest: "index.d.mts",
-    transform: (content) => content.replace("export = ", "export default "),
-  },
-  {
-    src: "index.coffee",
-    dest: "index.mjs",
     transform: compileCoffeescript,
   },
 ];
