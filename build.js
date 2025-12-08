@@ -25,7 +25,10 @@ const FILES_TO_COPY = [
         .replace(/ {2}/g, "\t")
         .replace(/\/\/ (?:Note:|https).*\n/g, "")
         .replace(/\n\n/g, "\n")
-        .replace(/\{\s*(tag: "[^"]+")\s*\}/g, "{$1}"),
+        .replace(/\{\s*(tag: "[^"]+")\s*\}/g, "{$1}")
+        // Support plain `require("js-tokens")` in addition to `require("js-tokens").default`.
+        // CoffeeScript does not support this syntax so we add it here instead.
+        .concat('export { jsTokens as "module.exports" };'),
   },
 ];
 
