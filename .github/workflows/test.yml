@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macOS-latest, windows-latest]
-        node-version: [20, 22, 24]
+        node-version: [20.x, 22.x, 24.x]
 
     steps:
       - uses: actions/checkout@v6
@@ -21,9 +21,15 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: "${{ matrix.node-version }}"
-          cache: "npm"
 
-      - run: npm ci --no-audit
+      - id: cache-node_modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: node_modules-${{ matrix.os }}-${{ matrix.node-version }}-${{ hashFiles('package.json', 'package-lock.json') }}
+
+      - if: steps.cache-node_modules.outputs.cache-hit != 'true'
+        run: npm ci --no-audit
 
       - run: npm run build
 
