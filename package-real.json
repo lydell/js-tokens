@@ -6,7 +6,12 @@
   "description": "Tiny JavaScript tokenizer.",
   "repository": "lydell/js-tokens",
   "type": "commonjs",
-  "exports": "./index.js",
+  "exports": {
+    ".": {
+      "import": "./index.mjs",
+      "default": "./index.js"
+    }
+  },
   "keywords": [
     "JavaScript",
     "js",
