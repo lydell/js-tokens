@@ -7,6 +7,7 @@ const keywords1 = [
   "default",
   "delete",
   "do",
+  "in",
   "instanceof",
   "new",
   "typeof",
@@ -44,6 +45,27 @@ const nonKeywords = [...keywords1, ...keywords2, ...keywords3].map(
     canHavePostfixIncDec: true,
   }),
 );
+
+// Keywords used as property names (`x.default`) end an expression, like any
+// other property access.
+const memberKeywords = [
+  ...[...keywords1, ...keywords2, ...keywords3].map(({ tokens: [keyword] }) => [
+    "x",
+    ".",
+    keyword,
+  ]),
+  ...[...keywords1, ...keywords2, ...keywords3].map(({ tokens: [keyword] }) => [
+    "x",
+    "?.",
+    keyword,
+  ]),
+].map((tokens) => ({
+  tokens,
+  expressionAfter: false,
+  braceAfterIsExpression: false,
+  canHaveLineTerminatorAfter: true,
+  canHavePostfixIncDec: true,
+}));
 
 const literals = [
   ['""'],
@@ -308,6 +330,7 @@ const all = [
   ...keywords2,
   ...keywords3,
   ...nonKeywords,
+  ...memberKeywords,
   ...literals,
   ...interpolations,
   ...unaryOperators,
