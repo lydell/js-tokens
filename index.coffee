@@ -198,7 +198,7 @@ TokensNotPrecedingObjectLiteral = ///
 ///
 
 KeywordsWithExpressionAfter = ///
-  ^(?:await|case|default|delete|do|else|instanceof|new|return|throw|typeof|void|yield)$
+  ^(?:await|case|default|delete|do|else|in|instanceof|new|return|throw|typeof|void|yield)$
 ///
 
 KeywordsWithNoLineTerminatorAfter = ///
@@ -349,13 +349,18 @@ jsTokens = (input, {jsx = false} = {}) ->
         Identifier.lastIndex = lastIndex
         if match = Identifier.exec(input)
           lastIndex = Identifier.lastIndex
-          nextLastSignificantToken = match[0]
-          switch match[0]
-            when "for", "if", "while", "with"
-              if lastSignificantToken != "." && lastSignificantToken != "?."
+          if lastSignificantToken == "." || lastSignificantToken == "?."
+            # A property name, such as `a.default`, ends an expression even if
+            # it is a keyword.
+            nextLastSignificantToken = "?PropertyName"
+            postfixIncDec = true
+          else
+            nextLastSignificantToken = match[0]
+            switch match[0]
+              when "for", "if", "while", "with"
                 nextLastSignificantToken = "?NonExpressionParenKeyword"
+            postfixIncDec = !KeywordsWithExpressionAfter.test(match[0])
           lastSignificantToken = nextLastSignificantToken
-          postfixIncDec = !KeywordsWithExpressionAfter.test(match[0])
           yield {
             type: if match[1] == "#" then "PrivateIdentifier" else "IdentifierName",
             value: match[0],
