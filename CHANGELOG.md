@@ -1,3 +1,8 @@
+### Version 10.0.1 (2026-11-21)
+
+- Fixed: Keywords used as property names, such as `a.default` or `a?.return`, are now treated like any other property name. Previously, `a.default / 2` was tokenized as containing a `RegularExpressionLiteral` (`/ 2`… up to the next `/`), because `default` usually comes before an expression. Thanks to @bardrop for fixing!
+- Fixed: `/` after the `in` keyword is now tokenized as the start of a `RegularExpressionLiteral`, as in `"a" in /b/`. Previously it was treated as division.
+
 ### Version 10.0.0 (2025-12-08)
 
 - Changed: js-tokens is now an ESM package! This means that it has `"type": "module"` (instead of `"type": "commonjs"`) in package.json, and `export default jsTokens` in the JavaScript code (instead of `module.exports = jsTokens`). If you were already using ESM, this probably won’t make any difference for you. For CommonJS users, `const jsTokens = require("js-tokens")` should still work if you use Node.js 20.19.0 or later (which support `require(esm)`). Thanks to fisker Cheung (@fisker)!
