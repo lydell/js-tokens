@@ -229,6 +229,12 @@ const nonExpressionParenEnds = []
         ")",
       ]),
     ]),
+    [
+      ["for", " ", "await", "(", "x", ")"],
+      ["for", " ", "await", " ", "(", "x", ")"],
+      ["for", "\n", "await", "\n", "(", "x", ")"],
+      ["for", "/**/", "await", "//comment", "\r\n", "/*\n*/", "(", "x", ")"],
+    ],
   )
   .map((tokens) => ({
     tokens,
@@ -240,6 +246,7 @@ const nonExpressionParenEnds = []
 
 const expressionParenEnds = [
   ["(", "x", ")"],
+  ["await", "(", "x", ")"],
   ...nonExpressionParenKeywords.map((keyword) => [
     `x${keyword}`,
     "(",
