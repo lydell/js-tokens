@@ -359,6 +359,10 @@ jsTokens = (input, {jsx = false} = {}) ->
             switch match[0]
               when "for", "if", "while", "with"
                 nextLastSignificantToken = "?NonExpressionParenKeyword"
+              when "await"
+                # `for await (` works like `for (`.
+                if lastSignificantToken == "?NonExpressionParenKeyword"
+                  nextLastSignificantToken = "?NonExpressionParenKeyword"
             postfixIncDec = !KeywordsWithExpressionAfter.test(match[0])
           lastSignificantToken = nextLastSignificantToken
           yield {
