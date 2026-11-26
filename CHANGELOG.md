@@ -1,3 +1,7 @@
+### Version 10.0.2 (2026-11-26)
+
+- Fixed: `/` after `for await (...)` is now tokenized as the start of a `RegularExpressionLiteral`, just like after `for (...)`. Previously, `for await (const x of y) /re/g.test(x)` was tokenized as containing division. Thanks to @bardrop for fixing!
+
 ### Version 10.0.1 (2026-11-21)
 
 - Fixed: Keywords used as property names, such as `a.default` or `a?.return`, are now treated like any other property name. Previously, `a.default / 2` was tokenized as containing a `RegularExpressionLiteral` (`/ 2`… up to the next `/`), because `default` usually comes before an expression. Thanks to @bardrop for fixing!
